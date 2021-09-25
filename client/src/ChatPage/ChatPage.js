@@ -54,7 +54,7 @@ handleInputChange = (e) => {
 
         this.props.dispatch(getChats());
 
-        this.socket = io(server);
+        this.socket = io();
 
 
         this.socket.on("Output Chat Message", messageFromBackEnd => {
