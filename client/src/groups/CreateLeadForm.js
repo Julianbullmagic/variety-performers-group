@@ -12,7 +12,7 @@ const coordinatesValue = React.useRef('')
 const timeValue = React.useRef('')
 const durationValue = React.useRef('')
 const [toggle, setToggle] = useState(false);
-let server = "http://localhost:5000";
+let server = process.env.PORT||"http://localhost:5000";
 let socket = io(server);
 
 

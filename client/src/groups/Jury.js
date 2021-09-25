@@ -14,7 +14,7 @@ export default function Jury(props) {
   const [restrictionPolls, setRestrictionPolls] = useState([]);
   const [comment, setComment] = useState("");
   const pollquestion = React.useRef('')
-  let server = "http://localhost:5000";
+  let server = process.env.PORT||"http://localhost:5000";
   let socket = io(server);
 
   useEffect(() => {

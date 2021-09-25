@@ -19,7 +19,7 @@ const selectedFile4 = React.useRef(null)
 const selectedFile5 = React.useRef(null)
 const [toggle, setToggle] = useState(false);
 const [numberOfImages, setNumberOfImages]=useState(1)
-let server = "http://localhost:5000";
+let server = process.env.PORT||"http://localhost:5000";
 let socket = io(server);
 
 

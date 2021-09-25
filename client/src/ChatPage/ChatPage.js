@@ -50,7 +50,7 @@ handleInputChange = (e) => {
 
 
     componentDidMount() {
-        let server = "http://localhost:5000";
+        let server = process.env.PORT||"http://localhost:5000";
 
         this.props.dispatch(getChats());
 
