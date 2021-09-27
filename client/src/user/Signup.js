@@ -46,6 +46,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function Signup (){
   const classes = useStyles()
+  const [numImages, setNumImages] = useState([0]);
   const [values, setValues] = useState({
     name: '',
     password: '',
@@ -69,7 +70,31 @@ export default function Signup (){
   let socket = io(server);
 
 
+  useEffect(()=>{
+    console.log("use EFFECT",numImages)
+  },[numImages,setNumImages])
 
+  function extraImage(e){
+    e.preventDefault()
+    let imagenum=numImages
+    console.log(imagenum)
+    if(imagenum.length<5){
+    imagenum.push(0)
+    }
+    console.log("after push",imagenum)
+    setNumImages([...imagenum])
+  }
+
+  function lessImage(e){
+    e.preventDefault()
+    console.log(imagenum)
+    let imagenum=numImages
+    if(imagenum.length>0){
+    imagenum.pop()
+    }
+    console.log(imagenum)
+    setNumImages([...imagenum])
+  }
 
   async function createUser(){
     var userId=mongoose.Types.ObjectId()
@@ -158,52 +183,67 @@ export default function Signup (){
           createUser()
     }
 
-    return (<div>
-      <Card className={classes.card}>
-        <CardContent>
-          <Typography id="title" variant="h6" className={classes.title}>
+    return (
+        <div className="signupform">
+        <div className="innersignupform">
+          <h4 style={{textAlign:"center"}}>
             Sign Up
-          </Typography>
-          <TextField id="name" placeHolder={values.name} label="Name" className={classes.textField} value={values.name} onChange={handleChange('name')} margin="normal"/><br/>
-          <TextField id="email" placeHolder={values.email} type="email" label="Email" className={classes.textField} value={values.email} onChange={handleChange('email')} margin="normal"/><br/>
-          <TextField id="website" placeHolder={values.website} type="website" label="website" value={values.website} onChange={handleChange('website')} margin="normal"/><br/>
-          <TextField id="youtube" placeHolder={values.youtube} type="youtube" label="youtube" value={values.youtube} onChange={handleChange('youtube')} margin="normal"/><br/>
-          <TextField id="promovideos" placeHolder={values.promovideos} type="promovideos" label="promotional videos, please add youtube url links separated by a comma" value={values.promovideos} onChange={handleChange('promovideos')} margin="normal"/><br/>
-          <TextField id="expertise" type="expertise" placeHolder={values.expertise} label="expertise" className={classes.textField} value={values.expertise} onChange={handleChange('expertise')} margin="normal"/><br/>
-          <TextField id="password" type="password" placeHolder={values.password} label="Password" className={classes.textField} value={values.password} onChange={handleChange('password')} margin="normal"/><br/>
-          <TextField id="performancedescription" placeHolder={values.performancedescription} type="performancedescription" label="Performance Description" className={classes.textField} value={values.performancedescription} onChange={handleChange('performancedescription')} margin="normal"/><br/>
-          <TextField id="rates" placeHolder={values.rates} type="rates" label="Rates" className={classes.textField} value={values.rates} onChange={handleChange('rates')} margin="normal"/>
+          </h4>
+          <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Name </h5><input id="name" placeHolder={values.name} label="Name" value={values.name} onChange={handleChange('name')} margin="normal"/></div>
+          <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Email </h5><input id="email" placeHolder={values.email} type="email" label="Email" value={values.email} onChange={handleChange('email')} margin="normal"/></div>
+          <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Website </h5><input id="website" placeHolder={values.website} type="website" label="website" value={values.website} onChange={handleChange('website')} margin="normal"/></div>
+          <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Youtube Channel </h5><input id="youtube" placeHolder={values.youtube} type="youtube" label="youtube" value={values.youtube} onChange={handleChange('youtube')} margin="normal"/></div>
+          <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Promo Videos, separate youtube video link urls with a comma </h5><input id="promovideos" placeHolder={values.promovideos} type="promovideos" label="promotional videos, please add youtube url links separated by a comma" value={values.promovideos} onChange={handleChange('promovideos')} margin="normal"/></div>
+          <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Expertise </h5><input id="expertise" type="expertise" placeHolder={values.expertise} label="expertise" value={values.expertise} onChange={handleChange('expertise')} margin="normal"/></div>
+          <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Password </h5><input id="password" type="password" placeHolder={values.password} label="Password" value={values.password} onChange={handleChange('password')} margin="normal"/></div>
+          <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Performance Description </h5><input id="performancedescription" placeHolder={values.performancedescription} type="performancedescription" label="Performance Description"  value={values.performancedescription} onChange={handleChange('performancedescription')} margin="normal"/></div>
+          <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Rates, if you have several different services you may put a variety of different rates </h5><input id="rates" placeHolder={values.rates} type="rates" label="Rates"  value={values.rates} onChange={handleChange('rates')} margin="normal"/></div>
 
-          <input id="file" type="file" ref={selectedFile1}/>
-          <input id="file2" type="file" ref={selectedFile2}/>
-          <input id="file3" type="file" ref={selectedFile3}/>
-          <input id="file4" type="file" ref={selectedFile4}/>
-          <input id="file5" type="file" ref={selectedFile5}/>
+          <h5 className="ruletext">  Images </h5>
+          <div style={{display:((numImages.length>=1)?"block":"none")}}  className="eventformbox ruletext">
+          <input style={{width:"90%"}} id="file" type="file" ref={selectedFile1}/>
+          </div>
 
+          <div style={{display:((numImages.length>=2)?"block":"none")}} className="eventformbox ruletext">
+          <input style={{width:"90%"}} id="file" type="file" ref={selectedFile2}/>
+          </div>
+
+          <div style={{display:((numImages.length>=3)?"block":"none")}}  className="eventformbox ruletext">
+          <input style={{width:"90%"}} id="file" type="file" ref={selectedFile3}/>
+          </div>
+
+          <div style={{display:((numImages.length>=4)?"block":"none")}}  className="eventformbox ruletext">
+          <input style={{width:"90%"}} id="file" type="file" ref={selectedFile4}/>
+          </div>
+
+          <div style={{display:((numImages.length>=5)?"block":"none")}}  className="eventformbox ruletext">
+          <input style={{width:"90%"}} id="file" type="file" ref={selectedFile5}/>
+          <p>Max 5 images</p>
+          </div>
+          <button style={{marginLeft:"30%"}} onClick={(e) => extraImage(e)}>Add Extra Image</button>
+          <button onClick={(e) => lessImage(e)}>One Less Image</button>
+          <button id="submit" onClick={clickSubmit}>Submit</button>
           <br/> {
             values.error && (<Typography component="p" color="error">
               <Icon color="error" className={classes.error}>error</Icon>
               {values.error}</Typography>)
           }
-        </CardContent>
-        <CardActions>
-        <button id="submit" onClick={clickSubmit}>Submit</button>
-        </CardActions>
-      </Card>
-      <Dialog open={values.open} disableBackdropClick={true}>
-        <DialogTitle>New Account</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            New account successfully created.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Link to="/signin">
-            <Button color="primary" autoFocus="autoFocus" variant="contained">
-              Sign In
-            </Button>
-          </Link>
-        </DialogActions>
-      </Dialog>
-    </div>)
+        </div>
+        <Dialog open={values.open} disableBackdropClick={true}>
+          <DialogTitle>New Account</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              New account successfully created.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Link to="/signin">
+              <Button color="primary" autoFocus="autoFocus" variant="contained">
+                Sign In
+              </Button>
+            </Link>
+          </DialogActions>
+        </Dialog>
+        </div>
+    )
 }

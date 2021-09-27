@@ -326,17 +326,24 @@ if(!rest.includes(currentrest)&&approval>1){
           }
         }
       }
+      let width=`${(item.approval.length/props.users.length)*100}%`
 
       return (
       <>
-      <h4>{item.restriction}</h4>
-      <h4>{item.usertorestrictname}</h4>
-      {props.users&&<h4>{approval}% of members approve this restriction, {item.approval.length}/{props.users.length}</h4>}
-      {approveenames&&approveenames.map(item=>{return(<><p>{item}</p></>)})}
-      {item.approval.includes(auth.isAuthenticated().user._id)&&<h4>You have approved this restriction</h4>}
-      {!item.approval.includes(auth.isAuthenticated().user._id)&&<button onClick={(e)=>approve(e,item._id)}>Approve?</button>}
-      {item.approval.includes(auth.isAuthenticated().user._id)&&<button onClick={(e)=>withdrawapproval(e,item._id)}>Withdraw Approval?</button>}
+      <div className="postbox">
+      <div className="juryboxform">
+      <h4 className="ruletext"><strong>Restriction:</strong> {item.restriction} ,</h4>
+      <h4 className="ruletext"><strong>For:</strong> {item.usertorestrictname} ,</h4>
+      {props.users&&<h4 className="ruletext">{approval}% of members approve this restriction, {item.approval.length}/{props.users.length}</h4>}
+
+      {(item.approval.length>0)&&<h4 className="ruletext">, approvees=</h4>}
+      {approveenames&&approveenames.map((item,index)=>{return(<h4 className="ruletext"> {item}{(index<(approveenames.length-2))?", ":(index<(approveenames.length-1))?" and ":"."}</h4>)})}
+      {!item.approval.includes(auth.isAuthenticated().user._id)&&<button className="ruletext" onClick={(e)=>approve(e,item._id)}>Approve?</button>}
+      {item.approval.includes(auth.isAuthenticated().user._id)&&<button className="ruletext" onClick={(e)=>withdrawapproval(e,item._id)}>Withdraw Approval?</button>}
+      <div className="percentagecontainer"><div style={{width:width}} className="percentage"></div></div>
+      </div>
       <Comment id={item._id}/>
+      </div>
       </>
     )})
 
@@ -350,15 +357,15 @@ if(!rest.includes(currentrest)&&approval>1){
         <h3>Propose a punishment for a member</h3>
         </div>
         <div className="eventformbox">
-        <select name="room" id="room" onChange={(e) => handleMemberChange(e)}>
+        <select style={{width:"70vw"}} name="room" id="room" onChange={(e) => handleMemberChange(e)}>
           {props.users&&props.users.map(item=>{return (
             <option key={item._id} value={item._id}>{item.name}</option>
           )})}
         </select>
-        <p htmlFor="room">members</p>
+        <p htmlFor="room"> members</p>
         </div>
         <div className="eventformbox">
-        <select id="restriction" onChange={(e) => handleRestrictionChange(e)}>
+        <select style={{width:"70vw"}} id="restriction" onChange={(e) => handleRestrictionChange(e)}>
             <option value="cannot post">cannot post</option>
             <option value="cannot create polls">cannot create polls</option>
             <option value="cannot suggest rules or vote for rules">cannot suggest rules or vote for rules</option>
@@ -369,12 +376,12 @@ if(!rest.includes(currentrest)&&approval>1){
             <option value="cannot vote in jury">cannot vote in jury</option>
             <option value="remove from group">remove from group</option>
         </select>
-        <p htmlFor="room">Choose a punishment</p>
+        <p htmlFor="room"> Choose a punishment</p>
 
         </div>
         <div className="eventformbox">
-        <input style={{display:"inline",width:"10vw"}} type='text' name='duration' id='duration' onChange={(e) => handleDurationChange(e)}/>
-        <p htmlFor="duration">How many days?</p>
+        <input style={{display:"inline",width:"70vw"}} type='text' name='duration' id='duration' onChange={(e) => handleDurationChange(e)}/>
+        <p htmlFor="duration"> How many days?</p>
         </div>
         <button onClick={(e) => handleSubmit(e)}>New Restriction Poll?</button>
         </form>

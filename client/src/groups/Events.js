@@ -5,6 +5,7 @@ import io from "socket.io-client";
 import auth from './../auth/auth-helper'
 import AwesomeSlider from 'react-awesome-slider';
 import 'react-awesome-slider/dist/styles.css';
+import { MapContainer, TileLayer,Circle} from 'react-leaflet'
 const mongoose = require("mongoose");
 
 
@@ -206,21 +207,33 @@ this.setState({events:eventscopy})
                   }
                 }
 
-
+console.log("EVENT!",item)
 
                 return(
 <>
+<div className="eventbox">
+<div className="eventcol1">
 <h3>{item.title}</h3>
 <h4>{item.description}</h4>
-{this.state.users&&<h4>{approval}% of members are attending this event, {item.approval.length}/{this.state.users.length}</h4>}
-{attendeenames&&attendeenames.map(item=>{return(<><p>{item}</p></>)})}
-{item.approval.includes(auth.isAuthenticated().user._id)&&<h4>You are attending this event</h4>}
+{this.state.users&&<h4>{approval}% of members are attending this event, {item.approval.length}/{this.state.users.length}. Atendees=</h4>}
+{attendeenames&&attendeenames.map((item,index)=>{return(<><h4 className="ruletext">{item}{(index<(attendeenames.length-2))?", ":(index<(attendeenames.length-1))?" and ":"."}</h4></>)})}
 {!item.approval.includes(auth.isAuthenticated().user._id)&&<button onClick={(e)=>this.approveofevent(e,item._id)}>Attend this event?</button>}
 {item.approval.includes(auth.isAuthenticated().user._id)&&<button onClick={(e)=>this.withdrawapprovalofevent(e,item._id)}>Don't want to attend anymore?</button>}
-<AwesomeSlider style={{width:"60vw",position: "absolute",  zIndex: -1}}>
-{item.images.map(item=>{return <div><Image style={{width:200}} cloudName="julianbullmagic" publicId={item} /></div>})}
-</AwesomeSlider>
-<button onClick={(e)=>this.deleteEvent(e,item)}>Delete?</button>
+<button style={{display:"block"}} onClick={(e)=>this.deleteEvent(e,item)}>Delete?</button>
+</div>
+<div className="eventcol2">
+{item.images&&<Image style={{width:"100%",overflow:"hidden"}} cloudName="julianbullmagic" publicId={item.images[0]} />}
+</div>
+<div className="eventcol3">
+{item.coordinates&&<><MapContainer center={[item.coordinates[0],item.coordinates[1]]} zoom={13} scrollWheelZoom={false}>
+  <TileLayer
+    attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+  />
+   <Circle center={[item.coordinates[0],item.coordinates[1]]} radius={100} />
+</MapContainer></>}
+</div>
+</div>
 </>
 
 )})

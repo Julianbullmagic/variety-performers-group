@@ -196,21 +196,24 @@ this.setState({purchases:purchasescopy})
 
                 return(
 <>
+<div className="leadbox">
+<div className="leadcol1">
 <h3>{item.title}</h3>
 <h4>{item.description}</h4>
 <h4>{item.price}</h4>
 <h4>{item.quantity}</h4>
 {this.state.users&&<h4>{approval}% of members want to share in this purchase, {item.approval.length}/{this.state.users.length}</h4>}
-{approveenames&&approveenames.map(item=>{return(<><p>{item}</p></>)})}
-{item.approval.includes(auth.isAuthenticated().user._id)&&<h4>You want to share in this purchase</h4>}
+{approveenames&&approveenames.map((item,index)=>{return(<><h4 className="ruletext">{item}{(index<(approveenames.length-2))?", ":(index<(approveenames.length-1))?" and ":"."}</h4></>)})}
 {!item.approval.includes(auth.isAuthenticated().user._id)&&<button onClick={(e)=>this.approveofpurchase(e,item._id)}>Contribute to this purchase?</button>}
 {item.approval.includes(auth.isAuthenticated().user._id)&&<button onClick={(e)=>this.withdrawapprovalofpurchase(e,item._id)}>Don't contribute to this purchase?</button>}
-<AwesomeSlider style={{width:"60vw",position: "absolute",  zIndex: -1}}>
-{item.images.map(item=>{return <div><Image style={{width:200}} cloudName="julianbullmagic" publicId={item} /></div>})}
-</AwesomeSlider>
-
 <button onClick={(e)=>this.deletePurchase(e,item)}>Delete?</button>
-
+</div>
+<div className="leadcol2">
+<AwesomeSlider style={{width:"25vw",position: "absolute",  zIndex: +1}}>
+{item.images.map(item=>{return <div><Image cloudName="julianbullmagic" publicId={item} /></div>})}
+</AwesomeSlider>
+</div>
+</div>
 </>
 
 )})

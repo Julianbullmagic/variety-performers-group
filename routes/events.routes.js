@@ -53,6 +53,7 @@ router.get("/:eventId", (req, res, next) => {
       title :req.body["title"],
       description :req.body["description"],
       location:req.body["location"],
+      coordinates:req.body["coordinates"],
       images:req.body["images"],
       timecreated:req.body["timecreated"],
       approval:req.body["approval"]

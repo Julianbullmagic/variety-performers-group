@@ -21,8 +21,7 @@ export default class Events extends Component {
 
 
            componentDidMount(){
-             let server = "http://localhost:5000";
-             this.socket = io(server);
+             this.socket = io();
              this.getLeads()
              }
 
@@ -93,11 +92,17 @@ console.log(item)
 
         leadscomponent=this.state.leads.map(item=>{return(
 <>
+<div className="leadbox">
+<div className="leadcol1">
 <h3>{item.title}</h3>
 <h4>Description: {item.description}</h4>
 <h4>Where: {item.location}</h4>
 <h4>When: {item.time}</h4>
 <h4>How Long: {item.duration}</h4>
+<button onClick={(e)=>this.deleteLead(e,item._id)}>Delete this lead?</button>
+
+</div>
+<div className="leadcol2">
 {item.coordinates&&<><MapContainer center={[item.coordinates[0],item.coordinates[1]]} zoom={13} scrollWheelZoom={false}>
   <TileLayer
     attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -105,7 +110,8 @@ console.log(item)
   />
    <Circle center={[item.coordinates[0],item.coordinates[1]]} radius={100} />
 </MapContainer></>}
-<button onClick={(e)=>this.deleteLead(e,item._id)}>Delete this lead?</button>
+</div>
+</div>
 </>
 )})
               }

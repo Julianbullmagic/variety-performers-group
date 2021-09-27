@@ -8,8 +8,7 @@ export default function CreateRuleForm(props) {
 const ruleValue = React.useRef('')
 const explanationValue = React.useRef('')
 const [toggle, setToggle] = useState(false);
-let server = process.env.PORT||"http://localhost:5000";
-let socket = io(server);
+let socket = io();
 
 
 async function handleSubmit(e) {

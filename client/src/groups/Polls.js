@@ -28,6 +28,7 @@ console.log("props",props)
 
 
   function handleSubmit(e){
+    e.preventDefault()
       var d = new Date();
       var n = d.getTime();
       var pollId=mongoose.Types.ObjectId()
@@ -75,6 +76,7 @@ console.log("newpoll",newPoll)
 
 
     function deletePoll(e,item) {
+      console.log("DELETING POLL",item)
       var pollscopy=JSON.parse(JSON.stringify(polls))
       var filteredarray = pollscopy.filter(function( obj ) {
    return obj._id !== item._id;
@@ -118,8 +120,7 @@ var pollsmapped=polls.map((item,i)=>{
   <>
 <div className="postbox">
 <div>
-<Poll poll={item} users={props.users}/>
-<button onClick={(e)=>deletePoll(e,item)}>Delete?</button>
+<Poll poll={item} users={props.users} deletePoll={deletePoll}/>
 </div>
 <Comment id={item._id}/>
 </div>

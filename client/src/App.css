@@ -45,6 +45,51 @@ label{
   padding:1vw;
 }
 
+.eventbox{
+  background:#f6f6f6;
+  border:#eaeaea;
+  border-style:solid;
+  border-width:5px;
+  padding:1vw;
+  display:flex;
+  justify-content:space-between;
+}
+
+.eventcol1{
+  width:33%
+}
+
+.eventcol2{
+  width:33%;
+  display:flex;
+  align-items:center;
+}
+.eventcol3{
+  width:33%
+}
+
+.leadbox{
+  background:#f6f6f6;
+  border:#eaeaea;
+  border-style:solid;
+  border-width:5px;
+  padding:1vw;
+  margin:1vw;
+  display:flex;
+}
+
+.leadcol1{
+  width:50%
+}
+
+.leadcol2{
+  width:50%;
+  display:flex;
+  justify-content:flex-end;
+}
+
+
+
 .form-control{
   padding-bottom:1vw;
 }
@@ -123,7 +168,55 @@ select:focus{
   display:flex;
   justify-content:space-between;
   padding:1vw;
+  width:90vw;
+}
+
+
+.signinform{
+  width:100vw;
+  height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.signininput{
+  margin:0.5vw;
+  display:flex;
+  justify-content:space-between;
+}
+
+.innersigninform{
+  background:#f6f6f6;
+  border:#eaeaea;
+  border-style:solid;
+  border-width:5px;
+  padding:1vw;
   width:30vw;
+}
+
+.signupform{
+  width:100vw;
+  margin-top:7vw;
+  margin-bottom:7vw;
+
+  display:flex;
+  justify-content:center;
+}
+
+.signupinput{
+  margin:0.5vw;
+  display:flex;
+  justify-content:space-between;
+}
+
+.innersignupform{
+  background:#f6f6f6;
+  border:#eaeaea;
+  border-style:solid;
+  border-width:5px;
+  padding:1vw;
+  width:60vw;
 }
 
 .eventformbox{
@@ -173,6 +266,16 @@ select:focus{
   border-right-width:5px;
   display:flex;
   justify-content:space-between;
+  padding:1vw;
+}
+
+.juryboxform{
+  background:#f6f6f6;
+  border:#eaeaea;
+  border-style:solid;
+  border-top-width:5px;
+  border-left-width:5px;
+  border-right-width:5px;
   padding:1vw;
 }
 
@@ -335,7 +438,7 @@ border-top-width:5px;
 
 .leaflet-container {
   width: 100%;
-  height: 300px;
+  height: 100%;
 }
 
 p{
@@ -364,7 +467,6 @@ input.error {
 
 .slider {
   position: relative;
-  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;

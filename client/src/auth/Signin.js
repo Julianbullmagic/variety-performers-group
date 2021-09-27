@@ -81,23 +81,25 @@ export default function Signin(props) {
   }
 
   return (
-      <Card className={classes.card}>
-        <CardContent>
-          <Typography variant="h6" className={classes.title}>
+      <div className="signinform">
+        <div className="innersigninform">
+          <h4 style={{textAlign:"center"}}>
             Sign In
-          </Typography>
-          <TextField id="email" type="email" label="Email" className={classes.textField} value={values.email} onChange={handleChange('email')} margin="normal"/><br/>
-          <TextField id="password" type="password" label="Password" className={classes.textField} value={values.password} onChange={handleChange('password')} margin="normal"/>
-          <br/> {
+          </h4>
+          <div className="signininput">
+          <h5 className="ruletext">Email </h5><input id="email" type="email" label="Email" className={classes.textField} value={values.email} onChange={handleChange('email')} margin="normal"/>
+          </div>
+          <div className="signininput">
+          <h5 className="ruletext">Password </h5><input id="password" type="password" label="Password" className={classes.textField} value={values.password} onChange={handleChange('password')} margin="normal"/>
+          </div>
+           {
             values.error && (<Typography component="p" color="error">
               <Icon color="error" className={classes.error}>error</Icon>
               {values.error}
             </Typography>)
           }
-        </CardContent>
-        <CardActions>
-          <button id="submit" onClick={clickSubmit} >Submit</button>
-        </CardActions>
-      </Card>
+          <button style={{marginLeft:"45%"}} id="submit" onClick={clickSubmit} >Submit</button>
+        </div>
+      </div>
     )
 }

@@ -7,7 +7,7 @@ const eventSchema = mongoose.Schema({
   description:String,
   location:String,
   images:[{type:String}],
-
+  coordinates:[Number],
   approval: [{type:mongoose.Schema.Types.ObjectId,ref:"User"}],
   timecreated:Number
 })

@@ -168,13 +168,13 @@ if(suggestions&&props.users){
     let width=`${(item.approval.length/props.users.length)*100}%`
 
     return (<>
-      <div className="pollsuggestion">
-<h4 className="ruletext">{item.suggestion} suggested by {item.createdby.name}</h4>
-<h5>{approval}% of members approve this suggestion, {item.approval.length}/{props.users.length}</h5>
-{approveenames&&approveenames.map((item,index)=>{return(<><h4 className="ruletext">{item}{(index<(approveenames.length-2))?", ":(index<(approveenames.length-1))?" and ":"."}</h4></>)})}
-{item.approval.includes(auth.isAuthenticated().user._id)&&<h5>You have approved this rule</h5>}
-{!item.approval.includes(auth.isAuthenticated().user._id)&&<button onClick={(e)=>approveofsuggestion(e,item._id)}>Approve this suggestion?</button>}
-{item.approval.includes(auth.isAuthenticated().user._id)&&<button onClick={(e)=>withdrawapprovalofsuggestion(e,item._id)}>Withdraw Approval?</button>}
+      <div className="pollbox">
+<h5 className="ruletext">{item.suggestion}, suggested by {item.createdby.name}, </h5>
+<h5 className="ruletext">{approval}% of members approve this suggestion, {item.approval.length}/{props.users.length}</h5>
+{(item.approval.length>0)&&<h5 className="ruletext">, approvees=</h5>}
+{approveenames&&approveenames.map((item,index)=>{return(<h5 className="ruletext"> {item}{(index<(approveenames.length-2))?", ":(index<(approveenames.length-1))?" and ":"."}</h5>)})}
+{!item.approval.includes(auth.isAuthenticated().user._id)&&<button className="ruletext" onClick={(e)=>approveofsuggestion(e,item._id)}>Approve this suggestion?</button>}
+{item.approval.includes(auth.isAuthenticated().user._id)&&<button className="ruletext" onClick={(e)=>withdrawapprovalofsuggestion(e,item._id)}>Withdraw Approval?</button>}
 <div className="percentagecontainer"><div style={{width:width}} className="percentage"></div></div>
 </div>
     </>)})
@@ -186,7 +186,7 @@ if(suggestions&&props.users){
   <div className="pollbox">
   <h3 className="ruletext">{props.poll.pollquestion}  </h3>
   <h4 className="ruletext">Poll Created By {props.poll.createdby.name}</h4>
-
+  <button onClick={(e)=>props.deletePoll(e,props.poll)}>Delete?</button>
   <form>
           <div >
           <h5 className="ruletext">Create Poll Suggestion</h5>

@@ -207,12 +207,11 @@ if (this.state.rules){
 <>
   <div className="rule">
   <h3 className="ruletext">{item.rule}  </h3>
-  {item.approval.includes(auth.isAuthenticated().user._id)&&<h4 className="ruletext">You have approved this rule  </h4>}
   {(!item.approval.includes(auth.isAuthenticated().user._id))&&<button className="ruletext" onClick={(e)=>this.approveofrule(e,item._id)}>Approve this rule?</button>}
   {(item.approval.includes(auth.isAuthenticated().user._id))&&<button className="ruletext" onClick={(e)=>this.withdrawapprovalofrule(e,item._id)}>Withdraw Approval?</button>}
   <h4 className="ruletext">  {item.explanation}  </h4>
 
-  {this.state.users&&<h4 className="ruletext">{approval}% of members approve this rule, {item.approval.length}/{this.state.users.length}. These people are </h4>}
+  {this.state.users&&<h4 className="ruletext">{approval}% of members approve this rule, {item.approval.length}/{this.state.users.length}. Approvees=</h4>}
   {approveenames&&approveenames.map((item,index)=>{return(<><h4 className="ruletext">{item}{(index<(approveenames.length-2))?", ":(index<(approveenames.length-1))?" and ":"."}</h4></>)})}
   <div className="percentagecontainer"><div style={{width:width}} className="percentage"></div></div>
   </div>

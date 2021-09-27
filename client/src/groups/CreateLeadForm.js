@@ -11,9 +11,10 @@ const locationValue = React.useRef('')
 const coordinatesValue = React.useRef('')
 const timeValue = React.useRef('')
 const durationValue = React.useRef('')
+const [numImages, setNumImages] = useState([0]);
+
 const [toggle, setToggle] = useState(false);
-let server = process.env.PORT||"http://localhost:5000";
-let socket = io(server);
+let socket = io();
 
 
 async function handleSubmit(e) {
@@ -127,9 +128,9 @@ console.log("new lead", newLead)
           ref={durationValue}
         />
 </div>
+
         <button onClick={(e) => handleSubmit(e)}>Submit Lead</button>
-
-
       </form>
+
     </div>
   )}
