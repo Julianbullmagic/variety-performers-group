@@ -13,8 +13,11 @@ export default function Jury(props) {
   const [duration, setDuration] = useState(0);
   const [restrictionPolls, setRestrictionPolls] = useState([]);
   const [comment, setComment] = useState("");
+  const [page, setPage] = useState(1);
+  const [pageNum, setPageNum] = useState([]);
+  const [currentPageData, setCurrentPageData] = useState([]);
   const pollquestion = React.useRef('')
-  let server = process.env.PORT||"http://localhost:5000";
+  let server = "http://localhost:5000";
   let socket = io(server);
 
   useEffect(() => {
@@ -24,9 +27,42 @@ console.log("props",props)
       return res.json();
     }).then(restrictionpolls => {
       console.log("polls",restrictionpolls)
-  setRestrictionPolls(restrictionpolls.data)})
+
+
+  let po=restrictionpolls.data
+  po.reverse()
+setRestrictionPolls(po)
+
+console.log("decide page",0,10)
+let currentpage=po.slice(0,10)
+console.log("currentpage",currentpage)
+setCurrentPageData(currentpage)
+
+let pagenum=Math.ceil(restrictionpolls.data.length/10)
+console.log("page num",pagenum)
+let pagenums=[]
+while(pagenum>0){
+pagenums.push(pagenum)
+pagenum--
+}
+pagenums.reverse()
+console.log(pagenums)
+setPageNum(pagenums)
+
+
+
+})
 },[])
 
+
+function decidePage(e,pagenum){
+
+  console.log("decide page",(pagenum*10-10),pagenum*10)
+  let currentpage=restrictionPolls.slice((pagenum*10-10),pagenum*10)
+  console.log("currentpage",currentpage)
+  setPage(pagenum)
+  setCurrentPageData(currentpage)
+}
 
 
   function handleSubmit(e){
@@ -64,8 +100,14 @@ console.log("newRestrictionPoll",newRestrictionPoll)
 
 console.log("newrestrictionpoll",newRestrictionPoll)
       var restrictionpollscopy=JSON.parse(JSON.stringify(restrictionPolls))
+      restrictionpollscopy.reverse()
       restrictionpollscopy.push(newRestrictionPoll)
+      restrictionpollscopy.reverse()
       setRestrictionPolls(restrictionpollscopy)
+
+            let current=restrictionpollscopy.slice((page*10-10),page*10)
+            console.log(current)
+ setCurrentPageData(current)
       console.log(restrictionpollscopy)
       const options={
           method: "POST",
@@ -86,6 +128,11 @@ console.log("newrestrictionpoll",newRestrictionPoll)
    return obj._id !== item._id;
    });
       setRestrictionPolls(filteredarray);
+
+      let current=filteredarray.slice((page*10-10),page*10)
+      console.log(current)
+      setCurrentPageData(current)
+
       var d = new Date();
       var n = d.getTime();
 
@@ -308,7 +355,7 @@ if(!rest.includes(currentrest)&&approval>1){
     var d = new Date();
     var n = d.getTime();
 
-    var restrictionpollsmapped=restrictionPolls.map((item,i)=>{
+    var restrictionpollsmapped=currentPageData.map((item,i)=>{
       let approval=<></>
 
       if(props.users){
@@ -386,7 +433,19 @@ if(!rest.includes(currentrest)&&approval>1){
         <button onClick={(e) => handleSubmit(e)}>New Restriction Poll?</button>
         </form>
         </div>
+        <h4 style={{display:"inline"}}>Choose Page</h4>
+        {pageNum&&pageNum.map(item=>{
+          return (<>
+            <button style={{display:"inline"}} onClick={(e) => decidePage(e,item)}>{item}</button>
+            </>)
+        })}
         {restrictionpollsmapped}
+        <h4 style={{display:"inline"}}>Choose Page</h4>
+        {pageNum&&pageNum.map(item=>{
+          return (<>
+            <button style={{display:"inline"}} onClick={(e) => decidePage(e,item)}>{item}</button>
+            </>)
+        })}
         </>
     )
 }

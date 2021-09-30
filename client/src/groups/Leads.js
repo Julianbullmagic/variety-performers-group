@@ -3,7 +3,6 @@ import CreateLeadForm from './CreateLeadForm'
 import { MapContainer, TileLayer,Circle} from 'react-leaflet'
 import auth from './../auth/auth-helper'
 import io from "socket.io-client";
-
 const mongoose = require("mongoose");
 
 
@@ -13,6 +12,9 @@ export default class Events extends Component {
            super(props);
            this.state = {
              leads:[],
+             page:1,
+             pageNum:[],
+             currentPageData:[],
              redirect: false,
              updating:false
            }
@@ -21,24 +23,58 @@ export default class Events extends Component {
 
 
            componentDidMount(){
-             this.socket = io();
+             let server = "http://localhost:5000";
+             this.socket = io(server);
              this.getLeads()
              }
+
+             decidePage(e,pagenum){
+                console.log("decide page",(pagenum*10-10),pagenum*10)
+                let currentpage=this.state.leads.slice((pagenum*10-10),pagenum*10)
+                console.log("currentpage",currentpage)
+                this.setState({page:pagenum,currentPageData:currentpage})
+              }
 
 async getLeads(){
   await fetch(`/leads`)
       .then(response => response.json())
       .then(data=>{
-        console.log("leads",data)
-        this.setState({leads:data})
+        for (let lead of data){
+          lead.viewcontact=false
+        }
+        let leads=data
+        leads.reverse()
+     this.setState({leads:leads})
+
+    let currentpage=leads.slice(0,10)
+    console.log("currentpage",currentpage)
+    this.setState({currentPageData:currentpage})
+
+    let pagenum=Math.ceil(data.length/10)
+    console.log("page num",pagenum)
+    let pagenums=[]
+    while(pagenum>0){
+      pagenums.push(pagenum)
+      pagenum--
+    }
+    pagenums.reverse()
+    console.log(pagenums)
+    this.setState({pageNum:pagenums})
       })
 }
 
 
  updateLeads(newlead){
  var leadscopy=JSON.parse(JSON.stringify(this.state.leads))
+ leadscopy.reverse()
  leadscopy.push(newlead)
- this.setState({ leads:leadscopy})}
+ leadscopy.reverse()
+ this.setState({ leads:leadscopy})
+
+       let current=leadscopy.slice((this.state.page*10-10),this.state.page*10)
+       console.log(current)
+       this.setState({currentPageData:current})
+}
 
 
          async deleteLead(event,item){
@@ -52,6 +88,9 @@ console.log(item)
                var filteredleads=leadscopy.filter(checkLead)
 
            this.setState({leads:filteredleads})
+           let current=filteredleads.slice((this.state.page*10-10),this.state.page*10)
+           console.log(current)
+           this.setState({currentPageData:current})
            var d = new Date();
            var n = d.getTime();
 
@@ -80,7 +119,14 @@ console.log(item)
            await fetch("/leads/"+item, options)
          }
 
-
+viewContactDetails(e,id){
+  let leadscopy=JSON.parse(JSON.stringify(this.state.leads))
+  for (let lead of leadscopy){
+    if (lead._id==id){
+      lead.viewcontact=!lead.viewcontact
+    }
+  }
+}
 
 
   render() {
@@ -90,7 +136,7 @@ console.log(item)
             var leadscomponent=<h3>no leads at the moment</h3>
             if (this.state.leads){
 
-        leadscomponent=this.state.leads.map(item=>{return(
+        leadscomponent=this.state.currentPageData.map(item=>{return(
 <>
 <div className="leadbox">
 <div className="leadcol1">
@@ -99,6 +145,9 @@ console.log(item)
 <h4>Where: {item.location}</h4>
 <h4>When: {item.time}</h4>
 <h4>How Long: {item.duration}</h4>
+{item.viewcontact&&<><h4>Phone: {item.phone}</h4>
+<h4>Email: {item.email}</h4></>}
+<button onClick={(e)=>this.viewContactDetails(e,item._id)}>View Contact Details?</button>
 <button onClick={(e)=>this.deleteLead(e,item._id)}>Delete this lead?</button>
 
 </div>
@@ -127,7 +176,19 @@ console.log(item)
       <br/>
       <CreateLeadForm updateLeads={this.updateLeads}/>
       <h2><strong>Gig Leads </strong></h2>
+      <h4 style={{display:"inline"}}>Choose Page</h4>
+{this.state.pageNum&&this.state.pageNum.map(item=>{
+        return (<>
+          <button style={{display:"inline"}} onClick={(e) => this.decidePage(e,item)}>{item}</button>
+          </>)
+      })}
       {leadscomponent}
+      <h4 style={{display:"inline"}}>Choose Page</h4>
+{this.state.pageNum&&this.state.pageNum.map(item=>{
+        return (<>
+          <button style={{display:"inline"}} onClick={(e) => this.decidePage(e,item)}>{item}</button>
+          </>)
+      })}
       </>
     );
   }

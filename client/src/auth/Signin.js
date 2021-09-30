@@ -9,6 +9,7 @@ import Icon from '@material-ui/core/Icon'
 import { makeStyles } from '@material-ui/core/styles'
 import auth from './../auth/auth-helper'
 import {Redirect} from 'react-router-dom'
+import io from "socket.io-client";
 import {signin} from './api-auth.js'
 
 const useStyles = makeStyles(theme => ({
@@ -38,6 +39,8 @@ const useStyles = makeStyles(theme => ({
 }))
 
 export default function Signin(props) {
+  let server = "http://localhost:5000";
+  var socket = io(server);
   const classes = useStyles()
   const [values, setValues] = useState({
       email: '',
@@ -60,10 +63,14 @@ export default function Signin(props) {
       } else {
         console.log(data)
         auth.authenticate(data, () => {
+          socket.emit("new user", data.user.name);
           setValues({ ...values, error: '',redirectToReferrer: true})
         })
       }
     })
+
+
+
   }
 
   const handleChange = name => event => {

@@ -26,6 +26,14 @@ const User = require("./models/user.model");
 const Rule = require("./models/rule.model");
 const Event = require("./models/event.model");
 const Restriction = require("./models/restriction.model");
+const Lead = require("./models/lead.model");
+const Post = require("./models/post.model");
+const Poll = require("./models/poll.model");
+const Purchase = require("./models/purchase.model");
+const RestrictionPoll = require("./models/restrictionpoll.model");
+const Comment = require("./models/comment.model");
+
+
 
 var geodist = require('geodist')
 
@@ -91,7 +99,88 @@ app.use('/api/chat', require('./routes/chat'));
 cron.schedule('0 0 0 * * *', () => {
 
   (async function(){
-    var restrictions=await Restriction.find().exec()
+    var d = new Date();
+    var n = d.getTime();
+
+    let users=await User.find().exec()
+    let events=await Event.find().exec()
+    let restrictions=await Restriction.find().exec()
+    let posts=await Post.find().exec()
+    let leads=await Lead.find().exec()
+    let purchases=await Purchase.find().exec()
+    let polls=await Poll.find().exec()
+    let restrictionpolls=await RestrictionPoll.find().exec()
+    let comments=await Comment.find().exec()
+
+for (let item of events){
+  if (n-item.timecreated>2629800000){
+    Event.findByIdAndDelete(item._id).exec()
+  }
+}
+for (let item of restrictions){
+  if (n-item.timecreated>2629800000){
+    Restriction.findByIdAndDelete(item._id).exec()
+  }
+}
+for (let item of posts){
+  if (n-item.timecreated>2629800000){
+    Post.findByIdAndDelete(item._id).exec()
+  }
+}
+for (let item of leads){
+  if (n-item.timecreated>2629800000){
+    Lead.findByIdAndDelete(item._id).exec()
+  }
+}
+for (let item of purchases){
+  if (n-item.timecreated>2629800000){
+    Purchase.findByIdAndDelete(item._id).exec()
+  }
+}
+for (let item of restrictionpolls){
+  if (n-item.timecreated>2629800000){
+    RestrictionPoll.findByIdAndDelete(item._id).exec()
+  }
+}
+for (let item of polls){
+  if (n-item.timecreated>2629800000){
+    Poll.findByIdAndDelete(item._id).exec()
+  }
+}
+for (let item of comments){
+  if (n-item.timecreated>2629800000){
+    Comment.findByIdAndDelete(item._id).exec()
+  }
+}
+
+
+
+
+for (let user of users){
+  let recentsignins=[]
+  let date = new Date(user.created); // some mock date
+  let millisecondssinceusercreated = date.getTime()
+  millisecondssinceusercreated=n-millisecondssinceusercreated
+  for (let login of user.signins){
+    console.log("login",login)
+    let difference=n-login
+    console.log(difference)
+    if (difference>2629800000){
+      recentsignins.push(login)
+    }
+
+
+    console.log(recentsignins)
+    console.log("milliseconds",millisecondssinceusercreated)
+    if(recentsignins.length<3&&millisecondssinceusercreated>2629800000){
+      await User.findByIdAndUpdate(user._id,{active:false}).exec()
+    }
+    if(recentsignins.length>3){
+      await User.findByIdAndUpdate(user._id,{active:true}).exec()
+    }
+  }
+}
+
 console.log(restrictions)
 var d = new Date();
 var n = d.getTime();
@@ -157,7 +246,7 @@ io.on("connection", socket => {
         if(msg.recipient){
           var chat = new Chat({ message: msg.chatMessage, sender:msg.userId, type: msg.type,recipient:msg.recipient })
         }else{
-          var chat = new Chat({ message: msg.chatMessage,groupId:msg.groupId, sender:msg.userId, type: msg.type })
+          var chat = new Chat({ message: msg.chatMessage, sender:msg.userId, type: msg.type })
         }
 
 

@@ -38,7 +38,9 @@ router.get("/", (req, res, next) => {
       coordinates:req.body.coordinates,
       time:req.body.time,
       duration:req.body.duration,
-      timecreated:req.body.timecreated
+      timecreated:req.body.timecreated,
+      phone:req.body.phone,
+      email:req.body.email
         });
 console.log(newLead)
 

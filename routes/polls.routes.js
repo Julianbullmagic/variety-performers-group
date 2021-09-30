@@ -29,6 +29,7 @@ const router = express.Router()
     console.log("getting restriction polls")
     RestrictionPoll.find()
     .populate("createdby")
+    .populate("usertorestrict")
     .exec(function(err,docs){
       if(err){
               console.log(err);
@@ -106,6 +107,7 @@ router.route('/createrestrictionpoll/:restrictionPollId').post((req, res) => {
   var newRestrictionPoll=new RestrictionPoll({
     _id: restrictionpollid,
     usertorestrict:req.body["usertorestrict"],
+    usertorestrictname:req.body["usertorestrictname"],
     restriction:req.body["restriction"],
     duration:req.body["duration"],
     approval:req.body["approval"],

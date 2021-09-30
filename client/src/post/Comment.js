@@ -103,22 +103,24 @@ if(comments){
 
   return (
     <div className='comments'>
-
-        <div className='commentform'>
-        <div>
-        <p style={{display:"inline",fontSize:"small"}} htmlFor='name'><strong>Comment</strong></p>
-        <button style={{display:"inline",fontSize:"small"}} onClick={(e) => handleSubmit(e)}>Submit Comment</button>
-        </div>
-        <input className='commentinput'
-          type='text'
-          style={{overflow:"auto"}}
-          name='commentValue'
-          id='commentValue'
-          ref={commentValue}
-        />
-
-        </div>
-{commentsmapped&&commentsmapped}
+    <div className='commentform'>
+    <div>
+    <p style={{display:"inline",fontSize:"small"}} htmlFor='name'><strong>Comment</strong></p>
+    <button style={{display:"inline",fontSize:"small"}} onClick={(e) => handleSubmit(e)}>Submit Comment</button>
+    </div>
+    <input className='commentinput'
+      type='text'
+      style={{overflow:"auto",width:"50vw"}}
+      name='commentValue'
+      id='commentValue'
+      ref={commentValue}
+    />
 
     </div>
+        <div className="commentsdisplay">
+{commentsmapped&&commentsmapped}
+</div>
+
+    </div>
+
   )}

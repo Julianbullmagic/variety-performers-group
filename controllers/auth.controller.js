@@ -21,6 +21,17 @@ console.log(user)
       })
     }
 
+    var d = new Date();
+    var n = d.getTime();
+await User.findByIdAndUpdate(user._id,{$push: {signins: n}}).exec(function(err,docs){
+  if(err){
+          console.log(err);
+      }else{
+
+        console.log(docs)
+}
+ })
+
     const token = jwt.sign({
       _id: user._id
     }, config.jwtSecret)

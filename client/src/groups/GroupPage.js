@@ -3,6 +3,7 @@ import {Link} from "react-router-dom";
 import auth from './../auth/auth-helper'
 import Newsfeed from './../post/Newsfeed'
 import Events from './Events'
+import Leaders from './Leaders'
 import Rules from './Rules'
 import Leads from './Leads'
 import Jury from './Jury'
@@ -148,7 +149,7 @@ class GroupPage extends Component {
        }
        </Tabs>
 
-       {!this.state.cannotusechat&&<ChatPage />}
+       {(this.state.users&&!this.state.cannotusechat)&&<ChatPage users={this.state.users}/>}
       </>
     );
   }

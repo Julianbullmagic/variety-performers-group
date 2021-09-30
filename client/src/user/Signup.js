@@ -47,10 +47,12 @@ const useStyles = makeStyles(theme => ({
 export default function Signup (){
   const classes = useStyles()
   const [numImages, setNumImages] = useState([0]);
+  const [loading,setLoading]=useState(false);
   const [values, setValues] = useState({
     name: '',
     password: '',
     email: '',
+    phone:'',
     expertise:'',
     website:'',
     youtube:'',
@@ -96,8 +98,27 @@ export default function Signup (){
     setNumImages([...imagenum])
   }
 
+
+
+
   async function createUser(){
+    setLoading(true)
     var userId=mongoose.Types.ObjectId()
+
+    let youtubevids=values.promovideos.split(",")
+    youtubevids=youtubevids.map(item=>{
+      let x=item.split("=")
+      console.log(x)
+      return (
+        x[1]
+    )})
+
+      youtubevids=youtubevids.map(item=>{
+        return(
+          "https://www.youtube.com/embed/"+item
+        )
+      })
+      console.log(youtubevids)
 
     let imageids=[]
     console.log(selectedFile1.current.files[0],selectedFile2.current.files[0],
@@ -154,10 +175,11 @@ export default function Signup (){
     const user = {
       _id:userId,
       name: values.name || undefined,
+      phone: values.phone || undefined,
       email: values.email || undefined,
       website: values.website||undefined,
       youtube: values.youtube||undefined,
-      promovideos: values.promovideos||undefined,
+      promovideos:  youtubevids||undefined,
       performancedescription:values.performancedescription||undefined,
       expertise: values.expertise || undefined,
       rates:values.rates || undefined,
@@ -172,6 +194,9 @@ export default function Signup (){
         setValues({ ...values, error: '', open: true})
       }
     })
+
+    setLoading(false)
+
   }
 
 
@@ -184,13 +209,19 @@ export default function Signup (){
     }
 
     return (
+
+
         <div className="signupform">
-        <div className="innersignupform">
+
+        <h2  className="innersignupform" style={{display:(loading?"block":"none")}}>Uploading profile, please wait...</h2>
+
+        <div className="innersignupform" style={{display:(!loading?"block":"none")}}>
           <h4 style={{textAlign:"center"}}>
             Sign Up
           </h4>
           <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Name </h5><input id="name" placeHolder={values.name} label="Name" value={values.name} onChange={handleChange('name')} margin="normal"/></div>
           <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Email </h5><input id="email" placeHolder={values.email} type="email" label="Email" value={values.email} onChange={handleChange('email')} margin="normal"/></div>
+          <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Phone </h5><input id="phone" placeHolder={values.phone} type="number" label="Phone" value={values.phone} onChange={handleChange('phone')} margin="normal"/></div>
           <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Website </h5><input id="website" placeHolder={values.website} type="website" label="website" value={values.website} onChange={handleChange('website')} margin="normal"/></div>
           <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Youtube Channel </h5><input id="youtube" placeHolder={values.youtube} type="youtube" label="youtube" value={values.youtube} onChange={handleChange('youtube')} margin="normal"/></div>
           <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Promo Videos, separate youtube video link urls with a comma </h5><input id="promovideos" placeHolder={values.promovideos} type="promovideos" label="promotional videos, please add youtube url links separated by a comma" value={values.promovideos} onChange={handleChange('promovideos')} margin="normal"/></div>
@@ -245,5 +276,6 @@ export default function Signup (){
           </DialogActions>
         </Dialog>
         </div>
+
     )
 }

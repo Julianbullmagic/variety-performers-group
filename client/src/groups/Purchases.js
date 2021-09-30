@@ -17,6 +17,9 @@ export default class Purchases extends Component {
              title:"",
              users:props.users,
              purchases:[],
+             page:1,
+             pageNum:[],
+             currentPageData:[],
              redirect: false,
              updating:false
            }
@@ -30,20 +33,51 @@ export default class Purchases extends Component {
              this.getPurchases()
              }
 
+
+             decidePage(e,pagenum){
+                console.log("decide page",(pagenum*10-10),pagenum*10)
+                let currentpage=this.state.purchases.slice((pagenum*10-10),pagenum*10)
+                console.log("currentpage",currentpage)
+                this.setState({page:pagenum,currentPageData:currentpage})
+              }
+
 async getPurchases(){
   await fetch(`/purchases`)
       .then(response => response.json())
       .then(data=>{
-        console.log("purchases",data)
-        this.setState({purchases:data})
+        let purchases=data
+        purchases.reverse()
+     this.setState({purchases:purchases})
+
+    let currentpage=purchases.slice(0,10)
+    console.log("currentpage",currentpage)
+    this.setState({currentPageData:currentpage})
+
+    let pagenum=Math.ceil(data.length/10)
+    console.log("page num",pagenum)
+    let pagenums=[]
+    while(pagenum>0){
+      pagenums.push(pagenum)
+      pagenum--
+    }
+    pagenums.reverse()
+    console.log(pagenums)
+    this.setState({pageNum:pagenums})
       })
 }
 
 
  updatePurchases(newpurchase){
  var purchasescopy=JSON.parse(JSON.stringify(this.state.purchases))
+ purchasescopy.reverse()
  purchasescopy.push(newpurchase)
- this.setState({ purchases:purchasescopy})}
+ purchasescopy.reverse()
+ this.setState({ purchases:purchasescopy})
+
+        let current=purchasescopy.slice((this.state.page*10-10),this.state.page*10)
+        console.log(current)
+        this.setState({currentPageData:current})
+}
 
 
 
@@ -60,6 +94,10 @@ async getPurchases(){
 
                var filteredapproval=purchasescopy.filter(checkPurchase)
          console.log(filteredapproval)
+
+         let current=filteredapproval.slice((this.state.page*10-10),this.state.page*10)
+         console.log(current)
+         this.setState({currentPageData:current})
 
            this.setState({purchases:filteredapproval})
            var d = new Date();
@@ -175,7 +213,7 @@ this.setState({purchases:purchasescopy})
 
             var purchasescomponent=<h3>no suggested purchases</h3>
             if (this.state.users&&this.state.purchases){
-              purchasescomponent=this.state.purchases.map(item => {
+              purchasescomponent=this.state.currentPageData.map(item => {
 
                 let approval=<></>
                 if(this.state.users){
@@ -231,7 +269,19 @@ this.setState({purchases:purchasescopy})
       <h2>Suggest a group purchase</h2>
       <CreatePurchaseForm updatePurchases={this.updatePurchases}/>
       <h2><strong>Possible Purchases </strong></h2>
+      <h4 style={{display:"inline"}}>Choose Page</h4>
+{this.state.pageNum&&this.state.pageNum.map(item=>{
+        return (<>
+          <button style={{display:"inline"}} onClick={(e) => this.decidePage(e,item)}>{item}</button>
+          </>)
+      })}
       {purchasescomponent}
+      <h4 style={{display:"inline"}}>Choose Page</h4>
+{this.state.pageNum&&this.state.pageNum.map(item=>{
+        return (<>
+          <button style={{display:"inline"}} onClick={(e) => this.decidePage(e,item)}>{item}</button>
+          </>)
+      })}
       </>
     );
   }

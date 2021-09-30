@@ -19,7 +19,9 @@ const selectedFile3 = React.useRef(null)
 const selectedFile4 = React.useRef(null)
 const selectedFile5 = React.useRef(null)
 const [toggle, setToggle] = useState(false);
-let socket = io();
+let server = "http://localhost:5000";
+
+let socket = io(server);
 
 useEffect(()=>{
   console.log("use EFFECT",numImages)

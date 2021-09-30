@@ -9,48 +9,55 @@ import unicornbikeImg from './../assets/images/unicornbike.jpg'
 import Grid from '@material-ui/core/Grid'
 import auth from './../auth/auth-helper'
 import background from "./2170171.jpg";
+import {Image} from 'cloudinary-react'
+import {Link} from "react-router-dom";
+import CreateLeadForm from '../groups/CreateLeadForm'
 
 const KmeansLib = require('kmeans-same-size');
 
 
 
 export default function Home({history}){
-  const [defaultPage, setDefaultPage] = useState(false)
+  const [users, setUsers] = useState(false)
 
 
   useEffect(()=> {
-    setDefaultPage(auth.isAuthenticated())
-    const unlisten = history.listen (() => {
-      setDefaultPage(auth.isAuthenticated())
-    })
-    return () => {
-      unlisten()
-    }
+getGroupData()
   }, [])
 
+
+
+
+  async function getGroupData(){
+    await fetch(`/groups/getusers`)
+        .then(response => response.json())
+        .then(data=>{
+          console.log("users",data)
+          setUsers(data)
+        })
+
+
+
+  }
     return (
       <>
+      <div className="homepage">
+      <h3>We are a team of entertainers from Sydney. We perform at many different kinds of events, weddings, festivals, parties, functions. Our highly skilled and experienced entertainers
+      will keep you amazed and amused. We are an agency run by performers, allowing direct communication and better value for money. No middle men.</h3>
+      <div className="users">
+      {users&&users.map(user=>{return(<>
+        <Link to={"/singleuser/" + user._id}>
+        <div className="usercard">
+        <h2><strong>{user.name}</strong></h2>
+        <h3>{user.expertise}</h3>
+        <div><Image style={{width:"100%"}} cloudName="julianbullmagic" publicId={user.images[0]} /></div>
+        </div>
+        }</Link>
+        </>)})}
+        </div>
+        <CreateLeadForm homepage="true"/>
 
-        { !defaultPage &&
-          <Grid container spacing={8}>
-
-            <Grid item xs={12}>
-              <Card className="card">
-
-
-
-
-
-              </Card>
-            </Grid>
-          </Grid>
-        }
-        {defaultPage &&
-          <>
-
-          <ChatPage/>
-          </>
-        }
+      </div>
       </>
     )
 }

@@ -187,33 +187,36 @@ setUser(newuser)
       <>
       {user&&(
       <div className="signupform">
-      <div style={{position: "relative",  zIndex: -2}} className="innersignupform">
-      <h1 style={{textAlign:"center"}}><strong>Name:</strong> {user.name}</h1>
-      <h3 style={{textAlign:"center"}}><strong>Website:</strong> {user.website}</h3>
-      <h3 style={{textAlign:"center"}}><strong>Youtube Channel:</strong> {user.youtube}</h3>
-      <h3 style={{textAlign:"center"}}><strong>Expertise:</strong> {user.expertise}</h3>
-      <h3 style={{textAlign:"center",}}><strong>Performance Description:</strong> {user.performancedescription}</h3>
+      <div className="innersignupform">
+      <h1 style={{textAlign:"center"}}>{user.name}</h1>
+      <a href={user.website}><h3 style={{textAlign:"center",color:"blue"}}>Website</h3></a>
+      <a href={user.youtube}><h3 style={{textAlign:"center",color:"blue"}}>Youtube Channel</h3></a>
+      <h3 style={{textAlign:"center"}}>{user.expertise}</h3>
+      <h3 style={{textAlign:"center",}}>{user.performancedescription}</h3>
       <h3 style={{textAlign:"center"}}><strong>Rates:</strong> {user.rates}</h3>
+      <h3 style={{textAlign:"center"}}>Phone Number: {user.phone}</h3>
+      <h3 style={{textAlign:"center"}}>Email Address: {user.email}</h3>
       <br/>
       <h3 style={{textAlign:"center"}}>Images</h3>
-      <AwesomeSlider style={{marginLeft:"20%",width:"60%",position: "relative",  zIndex: -1}}>
+      <div style={{marginBottom:"40vw"}}>
+      <AwesomeSlider style={{marginLeft:"5vw",width:"50vw", zIndex: 1, position:"absolute"}}>
       {user.images&&user.images.map(item=>{return (<div><Image style={{width:"100%"}} cloudName="julianbullmagic" publicId={item} /></div>)})}
       </AwesomeSlider>
-      <br/>
-      <br/>
+      </div>
+
       <h3 style={{textAlign:"center"}}><strong>Youtube Videos</strong></h3>
-      <AwesomeSlider style={{marginLeft:"20%",width:"60%",position: "relative",  zIndex: -1}}>
-      {user.promovideos&&user.promovideos.map(item=>{return (<div><iframe style={{width:"100%"}} src={item}/></div>)})}
+      <div style={{marginBottom:"40vw"}}>
+      <AwesomeSlider style={{marginLeft:"5vw",width:"50vw", zIndex: 1, position:"absolute"}}>
+      {user.promovideos&&user.promovideos.map(item=>{return (<div style={{width:"100%"}}><iframe style={{width:"100%"}} src={item}/></div>)})}
       </AwesomeSlider>
-      <br/>
-      <br/>
+      </div>
       </div>
       </div>)}
 
 
-      {(auth.isAuthenticated().user._id==match.params.userId)&&(
+      {(auth.isAuthenticated()&&auth.isAuthenticated().user._id==match.params.userId)&&(
         <div className="signupform">
-        <div className="innersignupform">
+        <div  style={{position: "static",  zIndex: -2}}  className="innersignupform">
           <h1 style={{textAlign:"center"}}>
             Edit Listing
           </h1>
@@ -249,30 +252,31 @@ setUser(newuser)
           <h5 style={{marginRight:"1vw"}} className="ruletext">Performance Description </h5><input id="performancedescription" placeHolder={user.performancedescription} type="performancedescription" label="Performance Description" value={values.performancedescription} onChange={handleChange('performancedescription')} margin="normal"/>
           </div>
 
-          <div className="signininput" style={{display:((numImages.length>=4)?"block":"none")}}>
+          <div className="signininput">
           <h5 style={{marginRight:"1vw"}} className="ruletext">Rates </h5><input id="rates" placeHolder={user.rates} type="rates" label="Rates" value={values.rates} onChange={handleChange('rates')} margin="normal"/>
           </div>
 
-          <div className="signininput" style={{display:((numImages.length>=4)?"block":"none")}}>
+          <div className="signininput" style={{display:((numImages.length>=1)?"block":"none")}}>
           <input style={{width:"100%"}} id="file" type="file" ref={selectedFile1}/>
           </div>
 
-          <div className="signininput" style={{display:((numImages.length>=4)?"block":"none")}}>
-          <input style={{width:"100%"}} id="file2" type="file" ref={selectedFile2}/>
+          <div className="signininput" style={{display:((numImages.length>=2)?"block":"none")}}>
+          <input style={{width:"100%"}} id="file" type="file" ref={selectedFile2}/>
+          </div>
+
+          <div className="signininput" style={{display:((numImages.length>=3)?"block":"none")}}>
+          <input style={{width:"100%"}} id="file2" type="file" ref={selectedFile3}/>
           </div>
 
           <div className="signininput" style={{display:((numImages.length>=4)?"block":"none")}}>
-          <input style={{width:"100%"}} id="file3" type="file" ref={selectedFile3}/>
+          <input style={{width:"100%"}} id="file3" type="file" ref={selectedFile4}/>
           </div>
 
-          <div className="signininput" style={{display:((numImages.length>=4)?"block":"none")}}>
-          <input style={{width:"100%"}} id="file4" type="file" ref={selectedFile4}/>
+          <div className="signininput" style={{display:((numImages.length>=5)?"block":"none")}}>
+          <input style={{width:"100%"}} id="file4" type="file" ref={selectedFile5}/>
           <p>Max 5 images</p>
           </div>
 
-          <div className="signininput" style={{display:((numImages.length>=4)?"block":"none")}}>
-          <input style={{width:"100%"}} id="file5" type="file" ref={selectedFile5}/>
-          </div>
           <button style={{marginLeft:"30%"}} onClick={(e) => extraImage(e)}>Add Extra Image</button>
           <button onClick={(e) => lessImage(e)}>One Less Image</button>
           <button id="submit" onClick={clickSubmit}>Submit</button>
@@ -280,7 +284,6 @@ setUser(newuser)
         </div>
         )}
 
-      <ChatPage/>
      </>
     )
 }

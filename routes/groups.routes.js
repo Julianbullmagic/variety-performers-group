@@ -16,7 +16,7 @@ mongoose.set('useFindAndModify', false);
 
 
 router.get("/getusers", (req, res) => {
-  User.find()
+  User.find({"active":true})
   .populate("restrictions")
     .then(rule => res.json(rule))
     .catch(err => res.status(400).json('Error: ' + err));

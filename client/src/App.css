@@ -1,4 +1,25 @@
 
+.homepage{
+  padding:3vw;
+  padding-top:7vw;
+  width:92vw;
+}
+.users{
+  display:flex;
+  flex-wrap:wrap;
+}
+.usercard{
+  padding:1vw;
+  margin-right:2vw;
+  margin-bottom:2vw;
+  width:41vw;
+  background: #d4dfee;
+  border-radius:10px;
+  color:white;
+  box-shadow: 5px 5px 5px #050A30;
+  text-align:center;
+}
+
 
 
 button{
@@ -211,6 +232,8 @@ select:focus{
 }
 
 .innersignupform{
+  margin-top:7vw;
+  margin-bottom:7vw;
   background:#f6f6f6;
   border:#eaeaea;
   border-style:solid;
@@ -309,7 +332,12 @@ select:focus{
   border-width:5px;
   padding-top:0.3vw;
   padding-bottom:0.3vw;
+  max-height:20vw;
+  overflow:auto;
+display: flex;
+flex-direction:column-reverse;
 }
+
 .comment{
   display:flex;
   justify-content:space-between;
@@ -320,8 +348,7 @@ select:focus{
   border-bottom:#f6f6f6;
   border-style:solid;
   border-top-width:5px;
-  padding:0.2vw;
-
+  padding:0.1vw;
 }
 .commentform{
   display:flex;

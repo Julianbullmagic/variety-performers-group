@@ -18,6 +18,9 @@ export default class Events extends Component {
              title:"",
              users:props.users,
              events:[],
+             page:1,
+             pageNum:[],
+             currentPageData:[],
              redirect: false,
              updating:false
            }
@@ -31,20 +34,52 @@ export default class Events extends Component {
              this.getEvents()
              }
 
+             decidePage(e,pagenum){
+                console.log("decide page",(pagenum*10-10),pagenum*10)
+                let currentpage=this.state.events.slice((pagenum*10-10),pagenum*10)
+                console.log("currentpage",currentpage)
+                this.setState({page:pagenum,currentPageData:currentpage})
+              }
+
 async getEvents(){
   await fetch(`/events`)
       .then(response => response.json())
       .then(data=>{
         console.log("events",data)
-        this.setState({events:data})
+        let events=data
+        events.reverse()
+     this.setState({events:events})
+
+    console.log("decide events",0,10)
+    let currentpage=events.slice(0,10)
+    console.log("currentpage",currentpage)
+    this.setState({currentPageData:currentpage})
+
+    let pagenum=Math.ceil(data.length/10)
+    console.log("page num",pagenum)
+    let pagenums=[]
+    while(pagenum>0){
+      pagenums.push(pagenum)
+      pagenum--
+    }
+    pagenums.reverse()
+    console.log(pagenums)
+    this.setState({pageNum:pagenums})
+
       })
 }
 
 
  updateEvents(newevent){
  var eventscopy=JSON.parse(JSON.stringify(this.state.events))
+ eventscopy.reverse()
  eventscopy.push(newevent)
- this.setState({ events:eventscopy})}
+ eventscopy.reverse()
+ this.setState({ events:eventscopy})
+       let current=eventscopy.slice((this.state.page*10-10),this.state.page*10)
+       console.log(current)
+       this.setState({currentPageData:current})
+}
 
 
 
@@ -80,6 +115,9 @@ async getEvents(){
 
            this.setState({events:filteredapproval})
 
+           let current=filteredapproval.slice((this.state.page*10-10),this.state.page*10)
+           console.log(current)
+           this.setState({currentPageData:current})
 
            const options = {
              method: 'delete',
@@ -192,7 +230,7 @@ this.setState({events:eventscopy})
 
             var eventscomponent=<h3>no events</h3>
             if (this.state.users&&this.state.events){
-              eventscomponent=this.state.events.map(item => {
+              eventscomponent=this.state.currentPageData.map(item => {
 
                 let approval=<></>
                 if(this.state.users){
@@ -211,13 +249,13 @@ console.log("EVENT!",item)
 
                 return(
 <>
-<div className="eventbox">
+<div className="eventbox" style={{marginBottom:"1vw"}}>
 <div className="eventcol1">
 <h3>{item.title}</h3>
 <h4>{item.description}</h4>
-{this.state.users&&<h4>{approval}% of members are attending this event, {item.approval.length}/{this.state.users.length}. Atendees=</h4>}
-{attendeenames&&attendeenames.map((item,index)=>{return(<><h4 className="ruletext">{item}{(index<(attendeenames.length-2))?", ":(index<(attendeenames.length-1))?" and ":"."}</h4></>)})}
-{!item.approval.includes(auth.isAuthenticated().user._id)&&<button onClick={(e)=>this.approveofevent(e,item._id)}>Attend this event?</button>}
+{this.state.users&&<h4 className="ruletext">{approval}% of members are attending this event, {item.approval.length}/{this.state.users.length}. Atendees=</h4>}
+{attendeenames&&attendeenames.map((item,index)=>{return(<h4 className="ruletext">{item}{(index<(attendeenames.length-2))?", ":(index<(attendeenames.length-1))?" and ":"."}</h4>)})}
+{!item.approval.includes(auth.isAuthenticated().user._id)&&<button Style={{display:"block"}} onClick={(e)=>this.approveofevent(e,item._id)}>Attend this event?</button>}
 {item.approval.includes(auth.isAuthenticated().user._id)&&<button onClick={(e)=>this.withdrawapprovalofevent(e,item._id)}>Don't want to attend anymore?</button>}
 <button style={{display:"block"}} onClick={(e)=>this.deleteEvent(e,item)}>Delete?</button>
 </div>
@@ -251,7 +289,19 @@ console.log("EVENT!",item)
       <h2>Propose an Event</h2>
       <CreateEventForm updateEvents={this.updateEvents}/>
       <h2><strong>Group Events </strong></h2>
+      <h4 style={{display:"inline"}}>Choose Page</h4>
+{this.state.pageNum&&this.state.pageNum.map(item=>{
+        return (<>
+          <button style={{display:"inline"}} onClick={(e) => this.decidePage(e,item)}>{item}</button>
+          </>)
+      })}
       {eventscomponent}
+      <h4 style={{display:"inline"}}>Choose Page</h4>
+{this.state.pageNum&&this.state.pageNum.map(item=>{
+        return (<>
+          <button style={{display:"inline"}} onClick={(e) => this.decidePage(e,item)}>{item}</button>
+          </>)
+      })}
       </>
     );
   }

@@ -17,15 +17,16 @@ constructor(props){
   this.state = {
       chatMessage: "",
       chats:[],
+      users:props.users,
       searchedusers:[],
-      usersearchvalue:'',
       widthcolumntwo:"0%",
       widthcolumnthree:"60%",
       height:"0.5vh",
-      usertomessage:'',
       togglechat:false
   }
 this.setInitialChats()
+this.handleuserchange=this.handleuserchange.bind(this)
+
 }
 
 async setInitialChats(){
@@ -47,7 +48,35 @@ handleInputChange = (e) => {
 
 
 
+async handleuserchange(e){
+  console.log("USER TO MESSAGE ID",e.target.value)
+  this.setState({
+      usertomessage: e.target.value
+  })
+  console.log(this.state.usertomessage)
+  let chatsarray=[]
 
+
+try{
+  chatsarray=await fetch(`/api/chat/getChatsWithParticularUser/${e.target.value}/${auth.isAuthenticated().user._id}`)
+        .then(response => response.json())
+        .then(data=>{
+            console.log("get chats one",data)
+            return data
+        })
+      }catch(err){
+      console.log(err)
+    }
+
+
+
+          console.log("CHATSARRAY",chatsarray)
+
+      this.setState({
+          chats: chatsarray
+      })
+
+}
 
     componentDidMount() {
         let server = process.env.PORT||"http://localhost:5000";
@@ -87,13 +116,16 @@ handleInputChange = (e) => {
         let userName = auth.isAuthenticated().user.name;
         let nowTime = moment();
         let type = "Text"
+        let recipient = this.state.usertomessage
 
+console.log("recipient",recipient)
         this.socket.emit("Input Chat Message", {
             chatMessage,
             userId,
             userName,
             nowTime,
-            type
+            type,
+            recipient
                   });
         this.setState({ chatMessage: "" })
     }
@@ -126,8 +158,14 @@ if(type==true){
     value={this.state.chatMessage}
     onChange={this.handleInputChange}></textarea>
 
-    <button className="submitbutton" onClick={this.submitChatMessage}>Submit Message</button>
-
+    <button style={{display:"inline"}} className="submitbutton" onClick={this.submitChatMessage}>Submit Message</button>
+      <select style={{margin:"5px",display:"inline"}} name="room" id="room" onChange={this.handleuserchange}>
+      {this.state.users&&this.state.users.map(user=>{
+        return(
+            <option key={user._id} value={user._id}>{user.name}</option>
+        )
+      })}
+      </select>
           </div>
     <div style={{border:"white", borderStyle: "solid",borderWidth:"5px",margin:"10px"}} className="chatcoloumn2">
 

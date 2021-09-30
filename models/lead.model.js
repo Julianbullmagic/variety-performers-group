@@ -9,7 +9,9 @@ const leadSchema = mongoose.Schema({
   coordinates:[Number],
   time:String,
   duration:String,
-  timecreated:Number
+  timecreated:Number,
+  phone:Number,
+  email:String
 })
 
 module.exports =  mongoose.model('Lead', leadSchema)

@@ -10,10 +10,10 @@ const titleValue = React.useRef('')
 const descriptionValue = React.useRef('')
 const locationValue = React.useRef('')
 const selectedFile1 = React.useRef(null)
-
 const [toggle, setToggle] = useState(false);
 const [numberOfImages, setNumberOfImages]=useState(1)
-let socket = io();
+let server = "http://localhost:5000";
+let socket = io(server);
 
 function addImages(){
   var numberplusone=numberOfImages+1
@@ -82,7 +82,11 @@ e.preventDefault()
         let userName=auth.isAuthenticated().user.name
         let nowTime=n
         let type="text"
-
+console.log("INPUT CHAT",chatMessage,
+userId,
+userName,
+nowTime,
+type)
         socket.emit("Input Chat Message", {
           chatMessage,
           userId,

@@ -14,9 +14,6 @@ export default class Rules extends Component {
            this.state = {
              users:props.users,
              rules: [],
-             page:1,
-             pageNum:[],
-             currentPageData:[],
              redirect: false,
              updating:false,
              participate:props.participate
@@ -33,53 +30,19 @@ export default class Rules extends Component {
              this.getRules()
              }
 
-            decidePage(e,pagenum){
-               console.log("decide page",(pagenum*10-10),pagenum*10)
-               let currentpage=this.state.rules.slice((pagenum*10-10),pagenum*10)
-               console.log("currentpage",currentpage)
-               this.setState({page:pagenum,currentPageData:currentpage})
-             }
-
            async getRules(){
              await fetch(`/rules`)
                  .then(response => response.json())
                  .then(data=>{
                    console.log("rules",data)
-                   let rules=data
-                   rules.reverse()
-                this.setState({rules:rules})
-
-               console.log("decide rules",0,10)
-               let currentpage=rules.slice(0,10)
-               console.log("currentpage",currentpage)
-               this.setState({currentPageData:currentpage})
-
-               let pagenum=Math.ceil(data.length/10)
-               console.log("page num",pagenum)
-               let pagenums=[]
-               while(pagenum>0){
-                 pagenums.push(pagenum)
-                 pagenum--
-               }
-               pagenums.reverse()
-               console.log(pagenums)
-               this.setState({pageNum:pagenums})
+                   this.setState({rules:data})
                  })
            }
 
            updateRules(newrule){
            var rulescopy=JSON.parse(JSON.stringify(this.state.rules))
-
-           rulescopy.reverse()
            rulescopy.push(newrule)
-           rulescopy.reverse()
-
-     console.log("page",this.state.page)
-           let current=rulescopy.slice((this.state.page*10-10),this.state.page*10)
-           console.log(current)
-
-           this.setState({ rules:rulescopy,currentPageData:current})
-         }
+           this.setState({ rules:rulescopy})}
 
 
 
@@ -88,17 +51,14 @@ async deleteRule(event,item){
 
   var rulescopy=JSON.parse(JSON.stringify(this.state.rules))
   function checkRule(rule) {
-    return rule._id!=item
+    return rule._id!=item._id
   }
-  console.log("ruleid",item)
 
       var filteredapproval=rulescopy.filter(checkRule)
-console.log(rulescopy.length)
-console.log(filteredapproval.length)
-let current=filteredapproval.slice((this.state.page*10-10),this.state.page*10)
-console.log(current)
+console.log(filteredapproval)
 
-this.setState({ rules:filteredapproval,currentPageData:current})
+  this.setState({rules:filteredapproval})
+
 
 
   var d = new Date();
@@ -129,7 +89,7 @@ this.setState({ rules:filteredapproval,currentPageData:current})
        body: ''
   }
 
-  await fetch("/rules/"+item, options)
+  await fetch("/rules/"+item._id, options)
 
 
 const optionstwo = {
@@ -140,7 +100,7 @@ headers: {
 body: ''
 }
 
-await fetch("/groups/removerulefromgroup/"+this.state.id+"/"+item, optionstwo)
+await fetch("/groups/removerulefromgroup/"+this.state.id+"/"+item._id, optionstwo)
 
 }
 
@@ -225,7 +185,7 @@ var rulescomponent=<h3>no rules</h3>
 if (this.state.rules){
 
 
-    rulescomponent=this.state.currentPageData.map(item => {
+    rulescomponent=this.state.rules.map(item => {
     let approval=<></>
     if(this.state.users){
       approval=Math.round((item.approval.length/this.state.users.length)*100)
@@ -268,19 +228,7 @@ if (this.state.rules){
       <CreateRuleForm updateRules={this.updateRules}/>
       <h2>Group Rules</h2>
       <p>Rules that have less than 75% approval and are more than a week old will be deleted</p>
-      <h4 style={{display:"inline"}}>Choose Page</h4>
-{this.state.pageNum&&this.state.pageNum.map(item=>{
-        return (<>
-          <button style={{display:"inline"}} onClick={(e) => this.decidePage(e,item)}>{item}</button>
-          </>)
-      })}
       {rulescomponent}
-      <h4 style={{display:"inline"}}>Choose Page</h4>
-{this.state.pageNum&&this.state.pageNum.map(item=>{
-        return (<>
-          <button style={{display:"inline"}} onClick={(e) => this.decidePage(e,item)}>{item}</button>
-          </>)
-      })}
       </>
     );
   }

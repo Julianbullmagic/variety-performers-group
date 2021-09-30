@@ -9,6 +9,9 @@ export default function Newsfeed (props) {
   const postArea = React.useRef('')
   const [posts, setPosts] = useState([]);
   const [post, setPost] = useState("");
+  const [page, setPage] = useState(1);
+  const [pageNum, setPageNum] = useState([]);
+  const [currentPageData, setCurrentPageData] = useState([]);
   const [comment, setComment] = useState("");
   const [preview, setPreview] = useState("");
   let server = "http://localhost:5000";
@@ -20,8 +23,27 @@ console.log("props",props)
     .then(res => {
       return res.json();
     }).then(posts => {
-      console.log("posts",posts)
-  setPosts(posts.data)})
+      console.log("posts!!!!!!!!!!!!!",posts.data)
+      let po=posts.data
+      po.reverse()
+  setPosts(po)
+
+  console.log("decide page",0,10)
+  let currentpage=po.slice(0,10)
+  console.log("currentpage",currentpage)
+  setCurrentPageData(currentpage)
+
+  let pagenum=Math.ceil(posts.data.length/10)
+  console.log("page num",pagenum)
+  let pagenums=[]
+  while(pagenum>0){
+    pagenums.push(pagenum)
+    pagenum--
+  }
+  pagenums.reverse()
+  console.log(pagenums)
+  setPageNum(pagenums)
+})
 },[props])
 
   useEffect(() => {
@@ -46,6 +68,14 @@ if (post.match(urlRegex)){
         : null;
   }
 
+  function decidePage(e,pagenum){
+
+    console.log("decide page",(pagenum*10-10),pagenum*10)
+    let currentpage=posts.slice((pagenum*10-10),pagenum*10)
+    console.log("currentpage",currentpage)
+    setPage(pagenum)
+    setCurrentPageData(currentpage)
+  }
 
 async function getPreview(url){
   var data = {key: '567204aab52f43be1f7bbd3573ff4875', q: url}
@@ -100,9 +130,19 @@ e.preventDefault()
 
 console.log("newpost",newPost)
       var postscopy=JSON.parse(JSON.stringify(posts))
+
+      postscopy.reverse()
       postscopy.push(newPost)
+      postscopy.reverse()
+
+
+
       setPosts(postscopy)
-      console.log(posts)
+console.log("page",page)
+      let current=postscopy.slice((page*10-10),page*10)
+      console.log(current)
+      setCurrentPageData(current)
+
       const options={
           method: "POST",
           body: JSON.stringify(newPost),
@@ -123,6 +163,12 @@ console.log("newpost",newPost)
    return obj._id !== id;
    });
       setPosts(filteredarray);
+
+console.log("page",page)
+      let current=postscopy.slice((page*10-10),page*10)
+      console.log(current)
+      setCurrentPageData(current)
+
 
         console.log(filteredarray)
         const options={
@@ -163,8 +209,8 @@ if(preview.url){
   var previewmapped=<><h2>{preview.title}</h2><iframe src={preview.url}></iframe></>
 }
 }
-
-var postsmapped=posts.map((item,i)=>{
+//
+var postsmapped=currentPageData.map((item,i)=>{
 if (item.preview){
   if(item.preview.title){
     if(item.preview.image){
@@ -213,8 +259,23 @@ if (item.preview){
 
             {preview&&previewmapped}
         </form>
+
         </div>
+        <h4 style={{display:"inline"}}>Choose Page</h4>
+        {pageNum&&pageNum.map(item=>{
+          return (<>
+            <button style={{display:"inline"}} onClick={(e) => decidePage(e,item)}>{item}</button>
+            </>)
+        })}
         {postsmapped}
+        <div style={{marginBottom:"5vw"}}>
+        <h4 style={{display:"inline"}}>Choose Page</h4>
+        {pageNum&&pageNum.map(item=>{
+          return (<>
+            <button style={{display:"inline"}} onClick={(e) => decidePage(e,item)}>{item}</button>
+            </>)
+        })}
+        </div>
         </>
     )
 }
