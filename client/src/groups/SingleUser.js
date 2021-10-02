@@ -16,9 +16,6 @@ import io from "socket.io-client";
 import Axios from 'axios'
 const mongoose = require("mongoose");
 
-
-
-
 export default function SingleUser({ match }) {
   const [user, setUser] = useState({})
   const [numImages, setNumImages] = useState([0]);
@@ -33,6 +30,14 @@ export default function SingleUser({ match }) {
     images:'',
     error:'',
     open: false,
+    events:'',
+    leads:'',
+    posts:'',
+    rules:'',
+    purchases:'',
+    restrictions:'',
+    rulesapproved:'',
+    restrictionsapproved:''
   })
   const selectedFile1 = React.useRef(null)
   const selectedFile2 = React.useRef(null)
@@ -75,6 +80,16 @@ export default function SingleUser({ match }) {
         .then(data=>{
           console.log("user",data.data)
           setUser(data.data)
+          setValues({
+            events:data.data.events,
+            leads:data.data.leads,
+            posts:data.data.posts,
+            rules:data.data.rules,
+            purchases:data.data.purchases,
+            restrictions:data.data.restrictions,
+            rulesapproved:data.data.rulesapproved,
+            restrictionsapproved:data.data.restrictionsapproved
+          })
         })
   }
 
@@ -279,6 +294,9 @@ setUser(newuser)
 
           <button style={{marginLeft:"30%"}} onClick={(e) => extraImage(e)}>Add Extra Image</button>
           <button onClick={(e) => lessImage(e)}>One Less Image</button>
+
+
+
           <button id="submit" onClick={clickSubmit}>Submit</button>
         </div>
         </div>

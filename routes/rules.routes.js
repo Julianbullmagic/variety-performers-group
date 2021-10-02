@@ -43,6 +43,16 @@ router.get("/", (req, res, next) => {
     }).exec()
     })
 
+    router.route('/approveofrule/:ruleId/:userId').put((req, res) => {
+      let ruleId = req.params.ruleId
+      let userId = req.params.userId;
+      console.log(ruleId,userId)
+
+      const updatedRule=Rule.findByIdAndUpdate(ruleId, {$push : {
+      approval:userId
+    }}).exec()
+    })
+
     router.route('/withdrawapprovalofrule/:ruleId/:userId').put((req, res) => {
       let ruleId = req.params.ruleId
       let userId = req.params.userId;

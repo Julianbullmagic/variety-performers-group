@@ -8,6 +8,7 @@ const mongoose = require("mongoose");
 
 
 export default function Polls (props) {
+  const [viewForm, setViewForm] = useState(false);
   const [polls, setPolls] = useState([]);
   const [poll, setPoll] = useState("");
   const [comment, setComment] = useState("");
@@ -251,8 +252,10 @@ var pollsmapped=currentPageData.map((item,i)=>{
 
     return (
   <>
-  <div className="form">
-  <form>
+  <button style={{display:"block"}} onClick={(e) => setViewForm(!viewForm)}>View Create Poll Form?</button>
+
+  <div className="form" style={{maxHeight:!viewForm?"0":"100vw",overflow:"hidden",transition:"max-height 2s"}}>
+  <form style={{display:!viewForm?"none":"block"}}>
           <div className="pollform">
         <label htmlFor='name'>Create Poll, write a question then suggest possible answers</label>
         <button onClick={(e) => handleSubmit(e)}>New Poll?</button>

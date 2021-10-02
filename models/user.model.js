@@ -60,7 +60,39 @@ const userSchema = new mongoose.Schema({
   },
   tokenExp :{
       type: Number
-  }
+  },
+  events:{
+    type: Boolean,
+    default: false
+  },
+  leads:{
+    type: Boolean,
+    default: false
+  },
+  posts:{
+    type: Boolean,
+    default: false
+  },
+  rules:{
+    type: Boolean,
+    default: false
+  },
+  purchases:{
+    type: Boolean,
+    default: false
+  },
+  restrictions:{
+    type: Boolean,
+    default: false
+  },
+  rulesapproved:{
+    type: Boolean,
+    default: false
+  },
+  restrictionsapproved:{
+    type: Boolean,
+    default: false
+  },
 })
 
 userSchema.plugin(random)

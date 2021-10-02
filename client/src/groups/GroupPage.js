@@ -59,33 +59,35 @@ class GroupPage extends Component {
                    console.log("users",data)
                    for (let user of data){
                      if(user._id==auth.isAuthenticated().user._id){
-                       for (let restriction of user.restrictions){
-                         if(restriction.restriction=="cannot post"){
-                           this.setState({cannotpost:true})
-                         }
-                         if(restriction.restriction=="cannot use chat"){
-                           this.setState({cannotusechat:true})
-                         }
-                         if(restriction.restriction=="cannot see events"){
-                           this.setState({cannotseeevents:true})
-                         }
-                         if(restriction.restriction=="cannot participate in group purchases"){
-                           this.setState({cannotparticipateingrouppurchases:true})
-                         }
-                         if(restriction.restriction=="remove from group"){
-                           this.setState({removefromgroup:true})
-                         }
-                         if(restriction.restriction=="cannot create polls"){
-                           this.setState({cannotcreatepolls:true})
-                         }
-                         if(restriction.restriction=="cannot suggest rules"){
-                           this.setState({cannotsuggestrules:true})
-                         }
-                         if(restriction.restriction=="cannot see gig leads"){
-                           this.setState({cannotseegigleads:true})
-                         }
-                         if(restriction.restriction=="cannot vote in jury"){
-                           this.setState({cannotvoteinjury:true})
+                       if(user.restrictions){
+                         for (let restriction of user.restrictions){
+                           if(restriction.restriction=="cannot post"){
+                             this.setState({cannotpost:true})
+                           }
+                           if(restriction.restriction=="cannot use chat"){
+                             this.setState({cannotusechat:true})
+                           }
+                           if(restriction.restriction=="cannot see events"){
+                             this.setState({cannotseeevents:true})
+                           }
+                           if(restriction.restriction=="cannot participate in group purchases"){
+                             this.setState({cannotparticipateingrouppurchases:true})
+                           }
+                           if(restriction.restriction=="remove from group"){
+                             this.setState({removefromgroup:true})
+                           }
+                           if(restriction.restriction=="cannot create polls"){
+                             this.setState({cannotcreatepolls:true})
+                           }
+                           if(restriction.restriction=="cannot suggest rules"){
+                             this.setState({cannotsuggestrules:true})
+                           }
+                           if(restriction.restriction=="cannot see gig leads"){
+                             this.setState({cannotseegigleads:true})
+                           }
+                           if(restriction.restriction=="cannot vote in jury"){
+                             this.setState({cannotvoteinjury:true})
+                           }
                          }
                        }
                      }

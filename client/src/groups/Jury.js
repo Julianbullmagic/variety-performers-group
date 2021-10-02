@@ -8,6 +8,7 @@ const mongoose = require("mongoose");
 
 
 export default function Jury(props) {
+  const [viewForm, setViewForm] = useState(false);
   const [selectedUser, setSelectedUser] = useState(props.users[0]);
   const [restriction, setRestriction] = useState('cannot post');
   const [duration, setDuration] = useState(0);
@@ -222,6 +223,7 @@ console.log("newrestrictionpoll",newRestrictionPoll)
 
 
           async function approve(e,item){
+            console.log("ITEM",item)
     var restrictionpollscopy=JSON.parse(JSON.stringify(restrictionPolls))
 
     for (var restriction of restrictionpollscopy){
@@ -288,7 +290,7 @@ restrictionPollApprovedNotification(item)
        body: JSON.stringify(newRestriction)
   }
 
-  var restrictionid=await fetch("/groups/createuserrrestriction", options
+  var restrictionid= await fetch("/groups/createuserrrestriction", options
   ).then(res => {
   return res.json()
   }).catch(err => {
@@ -541,41 +543,45 @@ restrictionPollApprovedNotification(item)
 
     return (
   <>
-  <div className="juryform">
-  <form >
-        <div className="eventformbox">
-        <h3>Propose a punishment for a member</h3>
-        </div>
-        <div className="eventformbox">
-        <select style={{width:"70vw"}} name="room" id="room" onChange={(e) => handleMemberChange(e)}>
-          {props.users&&props.users.map(item=>{return (
-            <option key={item._id} value={item._id}>{item.name}</option>
-          )})}
-        </select>
-        <p htmlFor="room"> members</p>
-        </div>
-        <div className="eventformbox">
-        <select style={{width:"70vw"}} id="restriction" onChange={(e) => handleRestrictionChange(e)}>
-            <option value="cannot post">cannot post</option>
-            <option value="cannot create polls">cannot create polls</option>
-            <option value="cannot suggest rules or vote for rules">cannot suggest rules or vote for rules</option>
-            <option value="cannot see gig leads">cannot see gig leads</option>
-            <option value="cannot use chat">cannot use chat</option>
-            <option value="cannot see events">cannot see events</option>
-            <option value="cannot participate in group purchases">cannot participate in group purchases</option>
-            <option value="cannot vote in jury">cannot vote in jury</option>
-            <option value="remove from group">remove from group</option>
-        </select>
-        <p htmlFor="room"> Choose a punishment</p>
+  <button style={{display:"block"}} onClick={(e) => setViewForm(!viewForm)}>View Restriction Poll Form?</button>
+    <div className="juryform" style={{maxHeight:!viewForm?"0":"100vw",overflow:"hidden",transition:"max-height 2s"}}>
+    <form>
+          <div className="eventformbox" >
+          <h3>Propose a punishment for a member</h3>
+          </div>
+          <div className="eventformbox">
 
-        </div>
-        <div className="eventformbox">
-        <input style={{display:"inline",width:"70vw"}} type='text' name='duration' id='duration' onChange={(e) => handleDurationChange(e)}/>
-        <p htmlFor="duration"> How many days?</p>
-        </div>
-        <button onClick={(e) => handleSubmit(e)}>New Restriction Poll?</button>
-        </form>
-        </div>
+          <select style={{width:"70vw"}} name="room" id="room" onChange={(e) => handleMemberChange(e)}>
+            {props.users&&props.users.map(item=>{return (
+              <option key={item._id} value={item._id}>{item.name}</option>
+            )})}
+          </select>
+          <p htmlFor="room"> members</p>
+          </div>
+          <div className="eventformbox">
+          <select style={{width:"70vw"}} id="restriction" onChange={(e) => handleRestrictionChange(e)}>
+              <option value="cannot post">cannot post</option>
+              <option value="cannot create polls">cannot create polls</option>
+              <option value="cannot suggest rules or vote for rules">cannot suggest rules or vote for rules</option>
+              <option value="cannot see gig leads">cannot see gig leads</option>
+              <option value="cannot use chat">cannot use chat</option>
+              <option value="cannot see events">cannot see events</option>
+              <option value="cannot participate in group purchases">cannot participate in group purchases</option>
+              <option value="cannot vote in jury">cannot vote in jury</option>
+              <option value="remove from group">remove from group</option>
+          </select>
+          <p htmlFor="room"> Choose a punishment</p>
+
+          </div>
+          <div className="eventformbox">
+          <input style={{display:"inline",width:"70vw"}} type='text' name='duration' id='duration' onChange={(e) => handleDurationChange(e)}/>
+          <p htmlFor="duration"> How many days?</p>
+          </div>
+          <button onClick={(e) => handleSubmit(e)}>New Restriction Poll?</button>
+          </form>
+          </div>
+
+
         <h4 style={{display:"inline"}}>Choose Page</h4>
         {(pageNum&&restrictionPolls)&&pageNum.map(item=>{
           return (<>

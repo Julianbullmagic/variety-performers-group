@@ -158,11 +158,13 @@ for (var ev of eventscopy){
    ev.approval.push(auth.isAuthenticated().user._id)
  }
 
-this.setState({events:eventscopy})
   }
 }
 
 this.setState({events:eventscopy})
+      let current=eventscopy.slice((this.state.page*10-10),this.state.page*10)
+      console.log(current)
+      this.setState({currentPageData:current})
          const options = {
            method: 'put',
            headers: {
@@ -196,7 +198,9 @@ this.setState({events:eventscopy})
            }
          }
          this.setState({events:eventscopy})
-
+               let current=eventscopy.slice((this.state.page*10-10),this.state.page*10)
+               console.log(current)
+               this.setState({currentPageData:current})
          const options = {
            method: 'put',
            headers: {
@@ -309,12 +313,15 @@ console.log("EVENT!",item,this.props.users)
 <div className="eventcol1">
 <h3>{item.title}</h3>
 <h4>{item.description}</h4>
-{this.state.users&&<h4 className="ruletext">{approval}% of members are attending this event, {item.approval.length}/{this.state.users.length}. Attendees=</h4>}
+{this.state.users&&<h4 className="ruletext">{approval}% of members are attending this event, {item.approval.length}/{this.state.users.length}. </h4>}
+{(item.approval.length>0)&&<h4 className="ruletext">Attendees=</h4>}
+
 {attendeenames&&attendeenames.map((item,index)=>{return(<h4 className="ruletext">{item}{(index<(attendeenames.length-2))?", ":(index<(attendeenames.length-1))?" and ":"."}</h4>)})}
-{!item.approval.includes(auth.isAuthenticated().user._id)&&<button Style={{display:"block"}} onClick={(e)=>this.approveofevent(e,item._id)}>Attend this event?</button>}
-{item.approval.includes(auth.isAuthenticated().user._id)&&<button onClick={(e)=>this.withdrawapprovalofevent(e,item._id)}>Don't want to attend anymore?</button>}
-<button style={{display:"block"}} onClick={(e)=>this.deleteEvent(e,item)}>Delete?</button>
+{!item.approval.includes(auth.isAuthenticated().user._id)&&<button className="ruletext" onClick={(e)=>this.approveofevent(e,item._id)}>Attend this event?</button>}
+{item.approval.includes(auth.isAuthenticated().user._id)&&<button className="ruletext" onClick={(e)=>this.withdrawapprovalofevent(e,item._id)}>Don't want to attend anymore?</button>}
+<button className="ruletext" onClick={(e)=>this.deleteEvent(e,item)}>Delete?</button>
 </div>
+<div className="eventimagemapcontainer">
 <div className="eventcol2">
 {item.images&&<Image style={{width:"100%",overflow:"hidden"}} cloudName="julianbullmagic" publicId={item.images[0]} />}
 </div>
@@ -326,6 +333,7 @@ console.log("EVENT!",item,this.props.users)
   />
    <Circle center={[item.coordinates[0],item.coordinates[1]]} radius={100} />
 </MapContainer></>}
+</div>
 </div>
 </div>
 </>

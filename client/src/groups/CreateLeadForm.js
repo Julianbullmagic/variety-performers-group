@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 
 
 export default function CreateLeadForm(props) {
+  const [viewForm, setViewForm] = useState(false);
 const titleValue = React.useRef('')
 const descriptionValue = React.useRef('')
 const locationValue = React.useRef('')
@@ -143,7 +144,10 @@ sendLeadNotification(newLead)
 
 
   return (
-    <div className='form' style={{borderRadius:(props.homepage?"10px":"0px")}}>
+    <>
+    <button style={{display:"block"}} onClick={(e) => setViewForm(!viewForm)}>View Create Lead?</button>
+
+    <div className='form' style={{borderRadius:(props.homepage?"10px":"0px"),maxHeight:!viewForm?"0":"100vw",overflow:"hidden",transition:"max-height 2s"}}>
       <form style={{display:(!formSubmitted?"block":"none")}}>
 <div className="eventformbox">
         <br/>
@@ -246,4 +250,5 @@ sendLeadNotification(newLead)
         <button style={{height:"3vw"}} onClick={(e) => sendAnother(e)}>Submit another booking request</button>
         </>)}
     </div>
+    </>
   )}

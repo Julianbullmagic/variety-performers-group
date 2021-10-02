@@ -7,6 +7,8 @@ const mongoose = require("mongoose");
 
 
 export default function CreatePurchseForm(props) {
+const [viewForm, setViewForm] = useState(false);
+const [uploading, setUploading] = useState(false);
 const titleValue = React.useRef('')
 const descriptionValue = React.useRef('')
 const locationValue = React.useRef('')
@@ -57,7 +59,7 @@ e.preventDefault()
     var n = d.getTime();
     var purchaseId=mongoose.Types.ObjectId()
     purchaseId=purchaseId.toString()
-
+setUploading(true)
 
 
                         let imageids=[]
@@ -117,7 +119,7 @@ e.preventDefault()
       _id:purchaseId,
       title: titleValue.current.value,
       description:descriptionValue.current.value,
-      createby:auth.isAuthenticated().user._id,
+      createdby:auth.isAuthenticated().user._id,
       images:imageids,
       price:priceValue.current.value,
       quantity:quantityValue.current.value,
@@ -156,14 +158,19 @@ e.preventDefault()
             "Content-type": "application/json; charset=UTF-8"}}
 
       await fetch("/purchases/createpurchase/"+purchaseId, options)
-              .then(response => response.json()).then(json => console.log(json));
+              .then(response => response.json()).then(json => {
+                setUploading(false)
+                console.log(json)});
   }
 
 
 
   return (
-    <div className='form'>
+    <>
+    {uploading&&<h4>uploading!!!!!</h4>}
 
+    <button style={{display:"block"}} onClick={(e) => setViewForm(!viewForm)}>View Suggest Purchase Form?</button>
+    <div className='form' style={{maxHeight:!viewForm?"0":"100vw",overflow:"hidden",transition:"max-height 2s"}}>
       <form>
       <div className="eventformbox">
 
@@ -229,8 +236,11 @@ e.preventDefault()
         </div>
         <button onClick={(e) => extraImage(e)}>Add Extra Image</button>
         <button onClick={(e) => lessImage(e)}>One Less Image</button>
-        <button onClick={(e) => handleSubmit(e)}>Submit Purchase Suggestion?</button>
+        {!uploading&&<button onClick={(e) => handleSubmit(e)}>Submit Purchase Suggestion?</button>}
+        {uploading&&<h3>uploading!!!!!</h3>}
+
 
       </form>
     </div>
+    </>
   )}

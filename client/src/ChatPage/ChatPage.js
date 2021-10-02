@@ -182,7 +182,7 @@ if(type==true){
                             </div>
                             <div className="togglechatbutton" style={{bottom:this.state.height}}>
                             <button style={{padding:"1px",borderRadius:"5px"}} onClick={() => {
-                          this.setState({ togglechat:!this.state.togglechat,height:this.state.togglechat?"0.5vh":"40vh",});
+                          this.setState({ togglechat:!this.state.togglechat,height:this.state.togglechat?"0.5vh":"40vh"});
                         }}>View Chat</button>
                             </div>
             </React.Fragment>

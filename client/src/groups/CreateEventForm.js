@@ -6,6 +6,8 @@ const mongoose = require("mongoose");
 
 
 export default function CreateEventForm(props) {
+  const [viewForm, setViewForm] = useState(false);
+  const [uploading, setUploading] = useState(false);
 const titleValue = React.useRef('')
 const descriptionValue = React.useRef('')
 const locationValue = React.useRef('')
@@ -33,6 +35,7 @@ function lessImages(){
 async function handleSubmit(e) {
 
 e.preventDefault()
+setUploading(true)
     var d = new Date();
     var n = d.getTime();
     var eventId=mongoose.Types.ObjectId()
@@ -112,14 +115,20 @@ console.log("new event",newEvent)
 
 
       await fetch("/events/createevent/"+eventId, options)
-              .then(response => response.json()).then(json => console.log(json));
+              .then(response => response.json()).then(json => {
+                setUploading(false)
+                console.log(json)});
+
+
   }
 
 
 
 
   return (
-    <div className='form'>
+    <>
+    <button style={{display:"block"}} onClick={(e) => setViewForm(!viewForm)}>View Create Event Form?</button>
+    <div className='form' style={{maxHeight:!viewForm?"0":"100vw",overflow:"hidden",transition:"max-height 2s"}}>
       <form>
       <div className="eventformbox">
         <label style={{display:"block"}} htmlFor='name'>Title</label>
@@ -153,7 +162,10 @@ console.log("new event",newEvent)
 
         <input id="file" type="file" ref={selectedFile1}/>
 </div>
-        <button onClick={(e) => handleSubmit(e)}>Submit Event?</button>
+        {!uploading&&<button onClick={(e) => handleSubmit(e)}>Submit Event?</button>}
+        {uploading&&<h3>uploading!!!!!</h3>}
       </form>
       </div>
+
+      </>
   )}

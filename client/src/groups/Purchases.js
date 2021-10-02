@@ -142,11 +142,13 @@ for (var p of purchasescopy){
    p.approval.push(auth.isAuthenticated().user._id)
  }
 
-this.setState({purchases:purchasescopy})
   }
 }
 
 this.setState({purchases:purchasescopy})
+let current=purchasescopy.slice((this.state.page*10-10),this.state.page*10)
+console.log(current)
+this.setState({currentPageData:current})
          const options = {
            method: 'put',
            headers: {
@@ -180,6 +182,9 @@ this.setState({purchases:purchasescopy})
            }
          }
          this.setState({purchases:purchasescopy})
+         let current=purchasescopy.slice((this.state.page*10-10),this.state.page*10)
+         console.log(current)
+         this.setState({currentPageData:current})
 
          const options = {
            method: 'put',

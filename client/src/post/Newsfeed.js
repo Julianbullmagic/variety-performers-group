@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 
 
 export default function Newsfeed (props) {
+  const [viewForm, setViewForm] = useState(false);
   const postArea = React.useRef('')
   const [posts, setPosts] = useState([]);
   const [post, setPost] = useState("");
@@ -308,8 +309,10 @@ if (item.preview){
 
     return (
   <>
-  <div className="form">
-  <form>
+  <button style={{display:"block"}} onClick={(e) => setViewForm(!viewForm)}>View Write Post Form?</button>
+
+  <div className="form" style={{maxHeight:!viewForm?"0":"100vw",overflow:"hidden",transition:"max-height 2s"}}>
+  <form style={{display:!viewForm?"none":"block"}}>
           <div>
         <label htmlFor='name'>Write Post</label>  <button onClick={(e) => handleSubmit(e)}>New Post?</button>
           </div>

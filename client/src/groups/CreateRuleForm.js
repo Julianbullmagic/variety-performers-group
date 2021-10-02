@@ -7,6 +7,7 @@ const mongoose = require("mongoose");
 export default function CreateRuleForm(props) {
 const ruleValue = React.useRef('')
 const explanationValue = React.useRef('')
+const [viewForm, setViewForm] = useState(false);
 const [toggle, setToggle] = useState(false);
 let server = "http://localhost:5000";
 let socket = io(server);
@@ -69,8 +70,9 @@ console.log("newPost.group",newRule)
 
 
   return (
-    <div className='form'>
-
+    <>
+    <button style={{display:"block"}} onClick={(e) => setViewForm(!viewForm)}>View Create Rule Form?</button>
+    <div className='form'  style={{maxHeight:!viewForm?"0":"100vw",overflow:"hidden",transition:"max-height 2s"}}>
       <form className='search-form'>
       <div className="eventformbox">
         <label htmlFor='name'>Rule</label>
@@ -94,8 +96,7 @@ console.log("newPost.group",newRule)
         />
         </div>
         <button onClick={(e) => handleSubmit(e)}>Submit Rule</button>
-
-
       </form>
     </div>
+    </>
   )}

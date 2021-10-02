@@ -72,21 +72,27 @@ label{
   border-style:solid;
   border-width:5px;
   padding:1vw;
-  display:flex;
-  justify-content:space-between;
 }
 
 .eventcol1{
-  width:33%
+  width:100%;
+  display:block;
+  text-align:center;
+  margin:1vw;
+}
+
+.eventimagemapcontainer{
+  display:flex;
+  align-items:space-between;
 }
 
 .eventcol2{
-  width:33%;
-  display:flex;
-  align-items:center;
+  width:50%;
+  display:inline;
 }
 .eventcol3{
-  width:33%
+  width:50%;
+  display:inline;
 }
 
 .leadbox{
@@ -413,8 +419,9 @@ bottom:0;
 display:flex;
 z-index:4;
 transition: height 2s;
-
 }
+
+
 
 .submitbutton{
   margin-left:2vw;
