@@ -149,14 +149,23 @@ if(suggestions&&props.users){
   console.log("users in Poll",props.users)
   var d = new Date();
   var n = d.getTime();
+
+
+  if(suggestions.length>=3&&!props.poll.notificationsent){
+    console.log("SENDING POLL NOTIFICCATION")
+    props.sendPollNotification(props.poll)
+  }
+
   suggestionsmapped=suggestions.map(item=>{
     let approval=<></>
     if(props.users){
       approval=Math.round((item.approval.length/props.users.length)*100)
     }
     if (approval<75&&(n-item.timecreated)>604800000){
-      this.deleteSuggestion(item)
+      this.deletePollSuggestion(item)
     }
+
+
     let approveenames=[]
     for (let user of props.users){
       for (let approvee of item.approval){

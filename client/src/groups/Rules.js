@@ -22,13 +22,15 @@ export default class Rules extends Component {
              participate:props.participate
            }
            this.updateRules= this.updateRules.bind(this)
-
+           this.sendRuleNotification= this.sendRuleNotification.bind(this)
+           this.approveofrule=this.approveofrule.bind(this)
+           this.ruleApprovedNotification=this.ruleApprovedNotification.bind(this)
 }
 
 
 
            componentDidMount(props){
-             let server = process.env.PORT||"http://localhost:5000";
+             let server = "http://localhost:5000";
              this.socket = io(server);
              this.getRules()
              }
@@ -120,7 +122,6 @@ this.setState({ rules:filteredapproval,currentPageData:current})
 
 
 
-
   const options = {
     method: 'delete',
     headers: {
@@ -155,13 +156,25 @@ for (var rule of rulescopy){
 
  if(!rule.approval.includes(auth.isAuthenticated().user._id)){
    rule.approval.push(auth.isAuthenticated().user._id)
+
+
+   let approval=(rule.approval.length/this.state.users.length)*100
+
+   if (approval>10){
+       this.ruleApprovedNotification(rule)
+   }
  }
 
-this.setState({rules:rulescopy})
   }
 }
 
+
+
 this.setState({rules:rulescopy})
+let current=rulescopy.slice((this.state.page*10-10),this.state.page*10)
+console.log(current)
+this.setState({currentPageData:rulescopy})
+
          const options = {
            method: 'put',
            headers: {
@@ -194,6 +207,9 @@ this.setState({rules:rulescopy})
            }
          }
          this.setState({rules:rulescopy})
+         let current=rulescopy.slice((this.state.page*10-10),this.state.page*10)
+         console.log(current)
+         this.setState({currentPageData:current})
 
          const options = {
            method: 'put',
@@ -212,9 +228,118 @@ this.setState({rules:rulescopy})
 
        }
 
+sendRuleNotification(item){
+  if(!item.notificationsent){
+    var rulescopy=JSON.parse(JSON.stringify(this.state.rules))
+    for (var rule of rulescopy){
+      if (rule._id==item._id){
+        rule.notificationsent=true
+}}
+this.setState({rules:rulescopy})
+let current=rulescopy.slice((this.state.page*10-10),this.state.page*10)
+console.log(current)
+this.setState({currentPageData:current})
+
+    console.log("sending rule notification",this.state.users)
+    let emails=this.state.users.map(item=>{return item.email})
 
 
+    console.log(emails)
+      let notification={
+        emails:emails,
+        subject:"New Rule Suggestion",
+        message:`${item.createdby.name} suggested the rule: ${item.rule}`
+      }
 
+      const options = {
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+           body: JSON.stringify(notification)
+      }
+
+      fetch("/groups/sendemailnotification", options
+    ) .then(res => {
+    console.log(res);
+    }).catch(err => {
+    console.log(err);
+    })
+
+    const optionstwo = {
+      method: 'put',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+         body: ''
+    }
+
+    fetch("/rules/notificationsent/"+item._id, optionstwo
+    ) .then(res => {
+    console.log(res);
+    }).catch(err => {
+    console.log(err);
+    })
+  }
+}
+
+
+           ruleApprovedNotification(item){
+             console.log("restrictionPollApprovedNotification(item)",item)
+             let rulescopy=JSON.parse(JSON.stringify(this.state.rules))
+
+              if(!item.ratificationnotificationsent){
+                for (let pol of rulescopy){
+                  if (pol._id==item._id){
+                    pol.ratificationnotificationsent=true
+            }}
+
+            console.log("SENDING RATIFICATION NOTIFICATION")
+            this.setState({rules:rulescopy})
+            let current=rulescopy.slice((this.state.page*10-10),this.state.page*10)
+            console.log(current)
+            this.setState({currentPageData:current})
+
+                let emails=this.state.users.map(item=>{return item.email})
+
+                console.log(emails)
+                  let notification={
+                    emails:emails,
+                    subject:"A rule has been approved by the group",
+                    message:`The new rule is ${item.rule}`
+                  }
+
+                  const options = {
+                    method: 'post',
+                    headers: {
+                      'Content-Type': 'application/json'
+                    },
+                       body: JSON.stringify(notification)
+                  }
+
+                  fetch("/groups/sendemailnotification", options
+                ) .then(res => {
+                console.log(res);
+                }).catch(err => {
+                console.log(err);
+                })
+
+                const optionstwo = {
+                  method: 'put',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                     body: ''
+                }
+
+                fetch("/rules/restrictionratificationnotificationsent/"+item._id, optionstwo
+                ) .then(res => {
+                console.log(res);
+                }).catch(err => {
+                console.log(err);
+                })
+              }
+            }
 
   render(props) {
     console.log("users in RULES",this.state.users)
@@ -227,11 +352,15 @@ if (this.state.rules){
 
     rulescomponent=this.state.currentPageData.map(item => {
     let approval=<></>
+
     if(this.state.users){
       approval=Math.round((item.approval.length/this.state.users.length)*100)
     }
     if (approval<75&&(n-item.timecreated)>604800000){
       this.deleteRule(item)
+    }
+    if(approval>=10&&!item.notificationsent){
+      this.sendRuleNotification(item)
     }
     let approveenames=[]
     for (let user of this.state.users){
@@ -246,7 +375,7 @@ if (this.state.rules){
     return(
 <>
   <div className="rule">
-  <h3 className="ruletext">{item.rule}  </h3>
+  <h3 className="ruletext">{item.rule}, suggested by {item.createdby.name}</h3>
   {(!item.approval.includes(auth.isAuthenticated().user._id))&&<button className="ruletext" onClick={(e)=>this.approveofrule(e,item._id)}>Approve this rule?</button>}
   {(item.approval.includes(auth.isAuthenticated().user._id))&&<button className="ruletext" onClick={(e)=>this.withdrawapprovalofrule(e,item._id)}>Withdraw Approval?</button>}
   <h4 className="ruletext">  {item.explanation}  </h4>
@@ -269,14 +398,14 @@ if (this.state.rules){
       <h2>Group Rules</h2>
       <p>Rules that have less than 75% approval and are more than a week old will be deleted</p>
       <h4 style={{display:"inline"}}>Choose Page</h4>
-{this.state.pageNum&&this.state.pageNum.map(item=>{
+{(this.state.pageNum&&this.state.rules)&&this.state.pageNum.map(item=>{
         return (<>
           <button style={{display:"inline"}} onClick={(e) => this.decidePage(e,item)}>{item}</button>
           </>)
       })}
       {rulescomponent}
       <h4 style={{display:"inline"}}>Choose Page</h4>
-{this.state.pageNum&&this.state.pageNum.map(item=>{
+{(this.state.pageNum&&this.state.rules)&&this.state.pageNum.map(item=>{
         return (<>
           <button style={{display:"inline"}} onClick={(e) => this.decidePage(e,item)}>{item}</button>
           </>)

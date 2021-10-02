@@ -25,6 +25,40 @@ const router = express.Router()
 })
   })
 
+  router.route('/notificationsent/:pollId').put((req, res) => {
+    let pollId = req.params.pollId
+    const updatedPoll=Poll.findByIdAndUpdate(pollId, {
+    notificationsent:true
+  }).exec()
+  })
+
+  router.route('/ratificationnotificationsent/:pollId').put((req, res) => {
+    let pollId = req.params.pollId
+    const updatedPoll=Poll.findByIdAndUpdate(pollId, {
+    ratificationnotificationsent:true
+  }).exec()
+  })
+
+
+  router.route('/restrictionnotificationsent/:pollId').put((req, res) => {
+    let pollId = req.params.pollId
+    const updatedPoll=RestrictionPoll.findByIdAndUpdate(pollId, {
+    notificationsent:true
+  }).exec()
+  })
+
+
+  router.route('/restrictionratificationnotificationsent/:pollId').put((req, res) => {
+    let pollId = req.params.pollId
+    const updatedPoll=RestrictionPoll.findByIdAndUpdate(pollId, {
+    ratificationnotificationsent:true
+  }).exec()
+  })
+
+
+
+
+
   router.route('/getrestrictionpolls').get((req, res) => {
     console.log("getting restriction polls")
     RestrictionPoll.find()

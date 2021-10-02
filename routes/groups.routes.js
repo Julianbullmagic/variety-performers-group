@@ -118,28 +118,23 @@ router.get("/findreviews/:groupId/:userId", (req, res, next) => {
   })})
 
 
-router.post('/sendelectionnotification/:groupName/:groupId', (req, res, next) => {
-  console.log("send election notfication")
-  var emails = req.body
-  var groupId=req.params.groupId
-var groupName=req.params.groupName
+router.post('/sendemailnotification', (req, res, next) => {
+  console.log("send email notfication")
 
-
-  if(emails.length>0){
-
+  if(req.body.emails.length>0){
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
         user: process.env.EMAIL,
-        pass: process.env.PASSWORD // naturally, replace both with your real credentials or an application-specific password
+        pass: process.env.PASSWORD
       }
     })
-    const optionsArray=emails.map(email=>{
+    const optionsArray=req.body.emails.map(email=>{
       const mailOptions = {
         from: process.env.EMAIL,
         to: email,
-        subject: 'Election Notification',
-        text: `The group called ${groupName} is having an election, please take the time to read the candidates\' experience and qualifications. If you don\'t have time for this, please abstain from voting. You have three days to make your decision`
+        subject: req.body.subject,
+        text: req.body.message
       };
       return mailOptions
     })

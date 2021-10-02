@@ -5,6 +5,8 @@ const RestrictionPollSchema = new mongoose.Schema({
   usertorestrictname: {type: String},
   restriction: {type: String},
   approval: [{type: mongoose.Schema.ObjectId, ref: 'User'}],
+  notificationsent:{type:Boolean,default:false},
+  ratificationnotificationsent:{type:Boolean,default:false},
   duration:Number,
   comments: [{type: mongoose.Schema.ObjectId, ref: 'Comment'}],
   createdby: {type: mongoose.Schema.ObjectId, ref: 'User'},

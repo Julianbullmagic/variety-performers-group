@@ -117,12 +117,17 @@ e.preventDefault()
       _id:purchaseId,
       title: titleValue.current.value,
       description:descriptionValue.current.value,
+      createby:auth.isAuthenticated().user._id,
       images:imageids,
       price:priceValue.current.value,
       quantity:quantityValue.current.value,
       timecreated:n,
       approval:[auth.isAuthenticated().user._id]
         }
+
+        var newPurchaseToRender=JSON.parse(JSON.stringify(newPurchase))
+
+        newPurchaseToRender.createdby=auth.isAuthenticated().user
 
 
 
@@ -142,14 +147,13 @@ e.preventDefault()
 
     console.log("newPurchase",newPurchase)
 
-    props.updatePurchases(newPurchase)
+    props.updatePurchases(newPurchaseToRender)
     console.log(newPurchase)
     const options={
         method: "POST",
         body: JSON.stringify(newPurchase),
         headers: {
             "Content-type": "application/json; charset=UTF-8"}}
-
 
       await fetch("/purchases/createpurchase/"+purchaseId, options)
               .then(response => response.json()).then(json => console.log(json));

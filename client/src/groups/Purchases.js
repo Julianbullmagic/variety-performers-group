@@ -200,6 +200,60 @@ this.setState({purchases:purchasescopy})
        }
 
 
+       sendPurchaseNotification(item){
+         if(!item.notificationsent){
+           var purchasescopy=JSON.parse(JSON.stringify(this.state.purchases))
+           for (var purch of purchasescopy){
+             if (purch._id==item._id){
+               purch.notificationsent=true
+       }}
+       this.setState({purchases:purchasescopy})
+       let current=purchasescopy.slice((this.state.page*10-10),this.state.page*10)
+       console.log(current)
+       this.setState({currentPageData:current})
+
+           console.log("sending rule notification",this.state.users)
+           let emails=this.state.users.map(item=>{return item.email})
+
+
+           console.log(emails)
+             let notification={
+               emails:emails,
+               subject:"New Purchase Suggestion",
+               message:`${item.createdby.name} suggested the purchase: ${item.title}`
+             }
+
+             const options = {
+               method: 'post',
+               headers: {
+                 'Content-Type': 'application/json'
+               },
+                  body: JSON.stringify(notification)
+             }
+
+             fetch("/groups/sendemailnotification", options
+           ) .then(res => {
+           console.log(res);
+           }).catch(err => {
+           console.log(err);
+           })
+
+           const optionstwo = {
+             method: 'put',
+             headers: {
+               'Content-Type': 'application/json'
+             },
+                body: ''
+           }
+
+           fetch("/purchases/notificationsent/"+item._id, optionstwo
+           ) .then(res => {
+           console.log(res);
+           }).catch(err => {
+           console.log(err);
+           })
+         }
+       }
 
 
 
@@ -219,6 +273,11 @@ this.setState({purchases:purchasescopy})
                 if(this.state.users){
                   approval=Math.round((item.approval.length/this.state.users.length)*100)
                 }
+
+                if(approval>=10&&!item.notificationsent){
+                  this.sendPurchaseNotification(item)
+                }
+
                 let approveenames=[]
                 for (let user of this.state.users){
                   for (let approvee of item.approval){
@@ -270,14 +329,14 @@ this.setState({purchases:purchasescopy})
       <CreatePurchaseForm updatePurchases={this.updatePurchases}/>
       <h2><strong>Possible Purchases </strong></h2>
       <h4 style={{display:"inline"}}>Choose Page</h4>
-{this.state.pageNum&&this.state.pageNum.map(item=>{
+{(this.state.pageNum&&this.state.purchases)&&this.state.pageNum.map(item=>{
         return (<>
           <button style={{display:"inline"}} onClick={(e) => this.decidePage(e,item)}>{item}</button>
           </>)
       })}
       {purchasescomponent}
       <h4 style={{display:"inline"}}>Choose Page</h4>
-{this.state.pageNum&&this.state.pageNum.map(item=>{
+{(this.state.pageNum&&this.state.purchases)&&this.state.pageNum.map(item=>{
         return (<>
           <button style={{display:"inline"}} onClick={(e) => this.decidePage(e,item)}>{item}</button>
           </>)

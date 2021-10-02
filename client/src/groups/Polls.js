@@ -70,12 +70,14 @@ function decidePage(e,pagenum){
       const newPoll={
         _id:pollId,
         pollquestion:pollquestion.current.value,
+        suggestions:[],
         timecreated:n,
         createdby:auth.isAuthenticated().user._id
       }
 
       const newPollToRender={
         _id:pollId,
+        suggestions:[],
         pollquestion:pollquestion.current.value,
         timecreated:n,
         createdby:auth.isAuthenticated().user
@@ -173,13 +175,74 @@ console.log("newpoll",newPoll)
 
 
 
+
+    function sendPollNotification(item){
+      console.log("SENDING POLL NOTIFICATION")
+      let pollscopy=JSON.parse(JSON.stringify(polls))
+      for (let pol of pollscopy){
+        if(pol._id==item._id){
+          pol.notificationsent=true
+        }
+      }
+      console.log(pollscopy,item)
+      setPolls(pollscopy)
+      let current=pollscopy.slice((page*10-10),page*10)
+      console.log(current)
+      setCurrentPageData(current)
+
+      if(!item.notificationsent){
+        console.log("sending Poll notification",props.users)
+        let emails=props.users.map(item=>{return item.email})
+
+
+        console.log(emails)
+          let notification={
+            emails:emails,
+            subject:"New Poll Suggestion",
+            message:`${item.createdby.name} suggested the poll: ${item.pollquestion}`
+          }
+
+          const options = {
+            method: 'post',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+               body: JSON.stringify(notification)
+          }
+
+          fetch("/groups/sendemailnotification", options
+        ) .then(res => {
+        console.log(res);
+        }).catch(err => {
+        console.log(err);
+        })
+
+        const optionstwo = {
+          method: 'put',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+             body: ''
+        }
+
+        fetch("/polls/notificationsent/"+item._id, optionstwo
+        ) .then(res => {
+        console.log(res);
+        }).catch(err => {
+        console.log(err);
+        })
+      }
+    }
+
+
+
 var pollsmapped=currentPageData.map((item,i)=>{
 
   return (
   <>
 <div className="postbox">
 <div>
-<Poll poll={item} users={props.users} deletePoll={deletePoll}/>
+<Poll poll={item} users={props.users} deletePoll={deletePoll} sendPollNotification={sendPollNotification}/>
 </div>
 <Comment id={item._id}/>
 </div>
@@ -198,14 +261,14 @@ var pollsmapped=currentPageData.map((item,i)=>{
         </form>
         </div>
         <h4 style={{display:"inline"}}>Choose Page</h4>
-        {pageNum&&pageNum.map(item=>{
+        {(pageNum&&polls)&&pageNum.map(item=>{
           return (<>
             <button style={{display:"inline"}} onClick={(e) => decidePage(e,item)}>{item}</button>
             </>)
         })}
         {pollsmapped}
         <h4 style={{display:"inline"}}>Choose Page</h4>
-        {pageNum&&pageNum.map(item=>{
+        {(pageNum&&polls)&&pageNum.map(item=>{
           return (<>
             <button style={{display:"inline"}} onClick={(e) => decidePage(e,item)}>{item}</button>
             </>)

@@ -7,6 +7,7 @@ mongoose.set('useFindAndModify', false);
 
 router.get("/", (req, res, next) => {
     Event.find()
+    .populate('createdby')
       .then(rule => res.json(rule))
       .catch(err => res.status(400).json('Error: ' + err));
   })
@@ -18,7 +19,12 @@ router.get("/:eventId", (req, res, next) => {
       .catch(err => res.status(400).json('Error: ' + err));
   })
 
-
+  router.route('/notificationsent/:eventId').put((req, res) => {
+    let eventId = req.params.eventId
+    Event.findByIdAndUpdate(eventId, {
+    notificationsent:true
+  }).exec()
+  })
 
 
   router.delete("/:eventId", (req, res, next) => {
@@ -52,6 +58,7 @@ router.get("/:eventId", (req, res, next) => {
       _id: eventId,
       title :req.body["title"],
       description :req.body["description"],
+      createdby :req.body["createdby"],
       location:req.body["location"],
       coordinates:req.body["coordinates"],
       images:req.body["images"],

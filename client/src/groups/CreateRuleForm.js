@@ -22,11 +22,20 @@ e.preventDefault()
     const newRule={
       _id:ruleId,
       rule: ruleValue.current.value,
+      createdby:auth.isAuthenticated().user._id,
       explanation:explanationValue.current.value,
       timecreated:n,
       approval:[auth.isAuthenticated().user._id]
     }
 
+    const newRuleToRender={
+      _id:ruleId,
+      rule: ruleValue.current.value,
+      createdby:auth.isAuthenticated().user,
+      explanation:explanationValue.current.value,
+      timecreated:n,
+      approval:[auth.isAuthenticated().user._id]
+    }
 
 
     let chatMessage=`created an rule; ${ruleValue.current.value}`
@@ -45,7 +54,7 @@ e.preventDefault()
 
 
 console.log("newPost.group",newRule)
-    props.updateRules(newRule)
+    props.updateRules(newRuleToRender)
     console.log(newRule)
     const options={
         method: "POST",

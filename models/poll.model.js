@@ -5,6 +5,7 @@ const PollSchema = new mongoose.Schema({
   suggestions: [{type: mongoose.Schema.ObjectId, ref: 'Suggestion'}],
   comments: [{type: mongoose.Schema.ObjectId, ref: 'Comment'}],
   createdby: {type: mongoose.Schema.ObjectId, ref: 'User'},
+  notificationsent:{type:Boolean,default:false},
   timecreated: Number
 })
 

@@ -66,12 +66,19 @@ e.preventDefault()
       _id:eventId,
       title: titleValue.current.value,
       description:descriptionValue.current.value,
+      createdby:auth.isAuthenticated().user._id,
       location:locationValue.current.value,
       coordinates:[coords[1],coords[0]],
       images:imageids,
       timecreated:n,
       approval:[auth.isAuthenticated().user._id]
         }
+
+        var newEventToRender=JSON.parse(JSON.stringify(newEvent))
+
+        newEventToRender.createdby=auth.isAuthenticated().user
+
+console.log("newEventToRender",newEventToRender)
 
         var d = new Date();
         var n = d.getTime();
@@ -95,7 +102,7 @@ type)
           type});
 
 console.log("new event",newEvent)
-    props.updateEvents(newEvent)
+    props.updateEvents(newEventToRender)
     console.log(newEvent)
     const options={
         method: "POST",

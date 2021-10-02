@@ -8,6 +8,8 @@ const eventSchema = mongoose.Schema({
   location:String,
   images:[{type:String}],
   coordinates:[Number],
+  notificationsent:{type:Boolean,default:false},
+  createdby:{type:mongoose.Schema.Types.ObjectId,ref:"User"},
   approval: [{type:mongoose.Schema.Types.ObjectId,ref:"User"}],
   timecreated:Number
 })

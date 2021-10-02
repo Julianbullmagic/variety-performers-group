@@ -23,6 +23,13 @@ const router = express.Router()
 })
   })
 
+  router.route('/notificationsent/:postId').put((req, res) => {
+    let postId = req.params.postId
+    Post.findByIdAndUpdate(postId, {
+    notificationsent:true
+  }).exec()
+  })
+
 
   router.route('/deletepost/:postId').delete((req, res) => {
           Post.findByIdAndDelete(req.params.postId)

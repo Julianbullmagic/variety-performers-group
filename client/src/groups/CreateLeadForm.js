@@ -10,6 +10,7 @@ const descriptionValue = React.useRef('')
 const locationValue = React.useRef('')
 const timeValue = React.useRef('')
 const durationValue = React.useRef('')
+const customerNameValue = React.useRef('')
 const emailValue = React.useRef('')
 const phoneValue = React.useRef('')
 const coordinatesValue = React.useRef('')
@@ -22,6 +23,35 @@ let socket = io(server);
 function sendAnother(e){
   setFormSubmitted(!formSubmitted)
 }
+
+
+
+function sendLeadNotification(item){
+    console.log("sending Lead notification",props.users)
+    let emails=props.users.map(item=>{return item.email})
+    console.log(emails)
+      let notification={
+        emails:emails,
+        subject:"New Gig Lead",
+        message:`An gig lead for an event called ${item.title} has been created by ${item.customername}`
+      }
+
+      const options = {
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+           body: JSON.stringify(notification)
+      }
+
+      fetch("/groups/sendemailnotification", options
+    ) .then(res => {
+    console.log(res);
+    }).catch(err => {
+    console.log(err);
+    })
+}
+
 
 async function handleSubmit(e) {
 e.preventDefault()
@@ -43,8 +73,10 @@ setFormSubmitted(!formSubmitted)
       _id:leadId,
       title:titleValue.current.value,
       description:descriptionValue.current.value,
+      customername:customerNameValue.current.value,
       location:locationValue.current.value,
       coordinates:coordinates,
+      views:[],
       time:timeValue.current.value,
       duration:durationValue.current.value,
       phone:phoneValue.current.value,
@@ -96,10 +128,12 @@ if(props.updateLeads){
       await fetch("/leads/createlead/"+leadId, options)
               .then(response => response.json()).then(json => console.log(json));
 
+sendLeadNotification(newLead)
 
               titleValue.current.value=""
               descriptionValue.current.value=""
               locationValue.current.value=""
+              customerNameValue.current.value=""
               timeValue.current.value=""
               durationValue.current.value=""
               emailValue.current.value=""
@@ -123,6 +157,21 @@ if(props.updateLeads){
           ref={titleValue}
         />
 </div>
+
+<div className="eventformbox">
+        <br/>
+        <label htmlFor='name'>What is your name or the customer's name?</label>
+        <input
+          className="leadforminput"
+          style={{borderRadius:(props.homepage?"10px":"0px")}}
+          type='text'
+          name='customerNameValue'
+          id='customerNameValue'
+          ref={customerNameValue}
+        />
+</div>
+
+
 <div className="eventformbox">
         <label htmlFor='name'>Briefly describe your event and the sort of entertainment you are looking for</label>
         <input

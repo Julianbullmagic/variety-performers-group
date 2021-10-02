@@ -6,6 +6,7 @@ const PostSchema = new mongoose.Schema({
     image:String,
     title:String
   },
+  notificationsent:{type:Boolean,default:false},
   likes: [{type: mongoose.Schema.ObjectId, ref: 'User'}],
   comments: [{type: mongoose.Schema.ObjectId, ref: 'Comment'}],
   createdby: {type: mongoose.Schema.ObjectId, ref: 'User'},

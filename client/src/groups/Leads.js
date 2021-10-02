@@ -6,12 +6,13 @@ import io from "socket.io-client";
 const mongoose = require("mongoose");
 
 
-export default class Events extends Component {
+export default class Leads extends Component {
 
     constructor(props) {
            super(props);
            this.state = {
              leads:[],
+             users:props.users,
              page:1,
              pageNum:[],
              currentPageData:[],
@@ -123,9 +124,27 @@ viewContactDetails(e,id){
   let leadscopy=JSON.parse(JSON.stringify(this.state.leads))
   for (let lead of leadscopy){
     if (lead._id==id){
-      lead.viewcontact=!lead.viewcontact
+      lead.views.push(auth.isAuthenticated().user._id)
     }
   }
+  this.setState(leadscopy)
+  console.log(leadscopy)
+  let current=leadscopy.slice((this.state.page*10-10),this.state.page*10)
+  console.log(current)
+  this.setState({currentPageData:current})
+
+  const options = {
+    method: 'put',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+       body: ''
+  }
+
+console.log("adding view",id,auth.isAuthenticated().user._id)
+       fetch("/leads/addview/"+id+"/"+auth.isAuthenticated().user._id, options)
+                .then(response => response.json()).then(json => console.log(json));
+
 }
 
 
@@ -141,13 +160,15 @@ viewContactDetails(e,id){
 <div className="leadbox">
 <div className="leadcol1">
 <h3>{item.title}</h3>
+<h4>Customer Name: {item.customername}</h4>
 <h4>Description: {item.description}</h4>
 <h4>Where: {item.location}</h4>
 <h4>When: {item.time}</h4>
 <h4>How Long: {item.duration}</h4>
-{item.viewcontact&&<><h4>Phone: {item.phone}</h4>
+{item.views.length>=3&&<h4>Max 3 people have viewed contact details already</h4>}
+{(item.views.includes(auth.isAuthenticated().user._id)&&item.views.length<=3)&&<><h4>Phone: {item.phone}</h4>
 <h4>Email: {item.email}</h4></>}
-<button onClick={(e)=>this.viewContactDetails(e,item._id)}>View Contact Details?</button>
+{(!item.views.includes(auth.isAuthenticated().user._id)&&!item.views.length>=3)&&<button onClick={(e)=>this.viewContactDetails(e,item._id)}>View Contact Details?</button>}
 <button onClick={(e)=>this.deleteLead(e,item._id)}>Delete this lead?</button>
 
 </div>
@@ -174,17 +195,17 @@ viewContactDetails(e,id){
     return (
       <>
       <br/>
-      <CreateLeadForm updateLeads={this.updateLeads}/>
+      {this.state.users&&<CreateLeadForm updateLeads={this.updateLeads} users={this.state.users}/>}
       <h2><strong>Gig Leads </strong></h2>
       <h4 style={{display:"inline"}}>Choose Page</h4>
-{this.state.pageNum&&this.state.pageNum.map(item=>{
+{(this.state.pageNum&&this.state.leads)&&this.state.pageNum.map(item=>{
         return (<>
           <button style={{display:"inline"}} onClick={(e) => this.decidePage(e,item)}>{item}</button>
           </>)
       })}
       {leadscomponent}
       <h4 style={{display:"inline"}}>Choose Page</h4>
-{this.state.pageNum&&this.state.pageNum.map(item=>{
+{(this.state.pageNum&&this.state.leads)&&this.state.pageNum.map(item=>{
         return (<>
           <button style={{display:"inline"}} onClick={(e) => this.decidePage(e,item)}>{item}</button>
           </>)

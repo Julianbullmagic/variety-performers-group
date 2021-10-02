@@ -25,7 +25,12 @@ router.get("/", (req, res, next) => {
       .exec()
     })
 
-
+    router.route('/notificationsent/:purchaseId').put((req, res) => {
+      let purchaseId = req.params.purchaseId
+      Purchase.findByIdAndUpdate(purchaseId, {
+      notificationsent:true
+    }).exec()
+    })
 
     router.route('/approveofpurchase/:purchaseId/:userId').put((req, res) => {
       let purchaseId = req.params.purchaseId
@@ -58,6 +63,7 @@ router.get("/", (req, res, next) => {
       _id: purchaseId,
       title :req.body["title"],
       description:req.body["description"],
+      createdby:req.body["createdby"],
       images :req.body["images"],
       price:req.body["price"],
       quantity:req.body["quantity"],

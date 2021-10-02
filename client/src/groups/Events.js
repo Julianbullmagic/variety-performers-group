@@ -87,8 +87,6 @@ async getEvents(){
 
 
          async deleteEvent(e,item){
-
-
            var eventscopy=JSON.parse(JSON.stringify(this.state.events))
            function checkEvent(event) {
              return event._id!=item._id
@@ -219,6 +217,59 @@ this.setState({events:eventscopy})
 
 
 
+       sendEventNotification(item){
+         if(!item.notificationsent){
+           var eventscopy=JSON.parse(JSON.stringify(this.state.events))
+           for (let ev of eventscopy){
+             if (ev._id==item._id){
+               ev.notificationsent=true
+       }}
+       this.setState({events:eventscopy})
+       let current=eventscopy.slice((this.state.page*10-10),this.state.page*10)
+       console.log(current)
+       this.setState({currentPageData:current})
+           console.log("sending event notification",this.state.users)
+           let emails=this.state.users.map(item=>{return item.email})
+
+
+           console.log(emails)
+             let notification={
+               emails:emails,
+               subject:"New Event Suggestion",
+               message:`${item.createdby.name} suggested the event: ${item.title}`
+             }
+
+             const options = {
+               method: 'post',
+               headers: {
+                 'Content-Type': 'application/json'
+               },
+                  body: JSON.stringify(notification)
+             }
+
+             fetch("/groups/sendemailnotification", options
+           ) .then(res => {
+           console.log(res);
+           }).catch(err => {
+           console.log(err);
+           })
+
+           const optionstwo = {
+             method: 'put',
+             headers: {
+               'Content-Type': 'application/json'
+             },
+                body: ''
+           }
+
+           fetch("/events/notificationsent/"+item._id, optionstwo
+           ) .then(res => {
+           console.log(res);
+           }).catch(err => {
+           console.log(err);
+           })
+         }
+       }
 
 
 
@@ -230,12 +281,17 @@ this.setState({events:eventscopy})
 
             var eventscomponent=<h3>no events</h3>
             if (this.state.users&&this.state.events){
+              console.log("THIS.PROPS.Users",this.props.users)
               eventscomponent=this.state.currentPageData.map(item => {
 
                 let approval=<></>
-                if(this.state.users){
                   approval=Math.round((item.approval.length/this.state.users.length)*100)
+
+
+                if(approval>=10&&!item.notificationsent){
+                  this.sendEventNotification(item)
                 }
+
                 let attendeenames=[]
                 for (let user of this.state.users){
                   for (let attendee of item.approval){
@@ -245,7 +301,7 @@ this.setState({events:eventscopy})
                   }
                 }
 
-console.log("EVENT!",item)
+console.log("EVENT!",item,this.props.users)
 
                 return(
 <>
@@ -253,7 +309,7 @@ console.log("EVENT!",item)
 <div className="eventcol1">
 <h3>{item.title}</h3>
 <h4>{item.description}</h4>
-{this.state.users&&<h4 className="ruletext">{approval}% of members are attending this event, {item.approval.length}/{this.state.users.length}. Atendees=</h4>}
+{this.state.users&&<h4 className="ruletext">{approval}% of members are attending this event, {item.approval.length}/{this.state.users.length}. Attendees=</h4>}
 {attendeenames&&attendeenames.map((item,index)=>{return(<h4 className="ruletext">{item}{(index<(attendeenames.length-2))?", ":(index<(attendeenames.length-1))?" and ":"."}</h4>)})}
 {!item.approval.includes(auth.isAuthenticated().user._id)&&<button Style={{display:"block"}} onClick={(e)=>this.approveofevent(e,item._id)}>Attend this event?</button>}
 {item.approval.includes(auth.isAuthenticated().user._id)&&<button onClick={(e)=>this.withdrawapprovalofevent(e,item._id)}>Don't want to attend anymore?</button>}
@@ -290,14 +346,14 @@ console.log("EVENT!",item)
       <CreateEventForm updateEvents={this.updateEvents}/>
       <h2><strong>Group Events </strong></h2>
       <h4 style={{display:"inline"}}>Choose Page</h4>
-{this.state.pageNum&&this.state.pageNum.map(item=>{
+{(this.state.pageNum&&this.state.events)&&this.state.pageNum.map(item=>{
         return (<>
           <button style={{display:"inline"}} onClick={(e) => this.decidePage(e,item)}>{item}</button>
           </>)
       })}
       {eventscomponent}
       <h4 style={{display:"inline"}}>Choose Page</h4>
-{this.state.pageNum&&this.state.pageNum.map(item=>{
+{(this.state.pageNum&&this.state.events)&&this.state.pageNum.map(item=>{
         return (<>
           <button style={{display:"inline"}} onClick={(e) => this.decidePage(e,item)}>{item}</button>
           </>)

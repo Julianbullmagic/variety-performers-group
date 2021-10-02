@@ -135,7 +135,7 @@ console.log("newpost",newPost)
       postscopy.push(newPost)
       postscopy.reverse()
 
-
+sendPostNotification(newPost)
 
       setPosts(postscopy)
 console.log("page",page)
@@ -200,6 +200,66 @@ console.log("page",page)
     }
 
 
+
+  function sendPostNotification(item){
+      let postscopy=JSON.parse(JSON.stringify(posts))
+      if(!item.notificationsent){
+
+        for (var po of postscopy){
+          if (po._id==item._id){
+            po.notificationsent=true
+    }}
+    setPosts(postscopy)
+    let current=postscopy.slice((page*10-10),page*10)
+    console.log(current)
+    setCurrentPageData(current)
+
+        console.log("sending rule notification",props.users)
+        let emails=props.users.map(item=>{return item.email})
+
+
+        console.log(emails)
+          let notification={
+            emails:emails,
+            subject:"New Post",
+            message:`${auth.isAuthenticated().user.name} wrote a post called ${item.post}`
+          }
+
+          const options = {
+            method: 'post',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+               body: JSON.stringify(notification)
+          }
+
+          fetch("/groups/sendemailnotification", options
+        ) .then(res => {
+        console.log(res);
+        }).catch(err => {
+        console.log(err);
+        })
+
+        const optionstwo = {
+          method: 'put',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+             body: ''
+        }
+
+        fetch("/posts/notificationsent/"+item._id, optionstwo
+        ) .then(res => {
+        console.log(res);
+        }).catch(err => {
+        console.log(err);
+        })
+      }
+    }
+
+
+
+
 if(preview){
   if(preview.image){
     var previewmapped=<><h2>{preview.title}</h2><img src={preview.image}></img></>
@@ -262,7 +322,7 @@ if (item.preview){
 
         </div>
         <h4 style={{display:"inline"}}>Choose Page</h4>
-        {pageNum&&pageNum.map(item=>{
+        {(pageNum&&posts)&&pageNum.map(item=>{
           return (<>
             <button style={{display:"inline"}} onClick={(e) => decidePage(e,item)}>{item}</button>
             </>)
@@ -270,7 +330,7 @@ if (item.preview){
         {postsmapped}
         <div style={{marginBottom:"5vw"}}>
         <h4 style={{display:"inline"}}>Choose Page</h4>
-        {pageNum&&pageNum.map(item=>{
+        {(pageNum&&posts)&&pageNum.map(item=>{
           return (<>
             <button style={{display:"inline"}} onClick={(e) => decidePage(e,item)}>{item}</button>
             </>)

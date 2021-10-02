@@ -9,6 +9,7 @@ mongoose.set('useFindAndModify', false);
 
 router.get("/", (req, res, next) => {
     Rule.find()
+    .populate("createdby")
       .then(rule => res.json(rule))
       .catch(err => res.status(400).json('Error: ' + err));
   })
@@ -28,14 +29,18 @@ router.get("/", (req, res, next) => {
 
 
 
-    router.route('/approveofrule/:ruleId/:userId').put((req, res) => {
+    router.route('/notificationsent/:ruleId').put((req, res) => {
       let ruleId = req.params.ruleId
-      let userId = req.params.userId;
-      console.log(ruleId,userId)
+      const updatedRule=Rule.findByIdAndUpdate(ruleId, {
+      notificationsent:true
+    }).exec()
+    })
 
-      const updatedRule=Rule.findByIdAndUpdate(ruleId, {$addToSet : {
-      approval:userId
-    }}).exec()
+
+    router.route('/restrictionratificationnotificationsent/:ruleId').put((req, res) => {
+      const updatedPoll=Rule.findByIdAndUpdate(req.params.ruleId, {
+      ratificationnotificationsent:true
+    }).exec()
     })
 
     router.route('/withdrawapprovalofrule/:ruleId/:userId').put((req, res) => {
@@ -57,6 +62,7 @@ router.get("/", (req, res, next) => {
     var newRule=new Rule({
       _id: ruleId,
       rule :req.body["rule"],
+      createdby :req.body["createdby"],
       explanation:req.body["explanation"],
       timecreated:req.body["timecreated"],
       approval:req.body["approval"]

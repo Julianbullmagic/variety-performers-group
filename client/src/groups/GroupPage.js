@@ -125,13 +125,13 @@ class GroupPage extends Component {
 
 
         <TabPanel>
-         {!this.state.cannotpost&&<Newsfeed />}
+         {!this.state.cannotpost&&<Newsfeed users={this.state.users}/>}
          </TabPanel>
          <TabPanel>
          {!this.state.cannotcreatepolls&&<Polls users={this.state.users}/>}
          </TabPanel>
          <TabPanel>
-         {!this.state.cannotseegigleads&&<Leads />}
+         {!this.state.cannotseegigleads&&<Leads users={this.state.users}/>}
          </TabPanel>
          <TabPanel>
          {!this.state.cannotsuggestrulesorvoteforrules&&<Rules users={this.state.users} />}
