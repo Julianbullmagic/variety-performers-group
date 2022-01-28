@@ -42,20 +42,26 @@ getGroupData()
     return (
       <>
       <div className="homepage">
-      <h3>We are a team of entertainers from Sydney. We perform at many different kinds of events, weddings, festivals, parties, functions. Our highly skilled and experienced entertainers
+      <div className="homepageexplanation">
+      <h3>!!!!!!!!!! We are a team of entertainers from Sydney. We perform at many different kinds of events, weddings, festivals, parties, functions. Our highly skilled and experienced entertainers
       will keep you amazed and amused. We are an agency run by performers, allowing direct communication and better value for money. No middle men.</h3>
+      </div>
       <div className="users">
       {users&&users.map(user=>{return(<>
         <Link to={"/singleuser/" + user._id}>
         <div className="usercard">
+        <div style={{zIndex:"100",position:"absolute",paddingTop:"1vh",paddingBottom:"1vh",paddingLeft:"1vw",paddingRight:"1vw",margin:"1vw",borderRadius:"10px",background:"white",top:"17vh"}}>
         <h2><strong>{user.name}</strong></h2>
-        <h3>{user.expertise}</h3>
-        <div><Image style={{width:"100%"}} cloudName="julianbullmagic" publicId={user.images[0]} /></div>
+        <h3>{user.jobtitle||user.expertise}</h3>
         </div>
+        <Image style={{objectFit:"cover",width:"100%",height:"100%",overflow:"hidden",position:"relative"}}
+        cloudName="julianbullmagic" publicId={user.images[0]} /></div>
         }</Link>
         </>)})}
         </div>
+        <div style={{opacity:"0.9"}}>
         <CreateLeadForm homepage="true"/>
+        </div>
 
       </div>
       </>

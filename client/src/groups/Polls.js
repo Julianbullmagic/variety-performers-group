@@ -193,10 +193,17 @@ console.log("newpoll",newPoll)
 
       if(!item.notificationsent){
         console.log("sending Poll notification",props.users)
-        let emails=props.users.map(item=>{return item.email})
+        let userscopy=JSON.parse(JSON.stringify(props.users))
+
+        console.log(userscopy.length)
 
 
+        userscopy=userscopy.filter(user=>user.polls)
+
+        let emails=userscopy.map(item=>{return item.email})
         console.log(emails)
+        console.log(emails.length)
+
           let notification={
             emails:emails,
             subject:"New Poll Suggestion",

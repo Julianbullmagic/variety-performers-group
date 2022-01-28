@@ -14,7 +14,7 @@ const isActive = (history, path) => {
     return {color: 'white'}
 }
 const Menu = withRouter(({history}) => (
-  <AppBar>
+  <AppBar style={{backgroundColor:"#759CC9"}}>
     <Toolbar>
       <Typography variant="h6" color="inherit"style={{marginLeft:"1vw"}}>
         Variety Performers Group

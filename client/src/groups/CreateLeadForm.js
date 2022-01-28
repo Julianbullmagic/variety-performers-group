@@ -29,8 +29,12 @@ function sendAnother(e){
 
 function sendLeadNotification(item){
     console.log("sending Lead notification",props.users)
-    let emails=props.users.map(item=>{return item.email})
+    let userscopy=JSON.parse(JSON.stringify(props.users))
+    console.log(userscopy.length)
+    userscopy=userscopy.filter(user=>user.leads)
+    let emails=userscopy.map(item=>{return item.email})
     console.log(emails)
+    console.log(emails.length)
       let notification={
         emails:emails,
         subject:"New Gig Lead",
@@ -145,7 +149,8 @@ sendLeadNotification(newLead)
 
   return (
     <>
-    <button style={{display:"block"}} onClick={(e) => setViewForm(!viewForm)}>View Create Lead?</button>
+    {!props.updateLeads&&<button style={{display:"block"}} onClick={(e) => setViewForm(!viewForm)}>View Booking Request Form?</button>}
+    {props.updateLeads&&<button style={{display:"block"}} onClick={(e) => setViewForm(!viewForm)}>View Create Lead Form?</button>}
 
     <div className='form' style={{borderRadius:(props.homepage?"10px":"0px"),maxHeight:!viewForm?"0":"100vw",overflow:"hidden",transition:"max-height 2s"}}>
       <form style={{display:(!formSubmitted?"block":"none")}}>

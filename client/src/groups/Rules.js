@@ -241,8 +241,16 @@ console.log(current)
 this.setState({currentPageData:current})
 
     console.log("sending rule notification",this.state.users)
-    let emails=this.state.users.map(item=>{return item.email})
+    let userscopy=JSON.parse(JSON.stringify(this.state.users))
 
+    console.log(userscopy.length)
+
+
+    userscopy=userscopy.filter(user=>user.polls)
+
+    let emails=userscopy.map(item=>{return item.rules})
+    console.log(emails)
+    console.log(emails.length)
 
     console.log(emails)
       let notification={
@@ -300,7 +308,16 @@ this.setState({currentPageData:current})
             console.log(current)
             this.setState({currentPageData:current})
 
-                let emails=this.state.users.map(item=>{return item.email})
+            let userscopy=JSON.parse(JSON.stringify(this.state.users))
+
+            console.log(userscopy.length)
+
+
+            userscopy=userscopy.filter(user=>user.rulesapproved)
+
+            let emails=userscopy.map(item=>{return item.email})
+            console.log(emails)
+            console.log(emails.length)
 
                 console.log(emails)
                   let notification={

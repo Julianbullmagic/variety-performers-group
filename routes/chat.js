@@ -11,7 +11,7 @@ const User = require("../models/user.model");
 
 router.get("/getChats",async (req, res) => {
   console.log("getting chats")
-    await Chat.find()
+    await Chat.find({"recipient": undefined})
         .populate("sender")
         .exec((err, chats) => {
             if(err) return res.status(400).send(err);

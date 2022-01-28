@@ -7,7 +7,7 @@ const signin = async (req, res) => {
   try {
     let user = await User.findOne({
       "email": { $regex: new RegExp(req.body.email, "i") }
-    })
+    }).populate('recentprivatemessages')
     console.log("user")
 console.log(user)
     if (!user)
@@ -42,7 +42,10 @@ await User.findByIdAndUpdate(user._id,{$push: {signins: n}}).exec(function(err,d
 
     return res.json({
       token,
-      user: {_id: user._id, name: user.name,coordinates:user.coordinates, email: user.email}
+      user: {_id: user._id, name: user.name,coordinates:user.coordinates, email: user.email,events:user.events,
+        leads:user.leads,posts:user.posts,polls:user.polls,rules:user.rules,purchases:user.purchases,
+        restriction:user.restriction,rulesapproved:user.rulesapproved,restrictionsapproved:user.restrictionsapproved,
+        recentprivatemessages:user.recentprivatemessages}
     })
   } catch (err) {
     console.log(err)

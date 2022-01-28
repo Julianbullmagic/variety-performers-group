@@ -62,10 +62,13 @@ export default function Signin(props) {
         console.log(data.error)
       } else {
         console.log(data)
+
         auth.authenticate(data, () => {
-          socket.emit("new user", data.user.name);
           setValues({ ...values, error: '',redirectToReferrer: true})
         })
+        
+        socket.emit("new user", data.user.name);
+
       }
     })
 

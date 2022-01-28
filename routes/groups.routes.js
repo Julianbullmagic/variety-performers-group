@@ -18,36 +18,11 @@ mongoose.set('useFindAndModify', false);
 router.get("/getusers", (req, res) => {
   User.find({"active":true})
   .populate("restrictions")
+  .populate("recentprivatemessages")
     .then(rule => res.json(rule))
     .catch(err => res.status(400).json('Error: ' + err));
 });
 
-
-router.post("/createreview/:reviewid", (req, res, next) => {
-   let newReview = new Review({
-     _id: req.params.reviewid,
-     rating:req.body['rating'],
-     explanation:req.body['explanation'],
-     timecreated: req.body["timecreated"],
-     userId:req.body['userId'],
-     groupId:req.body['groupId'],
-     postedBy: req.body["postedBy"]
-  });
-
-
-   newReview.save((err) => {
-     if(err){
-       res.status(400).json({
-         message: "The Item was not saved",
-         errorMessage : err.message
-      })
-     }else{
-       res.status(201).json({
-         message: "Item was saved successfully"
-      })
-     }
-   })
-})
 
 router.delete("/deleterestriction/:restrictionId", (req, res, next) => {
     Restriction.findByIdAndDelete(req.params.restrictionId)
@@ -183,18 +158,24 @@ router.post('/sendemailnotification', (req, res, next) => {
 router.get("/getuser/:userId", (req, res, next) => {
   var userId=req.params.userId
   console.log("userId in router",userId)
-  const items=User.findById(userId, function (err, docs) {
-    if (err){
-        console.log(err);
-    }
-    else{
-        console.log("Result : ", docs);
-        res.status(200).json({
-                    data: docs
-                })
-    }
+  const items=User.findById(userId)
+  .populate("recentprivatemessages")
+  .exec(function(err,docs){
+    if(err){
+            console.log(err);
+        }else{
+
+            res.status(200).json({
+              data:docs,
+              message: "User updated successfully"
+                    })
+  }
+   })
 })
-})
+
+
+
+
 
 router.post("/createuser", (req, res, next) => {
   var user=req.body.user

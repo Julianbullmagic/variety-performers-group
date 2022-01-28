@@ -16,10 +16,23 @@ import io from "socket.io-client";
 import Axios from 'axios'
 const mongoose = require("mongoose");
 
+
+
+
 export default function SingleUser({ match }) {
   const [user, setUser] = useState({})
   const [numImages, setNumImages] = useState([0]);
   const jwt = auth.isAuthenticated()
+  const [events,setEvents]=useState(false)
+  const [leads,setLeads]=useState(false)
+  const [posts,setPosts]=useState(false)
+  const [polls,setPolls]=useState(false)
+  const [rules,setRules]=useState(false)
+  const [purchases,setPurchases]=useState(false)
+  const [restrictions,setRestrictions]=useState(false)
+  const [rulesApproved,setRulesApproved]=useState(false)
+  const [restrictionsApproved,setRestrictionsApproved]=useState(false)
+
   const [values, setValues] = useState({
     name: '',
     password: '',
@@ -30,14 +43,6 @@ export default function SingleUser({ match }) {
     images:'',
     error:'',
     open: false,
-    events:'',
-    leads:'',
-    posts:'',
-    rules:'',
-    purchases:'',
-    restrictions:'',
-    rulesapproved:'',
-    restrictionsapproved:''
   })
   const selectedFile1 = React.useRef(null)
   const selectedFile2 = React.useRef(null)
@@ -80,16 +85,15 @@ export default function SingleUser({ match }) {
         .then(data=>{
           console.log("user",data.data)
           setUser(data.data)
-          setValues({
-            events:data.data.events,
-            leads:data.data.leads,
-            posts:data.data.posts,
-            rules:data.data.rules,
-            purchases:data.data.purchases,
-            restrictions:data.data.restrictions,
-            rulesapproved:data.data.rulesapproved,
-            restrictionsapproved:data.data.restrictionsapproved
-          })
+          setEvents(data.data.events)
+          setLeads(data.data.leads)
+          setPosts(data.data.posts)
+          setPolls(data.data.polls)
+          setRules(data.data.rules)
+          setPurchases(data.data.purchases)
+          setRestrictions(data.data.restriction)
+          setRulesApproved(data.data.rulesapproved)
+          setRestrictionsApproved(data.data.restrictionsapproved)
         })
   }
 
@@ -173,8 +177,18 @@ console.log(youtubevids)
       expertise: values.expertise || undefined,
       rates:values.rates || undefined,
       images:imageids,
-      password: values.password || undefined
+      password: values.password || undefined,
+      events:events,
+      leads:leads,
+      posts:posts,
+      polls:polls,
+      rules:rules,
+      purchases:purchases,
+      restriction:restrictions,
+      rulesapproved:rulesApproved,
+      restrictionsapproved:restrictionsApproved
     }
+
     console.log(user)
 setUser(newuser)
 
@@ -191,6 +205,7 @@ setUser(newuser)
 
 
     const handleChange = name => event => {
+      console.log(values)
       setValues({ ...values, [name]: event.target.value })
     }
 
@@ -231,7 +246,7 @@ setUser(newuser)
 
       {(auth.isAuthenticated()&&auth.isAuthenticated().user._id==match.params.userId)&&(
         <div className="signupform">
-        <div  style={{position: "static",  zIndex: -2}}  className="innersignupform">
+        <div  style={{position: "static"}}  className="innersignupform">
           <h1 style={{textAlign:"center"}}>
             Edit Listing
           </h1>
@@ -240,36 +255,132 @@ setUser(newuser)
           </div>
 
           <div className="signininput">
-          <h5 style={{marginRight:"1vw"}} className="ruletext">Email </h5><input id="email" placeHolder={user.email} type="email" label="Email"  value={values.email} onChange={handleChange('email')} margin="normal"/>
+          <h5 style={{marginRight:"1vw",textAlign:"left"}} className="ruletext">Email </h5><input id="email" placeHolder={user.email} type="email" label="Email"  value={values.email} onChange={handleChange('email')} margin="normal"/>
           </div>
 
           <div className="signininput">
-          <h5 style={{marginRight:"1vw"}} className="ruletext">Website </h5><input id="website" placeHolder={user.website} type="website" label="website" value={values.website} onChange={handleChange('website')} margin="normal"/>
+          <h5 style={{marginRight:"1vw",textAlign:"left"}} className="ruletext">Website </h5><input id="website" placeHolder={user.website} type="website" label="website" value={values.website} onChange={handleChange('website')} margin="normal"/>
           </div>
 
           <div className="signininput">
-          <h5 style={{marginRight:"1vw"}} className="ruletext">Youtube Channel </h5><input id="youtube" placeHolder={user.youtube} type="youtube" label="youtube" value={values.youtube} onChange={handleChange('youtube')} margin="normal"/>
+          <h5 style={{marginRight:"1vw",textAlign:"left"}} className="ruletext">Youtube Channel </h5><input id="youtube" placeHolder={user.youtube} type="youtube" label="youtube" value={values.youtube} onChange={handleChange('youtube')} margin="normal"/>
           </div>
 
           <div className="signininput">
-          <h5 style={{marginRight:"1vw"}} className="ruletext">Promotional Youtube Videos </h5><input id="promovideos" placeHolder={user.promovideos} type="promovideos" label="promotional videos, please add youtube url links separated by a comma" value={values.promovideos} onChange={handleChange('promovideos')} margin="normal"/>
+          <h5 style={{marginRight:"1vw",textAlign:"left"}} className="ruletext">Promotional Youtube Videos </h5><input id="promovideos" placeHolder={user.promovideos} type="promovideos" label="promotional videos, please add youtube url links separated by a comma" value={values.promovideos} onChange={handleChange('promovideos')} margin="normal"/>
           </div>
 
           <div className="signininput">
-          <h5 className="ruletext">Expertise </h5><input id="expertise" placeHolder={user.expertise} type="expertise" label="expertise" value={values.expertise} onChange={handleChange('expertise')} margin="normal"/>
+          <h5 className="ruletext" style={{marginRight:"1vw",textAlign:"left"}}>Expertise </h5><input id="expertise" placeHolder={user.expertise} type="expertise" label="expertise" value={values.expertise} onChange={handleChange('expertise')} margin="normal"/>
           </div>
 
           <div className="signininput">
-          <h5 style={{marginRight:"1vw"}} className="ruletext">Password </h5><input id="password" placeHolder={user.password} type="password" label="Password" value={values.password} onChange={handleChange('password')} margin="normal"/>
+          <h5 style={{marginRight:"1vw",textAlign:"left"}} className="ruletext">Password </h5><input id="password" placeHolder={user.password} type="password" label="Password" value={values.password} onChange={handleChange('password')} margin="normal"/>
           </div>
 
           <div className="signininput">
-          <h5 style={{marginRight:"1vw"}} className="ruletext">Performance Description </h5><input id="performancedescription" placeHolder={user.performancedescription} type="performancedescription" label="Performance Description" value={values.performancedescription} onChange={handleChange('performancedescription')} margin="normal"/>
+          <h5 style={{marginRight:"1vw",textAlign:"left"}} className="ruletext">Performance Description </h5><input id="performancedescription" placeHolder={user.performancedescription} type="performancedescription" label="Performance Description" value={values.performancedescription} onChange={handleChange('performancedescription')} margin="normal"/>
           </div>
 
           <div className="signininput">
-          <h5 style={{marginRight:"1vw"}} className="ruletext">Rates </h5><input id="rates" placeHolder={user.rates} type="rates" label="Rates" value={values.rates} onChange={handleChange('rates')} margin="normal"/>
+          <h5 style={{marginRight:"1vw",textAlign:"left"}} className="ruletext">Rates </h5><input id="rates" placeHolder={user.rates} type="rates" label="Rates" value={values.rates} onChange={handleChange('rates')} margin="normal"/>
           </div>
+
+<h4>Tick the boxes below to recieve email notifications about new suggestions. At least 10% of members must have voted for something before notifications will be sent in order to help prevent individuals from spamming everyone. </h4>
+
+          <input
+       type="checkbox"
+       style={{width:"1vw"}}
+       checked={events}
+       onChange={e => {
+         console.log(e.target.value)
+         setEvents(e.target.checked)}}
+     />
+     <h5 style={{marginRight:"1vw"}}  className="ruletext">Events </h5>
+     <input
+  type="checkbox"
+   style={{width:"1vw"}}
+  checked={leads}
+  onChange={e => {
+    console.log(e.target.value)
+    setLeads(e.target.checked)}}
+/>
+<h5 style={{marginRight:"1vw"}}  className="ruletext">Leads </h5>
+
+<input
+type="checkbox"
+ style={{width:"1vw"}}
+checked={posts}
+onChange={e => {
+console.log(e.target.value)
+setPosts(e.target.checked)}}
+/>
+<h5 style={{marginRight:"1vw"}} className="ruletext">Posts </h5>
+
+<input
+type="checkbox"
+ style={{width:"1vw"}}
+checked={polls}
+onChange={e => {
+console.log(e.target.value)
+setPolls(e.target.checked)}}
+/>
+<h5 style={{marginRight:"1vw"}} className="ruletext">Polls </h5>
+
+<input
+type="checkbox"
+ style={{width:"1vw"}}
+checked={rules}
+onChange={e => {
+console.log(e.target.value)
+setRules(e.target.checked)}}
+/>
+<h5 style={{marginRight:"1vw"}} className="ruletext">Rules </h5>
+
+<input
+type="checkbox"
+ style={{width:"1vw"}}
+checked={purchases}
+onChange={e => {
+console.log(e.target.value)
+setPurchases(e.target.checked)}}
+/>
+<h5 style={{marginRight:"1vw"}} className="ruletext">Purchases </h5>
+
+<input
+type="checkbox"
+style={{width:"1vw"}}
+checked={restrictions}
+onChange={e => {
+console.log(e.target.value)
+setRestrictions(e.target.checked)}}
+/>
+<h5 style={{marginRight:"1vw"}} className="ruletext">Restrictions </h5>
+
+
+<h4>Tick the boxes below to recieve email notifications when new rules or restrictions for particular uses recieve approval from above 75% of the members</h4>
+<input
+type="checkbox"
+ style={{width:"1vw"}}
+checked={rulesApproved}
+onChange={e => {
+console.log(e.target.value)
+setRulesApproved(e.target.checked)}}
+/>
+<h5 style={{marginRight:"1vw"}} className="ruletext">Rule Approval </h5>
+
+
+<input
+type="checkbox"
+ style={{width:"1vw"}}
+checked={restrictionsApproved}
+onChange={e => {
+console.log(e.target.value)
+setRestrictionsApproved(e.target.checked)}}
+/>
+<h5 style={{marginRight:"1vw"}} className="ruletext">Restriction Approval </h5>
+
+
 
           <div className="signininput" style={{display:((numImages.length>=1)?"block":"none")}}>
           <input style={{width:"100%"}} id="file" type="file" ref={selectedFile1}/>
@@ -292,11 +403,8 @@ setUser(newuser)
           <p>Max 5 images</p>
           </div>
 
-          <button style={{marginLeft:"30%"}} onClick={(e) => extraImage(e)}>Add Extra Image</button>
+          <button onClick={(e) => extraImage(e)}>Add Extra Image</button>
           <button onClick={(e) => lessImage(e)}>One Less Image</button>
-
-
-
           <button id="submit" onClick={clickSubmit}>Submit</button>
         </div>
         </div>

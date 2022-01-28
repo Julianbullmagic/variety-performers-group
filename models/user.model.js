@@ -15,12 +15,14 @@ const userSchema = new mongoose.Schema({
     match: [/.+\@.+\..+/, 'Please fill a valid email address'],
     required: 'Email is required'
   },
+  recentprivatemessages: [{type: mongoose.Schema.ObjectId, ref: 'Chat'}],
   phone:Number,
   active:{
     type:Boolean,
     default: true
   },
   signins:[Number],
+  jobtitle:String,
   expertise:String,
   website:String,
   youtube:String,
@@ -67,31 +69,35 @@ const userSchema = new mongoose.Schema({
   },
   leads:{
     type: Boolean,
-    default: false
+    default: true
   },
   posts:{
     type: Boolean,
     default: false
   },
-  rules:{
+  polls:{
     type: Boolean,
     default: false
+  },
+  rules:{
+    type: Boolean,
+    default: true
   },
   purchases:{
     type: Boolean,
     default: false
   },
-  restrictions:{
+  restriction:{
     type: Boolean,
-    default: false
+    default: true
   },
   rulesapproved:{
     type: Boolean,
-    default: false
+    default: true
   },
   restrictionsapproved:{
     type: Boolean,
-    default: false
+    default: true
   },
 })
 

@@ -236,18 +236,111 @@ app.post("/api/chat/uploadfiles", auth ,(req, res) => {
   })
 });
 
+var users={}
+
+
 io.on("connection", socket => {
+
+
+ //  socket.on('disconnect', function () {
+ //     console.log("disconnecting",socket.id)
+ //     console.log(users)
+ //     for (let x in users){
+ //       if(users[`${x}`]==socket.id){
+ //         delete users[`${x}`]
+ //       }
+ //     }
+ //     console.log(users)
+ // });
+
+
+
+  socket.on("new user",function(data){
+
+      socket.name=data
+      console.log("NEW USER",data)
+        users[`${socket.name}`]=socket.id
+      console.log("new room",data.toString())
+      let da=data
+      socket.join(data)
+      console.log(io.sockets.adapter.rooms)
+
+  })
+
+
+  socket.on("join room",async function(room){
+    console.log("join room!",room.userName)
+    socket.join(room.room);
+
+    let us=room.userName
+    socket.join(us)
+    console.log(io.sockets.adapter.rooms)
+
+    let user = await User.findById(room.userId).populate('recentprivatemessages').exec()
+    let result = user.recentprivatemessages.filter(us =>!(us.sender==room.recipientId));
+    let chatids=result.map(item=>item._id)
+    let usertwo = await User.findByIdAndUpdate(room.userId,{recentprivatemessages:chatids},{new:true}).exec()
+    user.recentprivatemessages=result
+    io.to(socket.id).emit("Joined Room", user);
+  })
+
+
+  socket.on("Input Chat Message To User", msg => {
+console.log("IMPUTTING MESSAGE TO USER")
+    connect.then(db => {
+      try {
+        var d = new Date();
+        var n = d.getTime();
+        console.log("message",msg)
+          var chat = new Chat({ message: msg.chatMessage, sender:msg.userId, type: msg.type,recipient:msg.recipient._id,timecreated:n })
+
+
+  console.log("chat",chat)
+          chat.save((err, doc) => {
+            console.log("error",err)
+            console.log(doc)
+            if(err) return res.json({ success: false, err });
+
+
+console.log("MSG RECIPIENT!!!!!!!!!",msg.recipient._id)
+            User.findByIdAndUpdate(msg.recipient._id,{$push : {
+            recentprivatemessages:doc._id
+            }}).exec(function(err,docs){
+              if(err){
+                      console.log(err);
+                  }else{
+                      console.log(docs)
+            }
+             })
+
+
+
+            Chat.find({ "_id": doc._id })
+            .populate('sender')
+            .exec((err, doc)=> {
+              let doccopy=JSON.parse(JSON.stringify(doc[0]))
+              let sender=doc[0][`sender`][`_id`]
+              doccopy.sender=sender
+              console.log("SENDER",doccopy)
+              io.emit("Output pm", doccopy);
+              return io.to(msg.room).emit("Output Chat Message", doc);
+            })
+          })
+      } catch (error) {
+        console.error(error);
+      }
+    })
+   })
+
 
   socket.on("Input Chat Message", msg => {
 
     connect.then(db => {
       try {
         console.log("message",msg)
-        if(msg.recipient){
-          var chat = new Chat({ message: msg.chatMessage, sender:msg.userId, type: msg.type,recipient:msg.recipient })
-        }else{
-          var chat = new Chat({ message: msg.chatMessage, sender:msg.userId, type: msg.type })
-        }
+        var d = new Date();
+        var n = d.getTime();
+          var chat = new Chat({ message: msg.chatMessage, sender:msg.userId, type: msg.type,timecreated:n })
 
 
 console.log("chat",chat)

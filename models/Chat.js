@@ -8,13 +8,11 @@ const chatSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
-    recipient:{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
-    },
+    recipient:String,
     type: {
         type: String
-    }
+    },
+    timecreated:Number,
 }, { timestamps: true });
 
 const Chat = mongoose.model('Chat', chatSchema);

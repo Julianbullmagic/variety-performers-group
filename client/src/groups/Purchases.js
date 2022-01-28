@@ -218,8 +218,12 @@ this.setState({currentPageData:current})
        this.setState({currentPageData:current})
 
            console.log("sending rule notification",this.state.users)
-           let emails=this.state.users.map(item=>{return item.email})
-
+           let userscopy=JSON.parse(JSON.stringify(this.state.users))
+           console.log(userscopy.length)
+           userscopy=userscopy.filter(user=>user.purchases)
+           let emails=userscopy.map(item=>{return item.email})
+           console.log(emails)
+           console.log(emails.length)
 
            console.log(emails)
              let notification={

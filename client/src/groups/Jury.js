@@ -387,8 +387,16 @@ restrictionPollApprovedNotification(item)
            setCurrentPageData(current)
 
                console.log("sending rule notification",props.users)
-               let emails=props.users.map(item=>{return item.email})
+               let userscopy=JSON.parse(JSON.stringify(props.users))
 
+               console.log(userscopy.length)
+
+
+               userscopy=userscopy.filter(user=>user.restriction)
+
+               let emails=userscopy.map(item=>{return item.email})
+               console.log(emails)
+               console.log(emails.length)
 
                console.log(emails)
                  let notification={
@@ -446,7 +454,16 @@ restrictionPollApprovedNotification(item)
             console.log(current)
             setCurrentPageData(current)
 
-                let emails=props.users.map(item=>{return item.email})
+            let userscopy=JSON.parse(JSON.stringify(props.users))
+
+            console.log(userscopy.length)
+
+
+            userscopy=userscopy.filter(user=>user.restrictionsapproved)
+
+            let emails=userscopy.map(item=>{return item.email})
+            console.log(emails)
+            console.log(emails.length)
 
                 console.log(emails)
                   let notification={

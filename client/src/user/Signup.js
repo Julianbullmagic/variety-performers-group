@@ -50,7 +50,10 @@ export default function Signup (){
   const [loading,setLoading]=useState(false);
   const [values, setValues] = useState({
     name: '',
+    jobtitle:'',
     password: '',
+    passwordtwo:'',
+    passworderror:false,
     email: '',
     phone:'',
     expertise:'',
@@ -70,6 +73,7 @@ export default function Signup (){
   const selectedFile5 = React.useRef(null)
   let server = "http://localhost:5000";
   let socket = io(server);
+
 
 
   useEffect(()=>{
@@ -102,100 +106,123 @@ export default function Signup (){
 
 
   async function createUser(){
-    setLoading(true)
-    var userId=mongoose.Types.ObjectId()
 
+
+    if(!(values.password==values.passwordtwo)){
+      setValues({ ...values, passworderror:true})
+
+    }
     let youtubevids=values.promovideos.split(",")
-    youtubevids=youtubevids.map(item=>{
-      let x=item.split("=")
-      console.log(x)
-      return (
-        x[1]
-    )})
+    let notallyoutub=false
+    for (let vid of youtubevids){
+      if (!vid.includes("youtube")){
+        notallyoutub=true
+      }
+    }
+    if(notallyoutub){
+      setValues({ ...values, passworderror:true})
+    }
+console.log(values.passworderror)
+    if((values.password==values.passwordtwo)&&!notallyoutub){
+      setValues({ ...values, passworderror:false})
+
+      setLoading(true)
+      var userId=mongoose.Types.ObjectId()
 
       youtubevids=youtubevids.map(item=>{
-        return(
-          "https://www.youtube.com/embed/"+item
-        )
-      })
-      console.log(youtubevids)
+        let x=item.split("=")
+        console.log(x)
+        return (
+          x[1]
+      )})
 
-    let imageids=[]
-    console.log(selectedFile1.current.files[0],selectedFile2.current.files[0],
-      selectedFile3.current.files[0],selectedFile4.current.files[0],selectedFile5.current.files[0])
-  if(selectedFile1.current.files[0]){
-    const formData = new FormData();
-  formData.append('file', selectedFile1.current.files[0]);
-  formData.append("upload_preset", "jvm6p9qv");
-  await Axios.post("https://api.cloudinary.com/v1_1/julianbullmagic/image/upload",formData)
-  .then(response => {
-    console.log("cloudinary response",response)
-    imageids.push(response.data.public_id)
-  })}
+        youtubevids=youtubevids.map(item=>{
+          return(
+            "https://www.youtube.com/embed/"+item
+          )
+        })
+        console.log(youtubevids)
 
-  if(selectedFile2.current.files[0]){const formData = new FormData();
-  formData.append('file', selectedFile2.current.files[0]);
-  formData.append("upload_preset", "jvm6p9qv");
-  await Axios.post("https://api.cloudinary.com/v1_1/julianbullmagic/image/upload",formData)
-  .then(response => {
-    console.log("cloudinary response",response)
-    imageids.push(response.data.public_id)
-  })}
+      let imageids=[]
+      console.log(selectedFile1.current.files[0],selectedFile2.current.files[0],
+        selectedFile3.current.files[0],selectedFile4.current.files[0],selectedFile5.current.files[0])
+    if(selectedFile1.current.files[0]){
+      const formData = new FormData();
+    formData.append('file', selectedFile1.current.files[0]);
+    formData.append("upload_preset", "jvm6p9qv");
+    await Axios.post("https://api.cloudinary.com/v1_1/julianbullmagic/image/upload",formData)
+    .then(response => {
+      console.log("cloudinary response",response)
+      imageids.push(response.data.public_id)
+    })}
 
-  if(selectedFile3.current.files[0]){const formData = new FormData();
-  formData.append('file', selectedFile3.current.files[0]);
-  formData.append("upload_preset", "jvm6p9qv");
-  await Axios.post("https://api.cloudinary.com/v1_1/julianbullmagic/image/upload",formData)
-  .then(response => {
-    console.log("cloudinary response",response)
-    imageids.push(response.data.public_id)
-  })}
+    if(selectedFile2.current.files[0]){const formData = new FormData();
+    formData.append('file', selectedFile2.current.files[0]);
+    formData.append("upload_preset", "jvm6p9qv");
+    await Axios.post("https://api.cloudinary.com/v1_1/julianbullmagic/image/upload",formData)
+    .then(response => {
+      console.log("cloudinary response",response)
+      imageids.push(response.data.public_id)
+    })}
 
-  if(selectedFile4.current.files[0]){const formData = new FormData();
-  formData.append('file', selectedFile4.current.files[0]);
-  formData.append("upload_preset", "jvm6p9qv");
-  await Axios.post("https://api.cloudinary.com/v1_1/julianbullmagic/image/upload",formData)
-  .then(response => {
-    console.log("cloudinary response",response)
-    imageids.push(response.data.public_id)
-  })}
+    if(selectedFile3.current.files[0]){const formData = new FormData();
+    formData.append('file', selectedFile3.current.files[0]);
+    formData.append("upload_preset", "jvm6p9qv");
+    await Axios.post("https://api.cloudinary.com/v1_1/julianbullmagic/image/upload",formData)
+    .then(response => {
+      console.log("cloudinary response",response)
+      imageids.push(response.data.public_id)
+    })}
 
-  if(selectedFile5.current.files[0]){const formData = new FormData();
-  formData.append('file', selectedFile5.current.files[0]);
-  formData.append("upload_preset", "jvm6p9qv");
-  await Axios.post("https://api.cloudinary.com/v1_1/julianbullmagic/image/upload",formData)
-  .then(response => {
-    console.log("cloudinary response",response)
-    imageids.push(response.data.public_id)
-  })}
+    if(selectedFile4.current.files[0]){const formData = new FormData();
+    formData.append('file', selectedFile4.current.files[0]);
+    formData.append("upload_preset", "jvm6p9qv");
+    await Axios.post("https://api.cloudinary.com/v1_1/julianbullmagic/image/upload",formData)
+    .then(response => {
+      console.log("cloudinary response",response)
+      imageids.push(response.data.public_id)
+    })}
 
-  console.log("imageids",imageids)
+    if(selectedFile5.current.files[0]){const formData = new FormData();
+    formData.append('file', selectedFile5.current.files[0]);
+    formData.append("upload_preset", "jvm6p9qv");
+    await Axios.post("https://api.cloudinary.com/v1_1/julianbullmagic/image/upload",formData)
+    .then(response => {
+      console.log("cloudinary response",response)
+      imageids.push(response.data.public_id)
+    })}
+
+    console.log("imageids",imageids)
 
 
-    const user = {
-      _id:userId,
-      name: values.name || undefined,
-      phone: values.phone || undefined,
-      email: values.email || undefined,
-      website: values.website||undefined,
-      youtube: values.youtube||undefined,
-      promovideos:  youtubevids||undefined,
-      performancedescription:values.performancedescription||undefined,
-      expertise: values.expertise || undefined,
-      rates:values.rates || undefined,
-      images:imageids,
-      password: values.password || undefined
-    }
-    console.log(user)
-    create(user).then((data) => {
-      if (data.error) {
-        setValues({ ...values, error: data.error})
-      } else {
-        setValues({ ...values, error: '', open: true})
+      const user = {
+        _id:userId,
+        jobtitle: values.jobtitle || undefined,
+        name: values.name || undefined,
+        phone: values.phone || undefined,
+        email: values.email || undefined,
+        website: values.website||undefined,
+        youtube: values.youtube||undefined,
+        promovideos:  youtubevids||undefined,
+        performancedescription:values.performancedescription||undefined,
+        expertise: values.expertise || undefined,
+        rates:values.rates || undefined,
+        images:imageids,
+        password: values.password || undefined
       }
-    })
+      console.log(user)
 
-    setLoading(false)
+      create(user).then((data) => {
+        if (data.error) {
+          setValues({ ...values, error: data.error})
+        } else {
+          setValues({ ...values, error: '', open: true})
+        }
+      })
+
+      setLoading(false)
+
+    }
 
   }
 
@@ -207,6 +234,14 @@ export default function Signup (){
     const clickSubmit = (e) => {
           createUser()
     }
+
+      let youtubevideos=values.promovideos.split(",")
+      let notallyoutube=false
+      for (let vid of youtubevideos){
+        if (!vid.includes("youtube")){
+          notallyoutube=true
+        }
+      }
 
     return (
 
@@ -225,8 +260,9 @@ export default function Signup (){
           <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Website </h5><input id="website" placeHolder={values.website} type="website" label="website" value={values.website} onChange={handleChange('website')} margin="normal"/></div>
           <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Youtube Channel </h5><input id="youtube" placeHolder={values.youtube} type="youtube" label="youtube" value={values.youtube} onChange={handleChange('youtube')} margin="normal"/></div>
           <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Promo Videos, separate youtube video link urls with a comma </h5><input id="promovideos" placeHolder={values.promovideos} type="promovideos" label="promotional videos, please add youtube url links separated by a comma" value={values.promovideos} onChange={handleChange('promovideos')} margin="normal"/></div>
+          {(notallyoutube&&!values.promovideos=="")&&<h5 style={{marginRight:"1vw",color:"red"}} className="ruletext">Includes links that are not for Youtube</h5>}
+          <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Job Title </h5><input id="job title" type="job title" placeHolder={values.jobtitle} label="job title" value={values.jobtitle} onChange={handleChange('jobtitle')} margin="normal"/></div>
           <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Expertise </h5><input id="expertise" type="expertise" placeHolder={values.expertise} label="expertise" value={values.expertise} onChange={handleChange('expertise')} margin="normal"/></div>
-          <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Password </h5><input id="password" type="password" placeHolder={values.password} label="Password" value={values.password} onChange={handleChange('password')} margin="normal"/></div>
           <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Performance Description </h5><input id="performancedescription" placeHolder={values.performancedescription} type="performancedescription" label="Performance Description"  value={values.performancedescription} onChange={handleChange('performancedescription')} margin="normal"/></div>
           <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Rates, if you have several different services you may put a variety of different rates </h5><input id="rates" placeHolder={values.rates} type="rates" label="Rates"  value={values.rates} onChange={handleChange('rates')} margin="normal"/></div>
 
@@ -251,6 +287,13 @@ export default function Signup (){
           <input style={{width:"90%"}} id="file" type="file" ref={selectedFile5}/>
           <p>Max 5 images</p>
           </div>
+
+          <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Password </h5><input id="password" type="password" placeHolder={values.password} label="Password" value={values.password} onChange={handleChange('password')} margin="normal"/></div>
+          <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Confirm Password </h5><input id="passwordtwo" type="password" placeHolder={values.passwordtwo} label="Confirm Password" value={values.passwordtwo} onChange={handleChange('passwordtwo')} margin="normal"/></div>
+          {(!(values.password==values.passwordtwo)&&!(values.passwordtwo==""))&&<h5 style={{marginRight:"1vw",color:"red"}} className="ruletext">Passwords Do Not Match</h5>}
+          {(values.passworderror&&notallyoutube)&&<h5 style={{marginRight:"1vw",color:"red"}} className="ruletext">Cannot Submit, Must Fix Errors</h5>}
+
+          {(values.passworderror&&(!(values.password==values.passwordtwo)&&!(values.passwordtwo=="")))&&<h5 style={{marginRight:"1vw",color:"red"}} className="ruletext">Cannot Submit, Must Fix Errors</h5>}
           <button style={{marginLeft:"30%"}} onClick={(e) => extraImage(e)}>Add Extra Image</button>
           <button onClick={(e) => lessImage(e)}>One Less Image</button>
           <button id="submit" onClick={clickSubmit}>Submit</button>
