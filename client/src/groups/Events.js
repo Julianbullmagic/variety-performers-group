@@ -361,14 +361,15 @@ console.log("EVENT!",item,this.props.users)
       <h2>Propose an Event</h2>
       <CreateEventForm updateEvents={this.updateEvents}/>
       <h2><strong>Group Events </strong></h2>
-      <h4 style={{display:"inline"}}>Choose Page</h4>
+      {(this.state.pageNum&&this.state.events.length>10)&&<h4 style={{display:"inline"}}>Choose Page</h4>}
 {(this.state.pageNum&&this.state.events)&&this.state.pageNum.map(item=>{
         return (<>
           <button style={{display:"inline"}} onClick={(e) => this.decidePage(e,item)}>{item}</button>
           </>)
       })}
       {eventscomponent}
-      <h4 style={{display:"inline"}}>Choose Page</h4>
+          {(this.state.pageNum&&this.state.events.length>10)&&<h4 style={{display:"inline"}}>Choose Page</h4>}
+
 {(this.state.pageNum&&this.state.events)&&this.state.pageNum.map(item=>{
         return (<>
           <button style={{display:"inline"}} onClick={(e) => this.decidePage(e,item)}>{item}</button>

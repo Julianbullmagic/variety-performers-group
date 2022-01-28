@@ -414,14 +414,14 @@ if (this.state.rules){
       <CreateRuleForm updateRules={this.updateRules}/>
       <h2>Group Rules</h2>
       <p>Rules that have less than 75% approval and are more than a week old will be deleted</p>
-      <h4 style={{display:"inline"}}>Choose Page</h4>
+      {(this.state.pageNum&&this.state.rules.length>10)&&<h4 style={{display:"inline"}}>Choose Page</h4>}
 {(this.state.pageNum&&this.state.rules)&&this.state.pageNum.map(item=>{
         return (<>
           <button style={{display:"inline"}} onClick={(e) => this.decidePage(e,item)}>{item}</button>
           </>)
       })}
       {rulescomponent}
-      <h4 style={{display:"inline"}}>Choose Page</h4>
+      {(this.state.pageNum&&this.state.rules.length>10)&&<h4 style={{display:"inline"}}>Choose Page</h4>}
 {(this.state.pageNum&&this.state.rules)&&this.state.pageNum.map(item=>{
         return (<>
           <button style={{display:"inline"}} onClick={(e) => this.decidePage(e,item)}>{item}</button>

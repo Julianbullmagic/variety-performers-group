@@ -270,14 +270,14 @@ var pollsmapped=currentPageData.map((item,i)=>{
       <textarea ref={pollquestion} id="story" rows="5"/>
         </form>
         </div>
-        <h4 style={{display:"inline"}}>Choose Page</h4>
+          {(pageNum&&polls.length>10)&&<h4 style={{display:"inline"}}>Choose Page</h4>}
         {(pageNum&&polls)&&pageNum.map(item=>{
           return (<>
             <button style={{display:"inline"}} onClick={(e) => decidePage(e,item)}>{item}</button>
             </>)
         })}
         {pollsmapped}
-        <h4 style={{display:"inline"}}>Choose Page</h4>
+        {(pageNum&&polls.length>10)&&  <h4 style={{display:"inline"}}>Choose Page</h4>}
         {(pageNum&&polls)&&pageNum.map(item=>{
           return (<>
             <button style={{display:"inline"}} onClick={(e) => decidePage(e,item)}>{item}</button>

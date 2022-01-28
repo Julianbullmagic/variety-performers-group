@@ -337,14 +337,14 @@ this.setState({currentPageData:current})
       <h2>Suggest a group purchase</h2>
       <CreatePurchaseForm updatePurchases={this.updatePurchases}/>
       <h2><strong>Possible Purchases </strong></h2>
-      <h4 style={{display:"inline"}}>Choose Page</h4>
+      {(this.state.pageNum&&this.state.purchases.length>10)&&<h4 style={{display:"inline"}}>Choose Page</h4>}
 {(this.state.pageNum&&this.state.purchases)&&this.state.pageNum.map(item=>{
         return (<>
           <button style={{display:"inline"}} onClick={(e) => this.decidePage(e,item)}>{item}</button>
           </>)
       })}
       {purchasescomponent}
-      <h4 style={{display:"inline"}}>Choose Page</h4>
+    {(this.state.pageNum&&this.state.purchases.length>10)&&  <h4 style={{display:"inline"}}>Choose Page</h4>}
 {(this.state.pageNum&&this.state.purchases)&&this.state.pageNum.map(item=>{
         return (<>
           <button style={{display:"inline"}} onClick={(e) => this.decidePage(e,item)}>{item}</button>

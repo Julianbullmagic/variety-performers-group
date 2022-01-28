@@ -311,6 +311,7 @@ select:focus{
   border-width:5px;
   margin-top:1vw;
   padding:0.5vw;
+  transition:height 2s;
 }
 
 .ruletext{

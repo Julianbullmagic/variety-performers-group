@@ -153,7 +153,12 @@ for (let item of comments){
   }
 }
 
-
+for (let user of users){
+  let created=new Date(user.created).getTime()
+  if (n-created>2629800000&&!user.approvedMember){
+    Users.findByIdAndDelete(user._id).exec()
+  }
+}
 
 
 for (let user of users){

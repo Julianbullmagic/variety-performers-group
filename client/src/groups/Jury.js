@@ -599,14 +599,14 @@ restrictionPollApprovedNotification(item)
           </div>
 
 
-        <h4 style={{display:"inline"}}>Choose Page</h4>
+        {(pageNum&&restrictionPolls.length>10)&&<h4 style={{display:"inline"}}>Choose Page</h4>}
         {(pageNum&&restrictionPolls)&&pageNum.map(item=>{
           return (<>
             <button style={{display:"inline"}} onClick={(e) => decidePage(e,item)}>{item}</button>
             </>)
         })}
         {restrictionpollsmapped}
-        <h4 style={{display:"inline"}}>Choose Page</h4>
+        {(pageNum&&restrictionPolls.length>10)&&<h4 style={{display:"inline"}}>Choose Page</h4>}
         {(pageNum&&restrictionPolls)&&pageNum.map(item=>{
           return (<>
             <button style={{display:"inline"}} onClick={(e) => decidePage(e,item)}>{item}</button>

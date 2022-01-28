@@ -307,7 +307,7 @@ console.log(values.passworderror)
           <DialogTitle>New Account</DialogTitle>
           <DialogContent>
             <DialogContentText>
-              New account successfully created.
+              New account successfully created. Existing members will need to vote to approve your membership.
             </DialogContentText>
           </DialogContent>
           <DialogActions>

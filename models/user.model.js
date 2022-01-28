@@ -26,6 +26,10 @@ const userSchema = new mongoose.Schema({
   expertise:String,
   website:String,
   youtube:String,
+  approvedmember: {
+    type: Boolean,
+    default: false
+  },
   promovideos:[String],
   performancedescription:String,
   rates:String,
@@ -43,6 +47,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     trim: true
   },
+  approval:[{type: mongoose.Schema.ObjectId, ref: 'User'}],
   photo: {
     data: Buffer,
     contentType: String
@@ -99,6 +104,10 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: true
   },
+  newmember:{
+    type: Boolean,
+    default: false
+  }
 })
 
 userSchema.plugin(random)

@@ -324,7 +324,7 @@ if (item.preview){
         </form>
 
         </div>
-        <h4 style={{display:"inline"}}>Choose Page</h4>
+              {(posts.length>10)&&<h4 style={{display:"inline"}}>Choose Page</h4>}
         {(pageNum&&posts)&&pageNum.map(item=>{
           return (<>
             <button style={{display:"inline"}} onClick={(e) => decidePage(e,item)}>{item}</button>
@@ -332,7 +332,7 @@ if (item.preview){
         })}
         {postsmapped}
         <div style={{marginBottom:"5vw"}}>
-        <h4 style={{display:"inline"}}>Choose Page</h4>
+        {(posts.length>10)&&<h4 style={{display:"inline"}}>Choose Page</h4>}
         {(pageNum&&posts)&&pageNum.map(item=>{
           return (<>
             <button style={{display:"inline"}} onClick={(e) => decidePage(e,item)}>{item}</button>

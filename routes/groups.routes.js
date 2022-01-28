@@ -77,6 +77,35 @@ router.put("/removerestrictionfromuser/:user/:restriction", (req, res, next) => 
    })
 })
 
+router.route('/approveofnewmember/:newMemberId/:userId').put((req, res) => {
+  let newMemberId = req.params.newMemberId
+  let userId = req.params.userId;
+  console.log(newMemberId,userId)
+
+  User.findByIdAndUpdate(newMemberId, {$push : {
+  approval:userId
+}}).exec()
+})
+
+router.route('/withdrawapprovalofnewmember/:newMemberId/:userId').put((req, res) => {
+  let newMemberId = req.params.newMemberId
+  let userId = req.params.userId;
+  console.log(newMemberId,userId)
+
+  User.findByIdAndUpdate(newMemberId, {$pull : {
+  approval:userId
+}}).exec()
+})
+
+router.route('/newmemberapproved/:newMemberId').put((req, res) => {
+  console.log("approving new member")
+  let newMemberId = req.params.newMemberId
+  console.log(newMemberId)
+  User.findByIdAndUpdate(newMemberId,{
+  approvedmember:true
+}).exec()
+})
+
 router.get("/findreviews/:groupId/:userId", (req, res, next) => {
   console.log("ids in server",req.params.userId)
 

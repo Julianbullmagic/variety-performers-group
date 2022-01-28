@@ -197,14 +197,14 @@ console.log("adding view",id,auth.isAuthenticated().user._id)
       <br/>
       {this.state.users&&<CreateLeadForm updateLeads={this.updateLeads} users={this.state.users}/>}
       <h2><strong>Gig Leads </strong></h2>
-      <h4 style={{display:"inline"}}>Choose Page</h4>
+    {(this.state.pageNum&&this.state.leads.length>10)&&  <h4 style={{display:"inline"}}>Choose Page</h4>}
 {(this.state.pageNum&&this.state.leads)&&this.state.pageNum.map(item=>{
         return (<>
           <button style={{display:"inline"}} onClick={(e) => this.decidePage(e,item)}>{item}</button>
           </>)
       })}
       {leadscomponent}
-      <h4 style={{display:"inline"}}>Choose Page</h4>
+    {(this.state.pageNum&&this.state.leads.length>10)&&  <h4 style={{display:"inline"}}>Choose Page</h4>}
 {(this.state.pageNum&&this.state.leads)&&this.state.pageNum.map(item=>{
         return (<>
           <button style={{display:"inline"}} onClick={(e) => this.decidePage(e,item)}>{item}</button>

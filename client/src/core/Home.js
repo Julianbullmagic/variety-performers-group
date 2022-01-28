@@ -33,7 +33,9 @@ getGroupData()
         .then(response => response.json())
         .then(data=>{
           console.log("users",data)
-          setUsers(data)
+          let approvedusers=data.filter(user=>user.approvedmember)
+          console.log("APPROVED USERS",approvedusers)
+          setUsers(approvedusers)
         })
 
 
@@ -43,7 +45,7 @@ getGroupData()
       <>
       <div className="homepage">
       <div className="homepageexplanation">
-      <h3>!!!!!!!!!! We are a team of entertainers from Sydney. We perform at many different kinds of events, weddings, festivals, parties, functions. Our highly skilled and experienced entertainers
+      <h3>We are a team of entertainers from Sydney. We perform at many different kinds of events, weddings, festivals, parties, functions. Our highly skilled and experienced entertainers
       will keep you amazed and amused. We are an agency run by performers, allowing direct communication and better value for money. No middle men.</h3>
       </div>
       <div className="users">

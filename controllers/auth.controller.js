@@ -39,14 +39,18 @@ await User.findByIdAndUpdate(user._id,{$push: {signins: n}}).exec(function(err,d
     res.cookie("t", token, {
       expire: new Date() + 9999
     })
-
-    return res.json({
-      token,
-      user: {_id: user._id, name: user.name,coordinates:user.coordinates, email: user.email,events:user.events,
-        leads:user.leads,posts:user.posts,polls:user.polls,rules:user.rules,purchases:user.purchases,
-        restriction:user.restriction,rulesapproved:user.rulesapproved,restrictionsapproved:user.restrictionsapproved,
-        recentprivatemessages:user.recentprivatemessages}
-    })
+if(user.approvedmember){
+  return res.json({
+    token,
+    user: {_id: user._id, name: user.name,coordinates:user.coordinates, email: user.email,events:user.events,
+      leads:user.leads,posts:user.posts,polls:user.polls,rules:user.rules,purchases:user.purchases,
+      restriction:user.restriction,rulesapproved:user.rulesapproved,restrictionsapproved:user.restrictionsapproved,
+      recentprivatemessages:user.recentprivatemessages}
+  })
+}
+if(!user.approvedmember){
+  return res.json({message:"user not approved yet"})
+}
   } catch (err) {
     console.log(err)
     return res.status('401').json({

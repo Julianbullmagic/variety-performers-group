@@ -9,6 +9,7 @@ import Leads from './Leads'
 import Jury from './Jury'
 import Polls from './Polls'
 import Purchases from './Purchases'
+import NewMemberApproval from './NewMemberApproval'
 import ChatPage from "./../ChatPage/ChatPage"
 import Kmeans from 'node-kmeans';
 import {Image} from 'cloudinary-react'
@@ -32,6 +33,7 @@ class GroupPage extends Component {
              title:"",
              members:[],
              events:[],
+             approvedusers:[],
              associatedlocalgroups:[],
              rules: [],
              redirect: false,
@@ -92,8 +94,9 @@ class GroupPage extends Component {
                        }
                      }
                    }
-
-                   this.setState({users:data})
+                  let approvedusers=data.filter(user=>user.approvedmember)
+                  console.log("APPROVED USERS",approvedusers)
+                   this.setState({users:data,approvedusers:approvedusers})
                  })
 
 
@@ -109,7 +112,7 @@ class GroupPage extends Component {
       <br/>
       <div className="activememberscontainer">
       <h3 className="activemembers">Active Members</h3>
-      {this.state.users&&this.state.users.map(item=>{return(
+      {this.state.approvedusers&&this.state.approvedusers.map(item=>{return(
         <><button style={{display:"inline"}}><Link to={"/singleuser/" + item._id}>{item.name}</Link></button></>
       )})}</div>
       {this.state.users&&<>
@@ -121,37 +124,43 @@ class GroupPage extends Component {
            {!this.state.cannotseeevents&&<Tab>Events</Tab>}
            {!this.state.cannotparticipateingrouppurchases&&<Tab>Suggested Purchases</Tab>}
            {!this.state.cannotvoteinjury&&<Tab>Jury</Tab>}
+           <Tab>New Member Approval</Tab>
+
            </TabList>
 
 
 
 
         <TabPanel>
-         {!this.state.cannotpost&&<Newsfeed users={this.state.users}/>}
+         {!this.state.cannotpost&&<Newsfeed users={this.state.approvedusers}/>}
          </TabPanel>
          <TabPanel>
-         {!this.state.cannotcreatepolls&&<Polls users={this.state.users}/>}
+         {!this.state.cannotcreatepolls&&<Polls users={this.state.approvedusers}/>}
          </TabPanel>
          <TabPanel>
-         {!this.state.cannotseegigleads&&<Leads users={this.state.users}/>}
+         {!this.state.cannotseegigleads&&<Leads users={this.state.approvedusers}/>}
          </TabPanel>
          <TabPanel>
-         {!this.state.cannotsuggestrulesorvoteforrules&&<Rules users={this.state.users} />}
+         {!this.state.cannotsuggestrulesorvoteforrules&&<Rules users={this.state.approvedusers} />}
          </TabPanel>
          <TabPanel>
-         {!this.state.cannotseeevents&&<Events users={this.state.users}/>}
+         {!this.state.cannotseeevents&&<Events users={this.state.approvedusers}/>}
          </TabPanel>
          <TabPanel>
-         {!this.state.cannotparticipateingrouppurchases&&<Purchases users={this.state.users}/>}
+         {!this.state.cannotparticipateingrouppurchases&&<Purchases users={this.state.approvedusers}/>}
          </TabPanel>
          <TabPanel>
-         {!this.state.cannotvoteinjury&&<Jury users={this.state.users}/>}
+         {!this.state.cannotvoteinjury&&<Jury users={this.state.approvedusers}/>}
+         </TabPanel>
+
+         <TabPanel>
+         <NewMemberApproval users={this.state.users}/>
          </TabPanel>
          </>
        }
        </Tabs>
 
-       {(this.state.users&&!this.state.cannotusechat)&&<ChatPage users={this.state.users}/>}
+       {(this.state.users&&!this.state.cannotusechat)&&<ChatPage users={this.state.approvedusers}/>}
       </>
     );
   }

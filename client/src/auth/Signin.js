@@ -42,6 +42,8 @@ export default function Signin(props) {
   let server = "http://localhost:5000";
   var socket = io(server);
   const classes = useStyles()
+  const [userNotApprovedError, setUserNotApprovedError] = useState(false)
+
   const [values, setValues] = useState({
       email: '',
       password: '',
@@ -61,14 +63,18 @@ export default function Signin(props) {
         setValues({ ...values, error: data.error})
         console.log(data.error)
       } else {
-        console.log(data)
+        console.log("SIGNING IN",data)
+        if(!data.message){
+          auth.authenticate(data, () => {
+            setValues({ ...values, error: '',redirectToReferrer: true})
+          })
 
-        auth.authenticate(data, () => {
-          setValues({ ...values, error: '',redirectToReferrer: true})
-        })
-        
-        socket.emit("new user", data.user.name);
+          socket.emit("new user", data.user.name);
+          setUserNotApprovedError(false)
+        }
 
+        if (data.message){
+          setUserNotApprovedError(true)        }
       }
     })
 
@@ -108,6 +114,12 @@ export default function Signin(props) {
               {values.error}
             </Typography>)
           }
+          {
+           userNotApprovedError && (<Typography component="p" color="error">
+             <Icon color="error" className={classes.error}>User Not Approved Yet</Icon>
+             {values.error}
+           </Typography>)
+         }
           <button style={{marginLeft:"45%"}} id="submit" onClick={clickSubmit} >Submit</button>
         </div>
       </div>
