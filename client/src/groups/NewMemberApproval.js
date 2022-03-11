@@ -12,6 +12,7 @@ export default class NewMemberApproval extends Component {
            super(props);
            this.state = {
              users:props.users,
+             allusers:props.users,
              potentialmembers:[],
              rules: [],
              page:1,
@@ -24,6 +25,9 @@ export default class NewMemberApproval extends Component {
            this.approveofnewmember=this.approveofnewmember.bind(this)
            this.withdrawapprovalofnewmember=this.withdrawapprovalofnewmember.bind(this)
            this.toggleDetails=this.toggleDetails.bind(this)
+           this.sendMemberApprovedNotification=this.sendMemberApprovedNotification.bind(this)
+           this.sendMemberApprovalNotification=this.sendMemberApprovalNotification.bind(this)
+
 }
 
 
@@ -32,6 +36,7 @@ export default class NewMemberApproval extends Component {
              let server = "https://variety-performers-group.herokuapp.com";
              this.socket = io(server);
              console.log(this.state.users)
+             let allusers=JSON.parse(JSON.stringify(this.state.users))
              let potentialmembers=this.state.users.filter(item=>!item.approvedmember)
              let actualmembers=this.state.users.filter(item=>item.approvedmember)
 
@@ -41,7 +46,7 @@ export default class NewMemberApproval extends Component {
               for (var member of potentialmembers){
                   member.viewdetails=false
            }
-             this.setState({potentialmembers:potentialmembers,users:actualmembers})
+             this.setState({potentialmembers:potentialmembers,users:actualmembers,allusers:allusers})
              }
 
 
@@ -70,9 +75,10 @@ this.setState({potentialmembers:potentialmemberscopy})
                 let approval=(member.approval.length/this.state.users.length)*100
 
                 if (approval>10){
-                    // this.ruleApprovedNotification(rule)
+                   this.sendMemberApprovalNotification(member)
                 }
                 if (approval>75){
+                  this.sendMemberApprovedNotification(member)
                   const opt = {
                     method: 'put',
                     headers: {
@@ -144,136 +150,128 @@ this.setState({potentialmembers:potentialmemberscopy})
                  console.log(err);
                })
                     }
-             //
-             // sendRuleNotification(item){
-             //   if(!item.notificationsent){
-             //     var rulescopy=JSON.parse(JSON.stringify(this.state.rules))
-             //     for (var rule of rulescopy){
-             //       if (rule._id==item._id){
-             //         rule.notificationsent=true
-             // }}
-             // this.setState({rules:rulescopy})
-             // let current=rulescopy.slice((this.state.page*10-10),this.state.page*10)
-             // console.log(current)
-             // this.setState({currentPageData:current})
-             //
-             //     console.log("sending rule notification",this.state.users)
-             //     let userscopy=JSON.parse(JSON.stringify(this.state.users))
-             //
-             //     console.log(userscopy.length)
-             //
-             //
-             //     userscopy=userscopy.filter(user=>user.polls)
-             //
-             //     let emails=userscopy.map(item=>{return item.rules})
-             //     console.log(emails)
-             //     console.log(emails.length)
-             //
-             //     console.log(emails)
-             //       let notification={
-             //         emails:emails,
-             //         subject:"New Rule Suggestion",
-             //         message:`${item.createdby.name} suggested the rule: ${item.rule}`
-             //       }
-             //
-             //       const options = {
-             //         method: 'post',
-             //         headers: {
-             //           'Content-Type': 'application/json'
-             //         },
-             //            body: JSON.stringify(notification)
-             //       }
-             //
-             //       fetch("/groups/sendemailnotification", options
-             //     ) .then(res => {
-             //     console.log(res);
-             //     }).catch(err => {
-             //     console.log(err);
-             //     })
-             //
-             //     const optionstwo = {
-             //       method: 'put',
-             //       headers: {
-             //         'Content-Type': 'application/json'
-             //       },
-             //          body: ''
-             //     }
-             //
-             //     fetch("/rules/notificationsent/"+item._id, optionstwo
-             //     ) .then(res => {
-             //     console.log(res);
-             //     }).catch(err => {
-             //     console.log(err);
-             //     })
-             //   }
-             // }
-             //
-             //
-             //            ruleApprovedNotification(item){
-             //              console.log("restrictionPollApprovedNotification(item)",item)
-             //              let rulescopy=JSON.parse(JSON.stringify(this.state.rules))
-             //
-             //               if(!item.ratificationnotificationsent){
-             //                 for (let pol of rulescopy){
-             //                   if (pol._id==item._id){
-             //                     pol.ratificationnotificationsent=true
-             //             }}
-             //
-             //             console.log("SENDING RATIFICATION NOTIFICATION")
-             //             this.setState({rules:rulescopy})
-             //             let current=rulescopy.slice((this.state.page*10-10),this.state.page*10)
-             //             console.log(current)
-             //             this.setState({currentPageData:current})
-             //
-             //             let userscopy=JSON.parse(JSON.stringify(this.state.users))
-             //
-             //             console.log(userscopy.length)
-             //
-             //
-             //             userscopy=userscopy.filter(user=>user.rulesapproved)
-             //
-             //             let emails=userscopy.map(item=>{return item.email})
-             //             console.log(emails)
-             //             console.log(emails.length)
-             //
-             //                 console.log(emails)
-             //                   let notification={
-             //                     emails:emails,
-             //                     subject:"A rule has been approved by the group",
-             //                     message:`The new rule is ${item.rule}`
-             //                   }
-             //
-             //                   const options = {
-             //                     method: 'post',
-             //                     headers: {
-             //                       'Content-Type': 'application/json'
-             //                     },
-             //                        body: JSON.stringify(notification)
-             //                   }
-             //
-             //                   fetch("/groups/sendemailnotification", options
-             //                 ) .then(res => {
-             //                 console.log(res);
-             //                 }).catch(err => {
-             //                 console.log(err);
-             //                 })
-             //
-             //                 const optionstwo = {
-             //                   method: 'put',
-             //                   headers: {
-             //                     'Content-Type': 'application/json'
-             //                   },
-             //                      body: ''
-             //                 }
-             //
-             //                 fetch("/rules/restrictionratificationnotificationsent/"+item._id, optionstwo
-             //                 ) .then(res => {
-             //                 console.log(res);
-             //                 }).catch(err => {
-             //                 console.log(err);
-             //                 })
-             //               }
-             //             }
+
+             sendMemberApprovedNotification(item){
+               if(!item.notificationsent){
+                 var memberscopy=JSON.parse(JSON.stringify(this.state.allusers))
+                 for (let member of memberscopy){
+                   if (member._id==item._id){
+                     member.notificationsent=true
+             }}
+             this.setState({allusers:memberscopy})
+
+
+                 console.log("sending new member notification",this.state.users)
+                 let userscopy=JSON.parse(JSON.stringify(this.state.users))
+
+                 console.log(userscopy.length)
+
+
+
+                 let emails=userscopy.map(item=>{return item.email})
+                 console.log(emails)
+                 console.log(emails.length)
+
+                 console.log(emails)
+                   let notification={
+                     emails:emails,
+                     subject:"New Member Approved",
+                     message:`New Member Approved: ${item.name}`
+                   }
+
+                   const options = {
+                     method: 'post',
+                     headers: {
+                       'Content-Type': 'application/json'
+                     },
+                        body: JSON.stringify(notification)
+                   }
+
+                   fetch("/groups/sendemailnotification", options
+                 ) .then(res => {
+                 console.log(res);
+                 }).catch(err => {
+                 console.log(err);
+                 })
+
+                 const optionstwo = {
+                   method: 'put',
+                   headers: {
+                     'Content-Type': 'application/json'
+                   },
+                      body: ''
+                 }
+
+                 fetch("/groups/notificationsent/"+item._id, optionstwo
+                 ) .then(res => {
+                 console.log(res);
+                 }).catch(err => {
+                 console.log(err);
+                 })
+               }
+             }
+
+
+                          sendMemberApprovalNotification(item){
+                            if(!item.notificationsent){
+                              var memberscopy=JSON.parse(JSON.stringify(this.state.allusers))
+                              for (let member of memberscopy){
+                                if (member._id==item._id){
+                                  member.notificationsent=true
+                          }}
+                          this.setState({allusers:memberscopy})
+
+
+                              console.log("sending new member notification",this.state.users)
+                              let userscopy=JSON.parse(JSON.stringify(this.state.users))
+
+                              console.log(userscopy.length)
+
+
+
+                              let emails=userscopy.map(item=>{return item.email})
+                              console.log(emails)
+                              console.log(emails.length)
+
+                              console.log(emails)
+                                let notification={
+                                  emails:emails,
+                                  subject:"New Member Approved",
+                                  message:`New Member Approved: ${item.name}`
+                                }
+
+                                const options = {
+                                  method: 'post',
+                                  headers: {
+                                    'Content-Type': 'application/json'
+                                  },
+                                     body: JSON.stringify(notification)
+                                }
+
+                                fetch("/groups/sendemailnotification", options
+                              ) .then(res => {
+                              console.log(res);
+                              }).catch(err => {
+                              console.log(err);
+                              })
+
+                              const optionstwo = {
+                                method: 'put',
+                                headers: {
+                                  'Content-Type': 'application/json'
+                                },
+                                   body: ''
+                              }
+
+                              fetch("/groups/notificationsent/"+item._id, optionstwo
+                              ) .then(res => {
+                              console.log(res);
+                              }).catch(err => {
+                              console.log(err);
+                              })
+                            }
+                          }
+
 
                render(props) {
                  console.log("users in new members page",this.state.users)
@@ -290,11 +288,13 @@ this.setState({potentialmembers:potentialmemberscopy})
                  if(this.state.users){
                    approval=Math.round((item.approval.length/this.state.users.length)*100)
                  }
-                 if (approval<75&&(n-item.timecreated)>604800000){
-                   // this.deleteRule(item)
-                 }
+
                  if(approval>=10&&!item.notificationsent){
-                   // this.sendRuleNotification(item)
+                   this.sendMemberApprovalNotification(item)
+                 }
+
+                 if(approval>=10&&!item.notificationsent){
+                   this.sendMemberApprovalNotification(item)
                  }
                  let approveenames=[]
                  for (let user of this.state.users){

@@ -160,8 +160,15 @@ for (var rule of rulescopy){
 
    let approval=(rule.approval.length/this.state.users.length)*100
 
-   if (approval>10){
+   if (approval>10&&!item.notificationsent){
+     this.sendRuleNotification(rule)
+   }
+
+   console.log('&&!RULE.RATIFICATIONNOTIFICATIONSENT', JSON.stringify(&&!rule.ratificationnotificationsent, null, 2))
+   if (approval>75&&!rule.ratificationnotificationsent){
+     console.log('CONDITION PASSED')
        this.ruleApprovedNotification(rule)
+
    }
  }
 
@@ -246,7 +253,6 @@ this.setState({currentPageData:current})
     console.log(userscopy.length)
 
 
-    userscopy=userscopy.filter(user=>user.polls)
 
     let emails=userscopy.map(item=>{return item.rules})
     console.log(emails)
@@ -313,7 +319,6 @@ this.setState({currentPageData:current})
             console.log(userscopy.length)
 
 
-            userscopy=userscopy.filter(user=>user.rulesapproved)
 
             let emails=userscopy.map(item=>{return item.email})
             console.log(emails)
@@ -349,7 +354,7 @@ this.setState({currentPageData:current})
                      body: ''
                 }
 
-                fetch("/rules/restrictionratificationnotificationsent/"+item._id, optionstwo
+                fetch("/rules/ratificationnotificationsent/"+item._id, optionstwo
                 ) .then(res => {
                 console.log(res);
                 }).catch(err => {
@@ -378,6 +383,10 @@ if (this.state.rules){
     }
     if(approval>=10&&!item.notificationsent){
       this.sendRuleNotification(item)
+    }
+
+    if (approval>75&&!item.ratificationnotificationsent){
+        this.ruleApprovedNotification(item)
     }
     let approveenames=[]
     for (let user of this.state.users){

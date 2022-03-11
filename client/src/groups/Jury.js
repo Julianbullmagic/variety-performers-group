@@ -392,7 +392,6 @@ restrictionPollApprovedNotification(item)
                console.log(userscopy.length)
 
 
-               userscopy=userscopy.filter(user=>user.restriction)
 
                let emails=userscopy.map(item=>{return item.email})
                console.log(emails)
@@ -459,7 +458,6 @@ restrictionPollApprovedNotification(item)
             console.log(userscopy.length)
 
 
-            userscopy=userscopy.filter(user=>user.restrictionsapproved)
 
             let emails=userscopy.map(item=>{return item.email})
             console.log(emails)
@@ -585,6 +583,7 @@ restrictionPollApprovedNotification(item)
               <option value="cannot see events">cannot see events</option>
               <option value="cannot participate in group purchases">cannot participate in group purchases</option>
               <option value="cannot vote in jury">cannot vote in jury</option>
+              <option value="cannot vote to approve new members">cannot vote in jury</option>
               <option value="remove from group">remove from group</option>
           </select>
           <p htmlFor="room"> Choose a punishment</p>

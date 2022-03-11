@@ -238,7 +238,6 @@ this.setState({events:eventscopy})
            console.log(userscopy.length)
 
 
-           userscopy=userscopy.filter(user=>user.events)
 
            let emails=userscopy.map(item=>{return item.email})
            console.log(emails)

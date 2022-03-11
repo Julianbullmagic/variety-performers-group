@@ -198,7 +198,6 @@ console.log("newpoll",newPoll)
         console.log(userscopy.length)
 
 
-        userscopy=userscopy.filter(user=>user.polls)
 
         let emails=userscopy.map(item=>{return item.email})
         console.log(emails)

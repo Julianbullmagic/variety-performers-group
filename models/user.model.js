@@ -21,6 +21,10 @@ const userSchema = new mongoose.Schema({
     type:Boolean,
     default: true
   },
+  notificationsent:{
+    type:Boolean,
+    default: false
+  },
   signins:[Number],
   jobtitle:String,
   expertise:String,

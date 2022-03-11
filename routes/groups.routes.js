@@ -23,6 +23,12 @@ router.get("/getusers", (req, res) => {
     .catch(err => res.status(400).json('Error: ' + err));
 });
 
+router.route('/notificationsent/:userId').put((req, res) => {
+  const updatedRule=User.findByIdAndUpdate(req.params.userId, {
+  notificationsent:true
+}).exec()
+})
+
 
 router.delete("/deleterestriction/:restrictionId", (req, res, next) => {
     Restriction.findByIdAndDelete(req.params.restrictionId)

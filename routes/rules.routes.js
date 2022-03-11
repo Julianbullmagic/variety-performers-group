@@ -31,8 +31,14 @@ router.get("/", (req, res, next) => {
 
     router.route('/notificationsent/:ruleId').put((req, res) => {
       let ruleId = req.params.ruleId
-      const updatedRule=Rule.findByIdAndUpdate(ruleId, {
+      Rule.findByIdAndUpdate(ruleId, {
       notificationsent:true
+    }).exec()
+    })
+
+    router.route('/ratificationnotificationsent/:ruleId').put((req, res) => {
+      Rule.findByIdAndUpdate(req.params.ruleId, {
+      ratificationnotificationsent:true
     }).exec()
     })
 

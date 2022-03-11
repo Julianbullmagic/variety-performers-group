@@ -90,6 +90,9 @@ class GroupPage extends Component {
                            if(restriction.restriction=="cannot vote in jury"){
                              this.setState({cannotvoteinjury:true})
                            }
+                           if(restriction.restriction=="cannot vote to approve new members"){
+                             this.setState({cannotvotetoapprovenewmembers:true})
+                           }
                          }
                        }
                      }
@@ -124,7 +127,7 @@ class GroupPage extends Component {
            {!this.state.cannotseeevents&&<Tab>Events</Tab>}
            {!this.state.cannotparticipateingrouppurchases&&<Tab>Suggested Purchases</Tab>}
            {!this.state.cannotvoteinjury&&<Tab>Jury</Tab>}
-           <Tab>New Member Approval</Tab>
+           {!this.state.cannotvotetoapprovenewmembers&&<Tab>New Member Approval</Tab>}
 
            </TabList>
 
@@ -154,7 +157,7 @@ class GroupPage extends Component {
          </TabPanel>
 
          <TabPanel>
-         <NewMemberApproval users={this.state.users}/>
+         {!this.state.cannotvotetoapprovenewmembers&&<NewMemberApproval users={this.state.users}/>}
          </TabPanel>
          </>
        }
