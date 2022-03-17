@@ -15,27 +15,26 @@ const userSchema = new mongoose.Schema({
     match: [/.+\@.+\..+/, 'Please fill a valid email address'],
     required: 'Email is required'
   },
+  approvedmember:{type:Boolean,default:false},
+  approval:[{type: mongoose.Schema.ObjectId, ref: 'User'}],
+  newmembers:{type:Boolean,default:false},
+  groupstheybelongto:[{type: mongoose.Schema.ObjectId, ref: 'Group'}],
+  location:String,
+  coordinates:[Number],
+  unreadmessages:{type:Number,default:0},
+  votes:[String],
   recentprivatemessages: [{type: mongoose.Schema.ObjectId, ref: 'Chat'}],
   phone:Number,
+  sex:{
+    type:String,
+    default:true
+  },
   active:{
     type:Boolean,
     default: true
   },
-  notificationsent:{
-    type:Boolean,
-    default: false
-  },
   signins:[Number],
-  jobtitle:String,
   expertise:String,
-  website:String,
-  youtube:String,
-  approvedmember: {
-    type: Boolean,
-    default: false
-  },
-  promovideos:[String],
-  performancedescription:String,
   rates:String,
   hashed_password: {
     type: String,
@@ -51,16 +50,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     trim: true
   },
-  approval:[{type: mongoose.Schema.ObjectId, ref: 'User'}],
   photo: {
     data: Buffer,
     contentType: String
   },
-  ratings: [{type: mongoose.Schema.ObjectId, ref: 'Review'}],
-  following: [{type: mongoose.Schema.ObjectId, ref: 'User'}],
-  followers: [{type: mongoose.Schema.ObjectId, ref: 'User'}],
   restrictions: [{type: mongoose.Schema.ObjectId, ref: 'Restriction'}],
-
   role : {
       type:Number,
       default: 0
@@ -76,7 +70,7 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
-  leads:{
+  leaders:{
     type: Boolean,
     default: true
   },
@@ -104,14 +98,14 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: true
   },
+  eventsapproved:{
+    type: Boolean,
+    default: true
+  },
   restrictionsapproved:{
     type: Boolean,
     default: true
   },
-  newmember:{
-    type: Boolean,
-    default: false
-  }
 })
 
 userSchema.plugin(random)
@@ -137,6 +131,9 @@ userSchema.path('hashed_password').validate(function(v) {
 }, null)
 
 userSchema.methods = {
+  updatePassword:function(passw){
+    this.hashed_password = this.encryptPassword(passw)
+  },
   authenticate: function(plainText) {
     return this.encryptPassword(plainText) === this.hashed_password
   },

@@ -3,7 +3,6 @@ import {Link} from "react-router-dom";
 import auth from './../auth/auth-helper'
 import Newsfeed from './../post/Newsfeed'
 import Events from './Events'
-import Leaders from './Leaders'
 import Rules from './Rules'
 import Leads from './Leads'
 import Jury from './Jury'
@@ -15,17 +14,11 @@ import Kmeans from 'node-kmeans';
 import {Image} from 'cloudinary-react'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
+import {Redirect} from 'react-router-dom'
 var geodist = require('geodist')
 const mongoose = require("mongoose");
 
-
-
-
-
-
-
 class GroupPage extends Component {
-
     constructor(props) {
            super(props);
            this.state = {
@@ -33,6 +26,7 @@ class GroupPage extends Component {
              title:"",
              members:[],
              events:[],
+             group:{_id:"Performers",title:"Performers"},
              approvedusers:[],
              associatedlocalgroups:[],
              rules: [],
@@ -99,7 +93,7 @@ class GroupPage extends Component {
                    }
                   let approvedusers=data.filter(user=>user.approvedmember)
                   console.log("APPROVED USERS",approvedusers)
-                   this.setState({users:data,approvedusers:approvedusers})
+                   this.setState({users:data,approvedusers:approvedusers,group:{_id:"Performers",title:"Performers",members:approvedusers}})
                  })
 
 
@@ -110,11 +104,20 @@ class GroupPage extends Component {
 
     return (
       <>
-
+      {!auth.isAuthenticated().user.approvedmember&&<h2 style={{marginRight:"5vw",marginLeft:"5vw",
+      width:"90vw"}}>Your membership has not yet been approved by
+        quarters of existing members</h2>}
+      {auth.isAuthenticated().user.approvedmember&&<>
+      <div>
+      {!auth.isAuthenticated()&&<Redirect to='/'/>}
+      {this.state.removefromgroup&&<h2 style={{margin:"5vw",width:"90vw"}}>You have been removed from this group. See your profile page
+        for an explanation</h2>}
+        {!this.state.removefromgroup&&<>
+          {auth.isAuthenticated()&&<>
       <Tabs className="tabs">
       <br/>
       <div className="activememberscontainer">
-      <h3 className="activemembers">Active Members</h3>
+      {this.state.approvedusers.length>0&&<h3 style={{display:"inline"}}>Active Members</h3>}
       {this.state.approvedusers&&this.state.approvedusers.map(item=>{return(
         <><button style={{display:"inline"}}><Link to={"/singleuser/" + item._id}>{item.name}</Link></button></>
       )})}</div>
@@ -128,42 +131,51 @@ class GroupPage extends Component {
            {!this.state.cannotparticipateingrouppurchases&&<Tab>Suggested Purchases</Tab>}
            {!this.state.cannotvoteinjury&&<Tab>Jury</Tab>}
            {!this.state.cannotvotetoapprovenewmembers&&<Tab>New Member Approval</Tab>}
-
            </TabList>
 
-
-
-
         <TabPanel>
-         {!this.state.cannotpost&&<Newsfeed users={this.state.approvedusers}/>}
+         {!this.state.cannotpost&&<Newsfeed users={this.state.approvedusers}
+         groupId="Performers" group={this.state.group}
+         groupTitle="Performers" />}
          </TabPanel>
          <TabPanel>
-         {!this.state.cannotcreatepolls&&<Polls users={this.state.approvedusers}/>}
+         {!this.state.cannotcreatepolls&&<Polls users={this.state.approvedusers}
+         groupId="Performers" group={this.state.group}/>}
          </TabPanel>
          <TabPanel>
-         {!this.state.cannotseegigleads&&<Leads users={this.state.approvedusers}/>}
+         {!this.state.cannotseegigleads&&<Leads users={this.state.approvedusers}
+         groupId="Performers" group={this.state.group}/>}
          </TabPanel>
          <TabPanel>
-         {!this.state.cannotsuggestrulesorvoteforrules&&<Rules users={this.state.approvedusers} />}
+         {!this.state.cannotsuggestrulesorvoteforrules&&<Rules users={this.state.approvedusers}
+         groupId="Performers" group={this.state.group}/>}
          </TabPanel>
          <TabPanel>
-         {!this.state.cannotseeevents&&<Events users={this.state.approvedusers}/>}
+         {!this.state.cannotseeevents&&<Events users={this.state.approvedusers}
+         groupId="Performers" group={this.state.group}/>}
          </TabPanel>
          <TabPanel>
-         {!this.state.cannotparticipateingrouppurchases&&<Purchases users={this.state.approvedusers}/>}
+         {!this.state.cannotparticipateingrouppurchases&&<Purchases users={this.state.approvedusers}
+         groupId="Performers" group={this.state.group}/>}
          </TabPanel>
          <TabPanel>
-         {!this.state.cannotvoteinjury&&<Jury users={this.state.approvedusers}/>}
+         {!this.state.cannotvoteinjury&&<Jury users={this.state.approvedusers}
+         groupId="Performers" group={this.state.group}/>}
          </TabPanel>
 
          <TabPanel>
-         {!this.state.cannotvotetoapprovenewmembers&&<NewMemberApproval users={this.state.users}/>}
+         {!this.state.cannotvotetoapprovenewmembers&&<NewMemberApproval users={this.state.users}
+         groupId="Performers" group={this.state.group}/>}
          </TabPanel>
          </>
        }
        </Tabs>
-
-       {(this.state.users&&!this.state.cannotusechat)&&<ChatPage users={this.state.approvedusers}/>}
+       {(this.state.users&&!this.state.cannotusechat)&&<ChatPage users={this.state.approvedusers}
+       grouptitle="Performers" groupId="Performers"/>}
+       </>}
+       </>}
+       </div>
+       </>}
       </>
     );
   }

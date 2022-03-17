@@ -4,6 +4,8 @@ const chatSchema = mongoose.Schema({
     message: {
         type: String
         },
+    groupId:{type:String},
+
     sender: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'

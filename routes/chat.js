@@ -9,9 +9,9 @@ const User = require("../models/user.model");
 
 
 
-router.get("/getChats",async (req, res) => {
+router.get("/getChats/:groupId",async (req, res) => {
   console.log("getting chats")
-    await Chat.find({"recipient": undefined})
+    await Chat.find({groupId:req.params.groupId,"recipient": undefined})
         .populate("sender")
         .exec((err, chats) => {
             if(err) return res.status(400).send(err);

@@ -14,6 +14,7 @@ import Icon from '@material-ui/core/Icon'
 import auth from './../auth/auth-helper'
 import io from "socket.io-client";
 import Axios from 'axios'
+import validator from 'validator';
 const mongoose = require("mongoose");
 
 
@@ -31,13 +32,27 @@ export default function SingleUser({ match }) {
   const [purchases,setPurchases]=useState(false)
   const [restrictions,setRestrictions]=useState(false)
   const [rulesApproved,setRulesApproved]=useState(false)
+  const [loading,setLoading]=useState(false)
   const [restrictionsApproved,setRestrictionsApproved]=useState(false)
+  const [websiteError,setWebsiteError]=useState(false);
+  const [youtubeChannelError,setYoutubeChannelError]=useState(false);
+  const [promoVidsError,setPromoVidsError]=useState(false);
+  const [emailError,setEmailError]=useState(false);
+  const [phoneError,setPhoneError]=useState(false);
+  const [fixErrors,setFixErrors]=useState(false)
 
   const [values, setValues] = useState({
     name: '',
+    jobtitle:'',
     password: '',
+    passwordtwo:'',
+    passworderror:false,
     email: '',
+    phone:'',
     expertise:'',
+    website:'',
+    youtube:'',
+    promovideos:'',
     performancedescription:'',
     rates:'',
     images:'',
@@ -100,6 +115,66 @@ export default function SingleUser({ match }) {
 
 
   async function updateUser(){
+
+    let errors=false
+    if(validator.isURL(values.youtube)&&values.youtube.includes("youtube")){
+      setYoutubeChannelError(false)
+    }else{
+      setYoutubeChannelError(true)
+      setFixErrors(true)
+      errors=true
+    }
+
+    if(validator.isURL(values.website)){
+      setWebsiteError(false)
+    }else{
+      setWebsiteError(true)
+      setFixErrors(true)
+      errors=true
+    }
+
+    if(validator.isEmail(values.email)){
+      setEmailError(false)
+    }else{
+      setEmailError(true)
+      setFixErrors(true)
+      errors=true
+    }
+
+    var phoneExpression = /^\({0,1}((0|\+61)(2|4|3|7|8)){0,1}\){0,1}(\ |-){0,1}[0-9]{2}(\ |-){0,1}[0-9]{2}(\ |-){0,1}[0-9]{1}(\ |-){0,1}[0-9]{3}$/;
+    if(values.phone.match(phoneExpression)){
+      setPhoneError(false)
+    }else{
+      setPhoneError(true)
+      setFixErrors(true)
+      errors=true
+    }
+
+    if(!(values.password==values.passwordtwo)){
+      setValues({ ...values, passworderror:true})
+    }
+    let youtubevids=values.promovideos.split(",")
+    let notallyoutub=false
+    for (let vid of youtubevids){
+      if (!vid.includes("youtube")){
+        notallyoutub=true
+        errors=true
+      }
+    }
+    if(notallyoutub){
+      setValues({ ...values, passworderror:true})
+    }
+
+    if (errors){
+      setFixErrors(true)
+    }else{
+      setFixErrors(false)
+    }
+
+    if(!errors){
+      if((values.password==values.passwordtwo)&&!notallyoutub){
+        setValues({ ...values, passworderror:false})
+        setLoading(true)
 
     let imageids=[]
     console.log(selectedFile1.current.files[0],selectedFile2.current.files[0],
@@ -201,6 +276,9 @@ setUser(newuser)
 
       await fetch("/groups/updateuser/"+match.params.userId, options)
               .then(response => response.json()).then(json => console.log(json));
+            }
+          }
+          setLoading(false)
   }
 
 
@@ -257,6 +335,9 @@ setUser(newuser)
           <div className="signininput">
           <h5 style={{marginRight:"1vw",textAlign:"left"}} className="ruletext">Email </h5><input id="email" placeHolder={user.email} type="email" label="Email"  value={values.email} onChange={handleChange('email')} margin="normal"/>
           </div>
+          <div className="signininput">
+          <h5 style={{marginRight:"1vw",textAlign:"left"}} className="ruletext">Phone </h5><input id="phone" placeHolder={user.phone} type="text" label="Phone"  value={values.phone} onChange={handleChange('phone')} margin="normal"/>
+          </div>
 
           <div className="signininput">
           <h5 style={{marginRight:"1vw",textAlign:"left"}} className="ruletext">Website </h5><input id="website" placeHolder={user.website} type="website" label="website" value={values.website} onChange={handleChange('website')} margin="normal"/>
@@ -274,9 +355,6 @@ setUser(newuser)
           <h5 className="ruletext" style={{marginRight:"1vw",textAlign:"left"}}>Expertise </h5><input id="expertise" placeHolder={user.expertise} type="expertise" label="expertise" value={values.expertise} onChange={handleChange('expertise')} margin="normal"/>
           </div>
 
-          <div className="signininput">
-          <h5 style={{marginRight:"1vw",textAlign:"left"}} className="ruletext">Password </h5><input id="password" placeHolder={user.password} type="password" label="Password" value={values.password} onChange={handleChange('password')} margin="normal"/>
-          </div>
 
           <div className="signininput">
           <h5 style={{marginRight:"1vw",textAlign:"left"}} className="ruletext">Performance Description </h5><input id="performancedescription" placeHolder={user.performancedescription} type="performancedescription" label="Performance Description" value={values.performancedescription} onChange={handleChange('performancedescription')} margin="normal"/>
@@ -405,7 +483,9 @@ setRestrictionsApproved(e.target.checked)}}
 
           <button onClick={(e) => extraImage(e)}>Add Extra Image</button>
           <button onClick={(e) => lessImage(e)}>One Less Image</button>
+
           <button id="submit" onClick={clickSubmit}>Submit</button>
+          {fixErrors&&<p style={{color:"red"}}>Please fix all errors</p>}
         </div>
         </div>
         )}

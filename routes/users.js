@@ -59,7 +59,7 @@ console.log(restriction)
 router.put("/updateuser/:user", (req, res, next) => {
   User.findByIdAndUpdate(req.params.user, req.body).exec(function(err,docs){
     if(err){
-            console.log(err);
+            console.error(err);
         }else{
 
             res.status(200).json({

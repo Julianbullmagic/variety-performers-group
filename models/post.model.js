@@ -6,7 +6,12 @@ const PostSchema = new mongoose.Schema({
     image:String,
     title:String
   },
+  grouptitle:String,
+  level:{type:Number,default:0},
+  sentdown:{type:Boolean,default:false},
+  groupIds:[{type: String}],
   notificationsent:{type:Boolean,default:false},
+  politicalmarketing: [{type: mongoose.Schema.ObjectId, ref: 'User'}],
   likes: [{type: mongoose.Schema.ObjectId, ref: 'User'}],
   comments: [{type: mongoose.Schema.ObjectId, ref: 'Comment'}],
   createdby: {type: mongoose.Schema.ObjectId, ref: 'User'},

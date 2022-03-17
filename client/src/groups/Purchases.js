@@ -6,7 +6,8 @@ import io from "socket.io-client";
 import AwesomeSlider from 'react-awesome-slider';
 import 'react-awesome-slider/dist/styles.css';
 const mongoose = require("mongoose");
-
+const MILLISECONDS_IN_A_DAY=86400000
+const MILLISECONDS_IN_A_WEEK=604800000
 
 export default class Purchases extends Component {
 
@@ -23,16 +24,32 @@ export default class Purchases extends Component {
              redirect: false,
              updating:false
            }
+           let socket
            this.updatePurchases= this.updatePurchases.bind(this)
+           this.sendPurchaseNotification=this.sendPurchaseNotification.bind(this)
               }
 
 
            componentDidMount(){
              let server = "http://localhost:5000";
-             this.socket = io(server);
+
+             if(process.env.NODE_ENV=="production"){
+               this.socket=io();
+             }
+             if(process.env.NODE_ENV=="development"){
+               this.socket=io(server);
+             }
              this.getPurchases()
              }
 
+             componentWillReceiveProps(nextProps) {
+               if (nextProps.users !== this.props.users) {
+                 this.setState({users:nextProps.users})
+               }
+               if (nextProps.group !== this.props.group) {
+                 this.setState({group:nextProps.group})
+               }
+             }
 
              decidePage(e,pagenum){
                 console.log("decide page",(pagenum*10-10),pagenum*10)
@@ -109,13 +126,17 @@ async getPurchases(){
            let userName=auth.isAuthenticated().user.name
            let nowTime=n
            let type="text"
+           let groupId=this.state.group._id
+           let groupTitle=this.state.group.title
 
            this.socket.emit("Input Chat Message", {
              chatMessage,
              userId,
              userName,
              nowTime,
-             type});
+             type,
+             groupId,
+             groupTitle});
 
            const options = {
              method: 'delete',
@@ -127,6 +148,31 @@ async getPurchases(){
 
            await fetch("/purchases/"+item._id, options)
 
+               let userscopy=JSON.parse(JSON.stringify(this.state.users))
+               userscopy=userscopy.filter(item=>item.events)
+               let emails=userscopy.map(item=>{return item.email})
+
+
+               let notification={
+                 emails:emails,
+                 subject:"Purchase Suggestion Deleted",
+                 message:`The purchase suggestion called ${item.title} has been deleted.`
+               }
+
+               const opt = {
+                 method: 'post',
+                 headers: {
+                   'Content-Type': 'application/json'
+                 },
+                 body: JSON.stringify(notification)
+               }
+
+               fetch("/groups/sendemailnotification", opt
+             ) .then(res => {
+               console.log(res)
+             }).catch(err => {
+               console.error(err);
+             })
          }
 
 
@@ -137,11 +183,13 @@ function checkPurchase() {
 }
 for (var p of purchasescopy){
   if (p._id==id){
-
  if(!p.approval.includes(auth.isAuthenticated().user._id)){
    p.approval.push(auth.isAuthenticated().user._id)
- }
 
+                   if(p.approval>=10&&!p.notificationsent){
+                     this.sendPurchaseNotification(p)
+                   }
+ }
   }
 }
 
@@ -176,11 +224,16 @@ this.setState({currentPageData:current})
          for (var p of purchasescopy){
            if (p._id==id){
 
-
              var filteredapproval=p.approval.filter(checkpurchase)
              p.approval=filteredapproval
+             let approval=(p.approval.length/this.state.users.length)*100
+             if(approval>=10&&!p.notificationsent){
+               this.sendPurchaseNotification(p)
+             }
            }
          }
+
+
          this.setState({purchases:purchasescopy})
          let current=purchasescopy.slice((this.state.page*10-10),this.state.page*10)
          console.log(current)
@@ -263,11 +316,6 @@ this.setState({currentPageData:current})
          }
        }
 
-
-
-
-
-
   render() {
     console.log("USERS IN EVENTS",this.props.users)
     var d = new Date();
@@ -282,9 +330,6 @@ this.setState({currentPageData:current})
                   approval=Math.round((item.approval.length/this.state.users.length)*100)
                 }
 
-                if(approval>=10&&!item.notificationsent){
-                  this.sendPurchaseNotification(item)
-                }
 
                 let approveenames=[]
                 for (let user of this.state.users){
@@ -332,8 +377,6 @@ this.setState({currentPageData:current})
 
     return (
       <>
-      <br/>
-      <h2>Suggest a group purchase</h2>
       <CreatePurchaseForm updatePurchases={this.updatePurchases}/>
       <h2><strong>Possible Purchases </strong></h2>
       {(this.state.pageNum&&this.state.purchases.length>10)&&<h4 style={{display:"inline"}}>Choose Page</h4>}

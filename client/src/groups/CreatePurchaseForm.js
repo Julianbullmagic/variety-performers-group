@@ -6,7 +6,7 @@ import io from "socket.io-client";
 const mongoose = require("mongoose");
 
 
-export default function CreatePurchseForm(props) {
+export default function CreatePurchaseForm(props) {
 const [viewForm, setViewForm] = useState(false);
 const [uploading, setUploading] = useState(false);
 const titleValue = React.useRef('')
@@ -22,12 +22,15 @@ const selectedFile4 = React.useRef(null)
 const selectedFile5 = React.useRef(null)
 const [toggle, setToggle] = useState(false);
 let server = "http://localhost:5000";
+let socket
 
-let socket = io(server);
+if(process.env.NODE_ENV=="production"){
+  socket=io();
+}
+if(process.env.NODE_ENV=="development"){
+  socket=io(server);
+}
 
-useEffect(()=>{
-  console.log("use EFFECT",numImages)
-},[numImages,setNumImages])
 
 function extraImage(e){
   e.preventDefault()
@@ -132,21 +135,6 @@ setUploading(true)
         newPurchaseToRender.createdby=auth.isAuthenticated().user
 
 
-
-        let chatMessage=`created a purchase suggestion called ${titleValue.current.value}`
-        let userId=auth.isAuthenticated().user._id
-        let userName=auth.isAuthenticated().user.name
-        let nowTime=n
-        let type="text"
-
-        socket.emit("Input Chat Message", {
-          chatMessage,
-          userId,
-          userName,
-          nowTime,
-          type});
-
-
     console.log("newPurchase",newPurchase)
 
     props.updatePurchases(newPurchaseToRender)
@@ -180,13 +168,14 @@ setUploading(true)
           name='titleValue'
           id='titleValue'
           ref={titleValue}
-
+          style={{width:"80vw"}}
         />
         </div>
 
         <div className="eventformbox">
         <label htmlFor='name'>Description</label>
         <input
+        style={{width:"80vw"}}
           type='text'
           name='descriptionValue'
           id='descriptionValue'
@@ -201,6 +190,7 @@ setUploading(true)
           name='priceValue'
           id='priceValue'
           ref={priceValue}
+          style={{width:"80vw"}}
         />
         </div>
 
@@ -211,6 +201,7 @@ setUploading(true)
           name='quantityValue'
           id='quantityValue'
           ref={quantityValue}
+          style={{width:"80vw"}}
         />
         </div>
 

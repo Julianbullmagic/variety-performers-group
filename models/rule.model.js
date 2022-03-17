@@ -1,12 +1,16 @@
 const mongoose = require('mongoose');
 
-
 const ruleSchema = mongoose.Schema({
   _id: mongoose.Schema.Types.ObjectId,
   rule: {
     type: String,
     required: true
   },
+  local:{type:Boolean,default:false},
+  level:Number,
+  grouptitle:String,
+  groupIds:[{type:String}],
+  sentdown:{type:Boolean,default:false},
   createdby:{type:mongoose.Schema.Types.ObjectId,ref:"User"},
   explanation:String,
   approval: [{type:mongoose.Schema.Types.ObjectId,ref:"User"}],

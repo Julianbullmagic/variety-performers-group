@@ -14,18 +14,19 @@ const isActive = (history, path) => {
     return {color: 'white'}
 }
 const Menu = withRouter(({history}) => (
-  <AppBar style={{backgroundColor:"#759CC9"}}>
-    <Toolbar>
-      <Typography variant="h6" color="inherit"style={{marginLeft:"1vw"}}>
+  <div className="menu" style={{backgroundColor:"#759CC9"}}>
+    <h2 className="menutitle">
         Variety Performers Group
-      </Typography>
+      </h2>
+      <div className="navbuttons">
       <Link to="/">
         <button style={isActive(history, "/")}>Home</button>
       </Link>
-      <Link to="/explanation">
+      {(auth.isAuthenticated()&&
+      auth.isAuthenticated().user.cool)&&<><Link to="/explanation">
         <button id="explanation">About
         </button>
-      </Link>
+      </Link></>}
       {
         !auth.isAuthenticated() && (<span>
           <Link style={{marginLeft:"10px",
@@ -47,16 +48,16 @@ const Menu = withRouter(({history}) => (
             marginRight:"5px"}}>My Profile</button>
           </Link>
             <Link to={"/group"}>
-              <button>Group</button>
+              <button style={{marginLeft:"10px",
+              marginRight:"5px"}}>Group</button>
             </Link>
           <button color="inherit" onClick={() => {
               auth.clearJWT(() => history.push('/'))
             }}>Sign out</button>
-
         </span>)
       }
-    </Toolbar>
-  </AppBar>
+      </div>
+  </div>
 ))
 
 export default Menu

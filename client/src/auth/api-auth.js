@@ -12,7 +12,7 @@ const signin = async (user) => {
     })
     return await response.json()
   } catch(err) {
-    console.log(err)
+    console.error(err)
   }
 }
 
@@ -21,7 +21,7 @@ const signout = async () => {
     let response = await fetch('/auth/signout/', { method: 'GET' })
     return await response.json()
   } catch(err) {
-    console.log(err)
+    console.error(err)
   }
 }
 

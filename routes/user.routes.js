@@ -12,6 +12,9 @@ router.route('/api/users')
     .get(userCtrl.listbyname)
 
 
+router.route('/api/users/changepassword')
+    .put(userCtrl.changePassword)
+
 router.route('/api/users/photo/:userId')
   .get(userCtrl.photo, userCtrl.defaultPhoto)
 router.route('/api/users/defaultphoto')

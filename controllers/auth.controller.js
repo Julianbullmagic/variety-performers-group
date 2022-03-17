@@ -25,7 +25,7 @@ console.log(user)
     var n = d.getTime();
 await User.findByIdAndUpdate(user._id,{$push: {signins: n}}).exec(function(err,docs){
   if(err){
-          console.log(err);
+          console.error(err);
       }else{
 
         console.log(docs)
@@ -39,20 +39,16 @@ await User.findByIdAndUpdate(user._id,{$push: {signins: n}}).exec(function(err,d
     res.cookie("t", token, {
       expire: new Date() + 9999
     })
-if(user.approvedmember){
-  return res.json({
-    token,
-    user: {_id: user._id, name: user.name,coordinates:user.coordinates, email: user.email,events:user.events,
-      leads:user.leads,posts:user.posts,polls:user.polls,rules:user.rules,purchases:user.purchases,
-      restriction:user.restriction,rulesapproved:user.rulesapproved,restrictionsapproved:user.restrictionsapproved,
-      recentprivatemessages:user.recentprivatemessages}
-  })
-}
-if(!user.approvedmember){
-  return res.json({message:"user not approved yet"})
-}
+
+    return res.json({
+      token,
+      user: {_id: user._id,approvedmember:user.approvedmember, name: user.name,cool:user.cool,coordinates:user.coordinates, email: user.email,events:user.events,
+        leads:user.leads,posts:user.posts,polls:user.polls,rules:user.rules,purchases:user.purchases,
+        restriction:user.restriction,rulesapproved:user.rulesapproved,restrictionsapproved:user.restrictionsapproved,
+        recentprivatemessages:user.recentprivatemessages}
+    })
   } catch (err) {
-    console.log(err)
+    console.error(err)
     return res.status('401').json({
       error: "Could not sign in"
     })

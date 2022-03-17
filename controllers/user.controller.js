@@ -1,5 +1,4 @@
 const User = require('../models/user.model')
-
 const extend = require('lodash/extend')
 const errorHandler = require('./../helpers/dbErrorHandler')
 const formidable = require('formidable')
@@ -23,9 +22,21 @@ console.log("signup request")
   }
 }
 
-(function(err,room) {
-   console.log(room.id);
-});
+const changePassword = async (req, res) => {
+console.log("change password")
+  console.log(req.body)
+  const user=await User.findOne({email:req.body.email})
+  console.log(user)
+  user.updatePassword(req.body.password)
+  try {
+    await user.save()
+    res.json(user)
+  } catch (err) {
+    return res.status(400).json({
+      error: errorHandler.getErrorMessage(err)
+    })
+  }
+}
 
 const userByID = async (req, res, next, id) => {
   try {
@@ -199,6 +210,7 @@ const findPeople = async (req, res) => {
 module.exports= {
 
   create,
+  changePassword,
   userByID,
   read,
   list,

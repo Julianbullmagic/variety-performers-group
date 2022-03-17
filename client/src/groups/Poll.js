@@ -1,213 +1,264 @@
 import React, {useState, useEffect, useRef} from 'react'
 import auth from './../auth/auth-helper'
 const mongoose = require("mongoose");
-
+const MILLISECONDS_IN_A_DAY=86400000
+const MILLISECONDS_IN_A_WEEK=604800000
 
 export default function Poll (props) {
   const [suggestions, setSuggestions] = useState([]);
+  const [poll, setPoll] = useState(props.poll);
+  const [sure, setSure] = useState(false);
+  const [group, setGroup] = useState(props.group);
   const pollsuggestion = React.useRef('')
 
   useEffect(() => {
-console.log("props",props)
+
+    setGroup(props.group)
+    setPoll(props.poll)
     fetch("/polls/getsuggestions/"+props.poll._id)
     .then(res => {
       return res.json();
     }).then(suggestions => {
-      console.log("suggestions!!!!!!!!!!!!!!!!!!",suggestions)
-  setSuggestions(suggestions.data)})
-},[props])
+
+      setSuggestions(suggestions.data)})
+      .catch(err => {
+        console.error(err);
+      })
+    },[props])
 
 
-
-  function handleSubmit(e){
-e.preventDefault()
-      var d = new Date();
-      var n = d.getTime();
-      var pollSuggestionId=mongoose.Types.ObjectId()
-
-      const newPollSuggestion={
-        _id:pollSuggestionId,
-        suggestion:pollsuggestion.current.value,
-        pollid:props.poll._id,
-        timecreated:n,
-        approval:[auth.isAuthenticated().user._id],
-        createdby:auth.isAuthenticated().user._id
-      }
-
-
-console.log("newpollsuggestion",newPollSuggestion)
-      var suggestionscopy=JSON.parse(JSON.stringify(suggestions))
-      suggestionscopy.push(newPollSuggestion)
-      setSuggestions(suggestionscopy)
-      console.log(suggestionscopy)
-      const options={
-          method: "POST",
-          body: JSON.stringify(newPollSuggestion),
-          headers: {
-              "Content-type": "application/json; charset=UTF-8"}}
-
-
-        fetch("/polls/createpollsuggestion/"+pollSuggestionId, options)
-                .then(response => response.json()).then(json => console.log(json));
-  }
-
-
-    function deletePollSuggestion(e,id) {
-      e.preventDefault()
-      var suggestionscopy=JSON.parse(JSON.stringify(suggestions))
-      var filteredarray =suggestionscopy.filter(function( obj ) {
-   return obj._id !== id;
-   });
-      setSuggestions(filteredarray);
-
-        console.log(filteredarray)
-        const options={
-            method: "Delete",
-            body: '',
-            headers: {
-                "Content-type": "application/json; charset=UTF-8"}}
-
-
-           fetch("/polls/deletesuggestion/"+id, options)
-                  .then(response => response.json()).then(json => console.log(json));
-
-    }
-
-
-    function approveofsuggestion(e,id){
-var suggestionscopy=JSON.parse(JSON.stringify(suggestions))
-function checkSuggestion() {
-return id!==auth.isAuthenticated().user._id
-}
-for (var suggestion of suggestionscopy){
-if (suggestion._id==id){
-
-if(!suggestion.approval.includes(auth.isAuthenticated().user._id)){
-suggestion.approval.push(auth.isAuthenticated().user._id)
-}
-
-setSuggestions(suggestionscopy)
-}
-}
-
-setSuggestions(suggestionscopy)
-      const options = {
-        method: 'put',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-           body: ''
-      }
-
-      fetch("/polls/approveofsuggestion/" + id +"/"+ auth.isAuthenticated().user._id, options
-).then(res => {
- console.log(res);
-}).catch(err => {
- console.log(err);
-})
-
-}
-
-
-    function withdrawapprovalofsuggestion(e,id){
-
-      console.log("ID!!!!!",id)
-      var suggestionscopy=JSON.parse(JSON.stringify(suggestions))
-      function checkSuggestion(userid) {
-        return userid!=auth.isAuthenticated().user._id
-      }
-      for (var suggestion of suggestionscopy){
-        if (suggestion._id==id){
-
-
-          var filteredapproval=suggestion.approval.filter(checkSuggestion)
-          suggestion.approval=filteredapproval
-        }
-      }
-      setSuggestions(suggestionscopy)
-
-      const options = {
-        method: 'put',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-           body: ''
-      }
-
-      fetch("/polls/withdrawapprovalofsuggestion/" + id +"/"+ auth.isAuthenticated().user._id, options
-) .then(res => {
- console.log(res);
-}).catch(err => {
- console.log(err);
-})
-
-    }
-
-
-let suggestionsmapped=<></>
-if(suggestions&&props.users){
-  console.log("users in Poll",props.users)
+function handleSubmit(e){
+  e.preventDefault()
   var d = new Date();
   var n = d.getTime();
+  var pollSuggestionId=mongoose.Types.ObjectId()
 
-
-  if(suggestions.length>=3&&!props.poll.notificationsent){
-    console.log("SENDING POLL NOTIFICCATION")
-    props.sendPollNotification(props.poll)
+  let newPollSuggestion={
+    _id:pollSuggestionId,
+    suggestion:pollsuggestion.current.value,
+    pollid:props.poll._id,
+    timecreated:n,
+    approval:[auth.isAuthenticated().user._id],
+    createdby:auth.isAuthenticated().user._id
   }
-
-  suggestionsmapped=suggestions.map(item=>{
-    let approval=<></>
-    if(props.users){
-      approval=Math.round((item.approval.length/props.users.length)*100)
-    }
-    if (approval<75&&(n-item.timecreated)>604800000){
-      this.deletePollSuggestion(item)
-    }
+let newPollSuggestionToRender=JSON.parse(JSON.stringify(newPollSuggestion))
+newPollSuggestionToRender.createdby=auth.isAuthenticated().user
 
 
-    let approveenames=[]
-    for (let user of props.users){
-      for (let approvee of item.approval){
-        if (approvee==user._id){
-          approveenames.push(user.name)
-        }
+  var suggestionscopy=JSON.parse(JSON.stringify(suggestions))
+  suggestionscopy.reverse()
+  suggestionscopy.push(newPollSuggestionToRender)
+  suggestionscopy.reverse()
+  setSuggestions(suggestionscopy)
+
+  const options={
+    method: "POST",
+    body: JSON.stringify(newPollSuggestion),
+    headers: {
+      "Content-type": "application/json; charset=UTF-8"}}
+
+
+      fetch("/polls/createpollsuggestion/"+pollSuggestionId, options)
+      .then(response => response.json())
+      .then(json =>console.log(json))
+        .catch(err => {
+          console.error(err);
+        })
       }
-    }
-    let width=`${(item.approval.length/props.users.length)*100}%`
 
-    return (<>
-      <div className="pollbox">
-<h5 className="ruletext">{item.suggestion}, suggested by {item.createdby.name}, </h5>
-<h5 className="ruletext">{approval}% of members approve this suggestion, {item.approval.length}/{props.users.length}</h5>
-{(item.approval.length>0)&&<h5 className="ruletext">, approvees=</h5>}
-{approveenames&&approveenames.map((item,index)=>{return(<h5 className="ruletext"> {item}{(index<(approveenames.length-2))?", ":(index<(approveenames.length-1))?" and ":"."}</h5>)})}
-{!item.approval.includes(auth.isAuthenticated().user._id)&&<button className="ruletext" onClick={(e)=>approveofsuggestion(e,item._id)}>Approve this suggestion?</button>}
-{item.approval.includes(auth.isAuthenticated().user._id)&&<button className="ruletext" onClick={(e)=>withdrawapprovalofsuggestion(e,item._id)}>Withdraw Approval?</button>}
-<div className="percentagecontainer"><div style={{width:width}} className="percentage"></div></div>
-</div>
-    </>)})
-}
 
-    return (
-  <>
-  <div>
-  <div className="pollbox">
-  <h3 className="ruletext">{props.poll.pollquestion}  </h3>
-  <h4 className="ruletext">Poll Created By {props.poll.createdby.name}</h4>
-  <button onClick={(e)=>props.deletePoll(e,props.poll)}>Delete?</button>
-  <form>
-          <div >
-          <h5 className="ruletext">Create Poll Suggestion</h5>
-        <button className="ruletext" onClick={(e) => handleSubmit(e)}>New Poll Suggestion?</button>
-      <textarea ref={pollsuggestion} id="story" rows="2" />
-          </div>
-        </form>
-        </div>
-        <div>
-        {suggestionsmapped}
-        </div>
-        </div>
-        </>
-    )
-}
+      function deletePollSuggestion(e,item) {
+        console.log("deleting",item)
+        var suggestionscopy=JSON.parse(JSON.stringify(suggestions))
+        var filteredarray =suggestionscopy.filter(function( obj ) {
+          return obj._id !== item._id;
+        });
+        setSuggestions(filteredarray);
+
+        const options={
+          method: "Delete",
+          body: '',
+          headers: {
+            "Content-type": "application/json; charset=UTF-8"}}
+
+
+            fetch("/polls/deletesuggestion/"+item._id, options)
+            .then(response => response.json())
+            .then(json =>console.log(json))
+              .catch(err => {
+                console.error(err);
+              })
+            }
+
+
+            function approveofsuggestion(e,id){
+              console.log(id)
+              var suggestionscopy=JSON.parse(JSON.stringify(suggestions))
+              function checkSuggestion() {
+                return id!==auth.isAuthenticated().user._id
+              }
+              for (var suggestion of suggestionscopy){
+                if (suggestion._id==id){
+
+                  if(!suggestion.approval.includes(auth.isAuthenticated().user._id)){
+                    suggestion.approval.push(auth.isAuthenticated().user._id)
+                  }
+                  setSuggestions(suggestionscopy)
+                }
+              }
+              if(suggestions.length>=3&&!props.poll.notificationsent){
+                props.sendPollNotification(props.poll)
+              }
+
+              setSuggestions(suggestionscopy)
+              const options = {
+                method: 'put',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: ''
+              }
+
+              fetch("/polls/approveofsuggestion/" + id +"/"+ auth.isAuthenticated().user._id, options
+            ).catch(err => {
+              console.error(err);
+            })
+          }
+
+
+          function withdrawapprovalofsuggestion(e,id){
+            console.log(id)
+            var suggestionscopy=JSON.parse(JSON.stringify(suggestions))
+            function checkSuggestion(userid) {
+              return userid!=auth.isAuthenticated().user._id
+            }
+            for (var suggestion of suggestionscopy){
+              if (suggestion._id==id){
+                var filteredapproval=suggestion.approval.filter(checkSuggestion)
+                suggestion.approval=filteredapproval
+              }
+            }
+            setSuggestions(suggestionscopy)
+
+            const options = {
+              method: 'put',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: ''
+            }
+
+            fetch("/polls/withdrawapprovalofsuggestion/" + id +"/"+ auth.isAuthenticated().user._id, options
+          ).catch(err => {
+            console.error(err);
+          })
+        }
+
+
+        function areYouSure(e,item){
+          console.log(item)
+            let suggestionscopy=JSON.parse(JSON.stringify(suggestions))
+            console.log(suggestionscopy)
+            for (let suggest of suggestionscopy){
+              if (suggest._id==item._id){
+                suggest.areyousure=true
+              }}
+              console.log(suggestionscopy)
+              setSuggestions(suggestionscopy)
+            }
+
+            function areYouNotSure(e,item){
+              console.log(item)
+              let suggestionscopy=JSON.parse(JSON.stringify(suggestions))
+                console.log(suggestionscopy)
+                for (let suggest of suggestionscopy){
+                  if (suggest._id==item._id){
+                    suggest.areyousure=false
+                  }}
+                  console.log(suggestionscopy)
+                  setSuggestions(suggestionscopy)
+                }
+
+                function areYouSur(e){
+                      setSure(true)
+                    }
+
+                    function areYouNotSur(e){
+                          setSure(false)
+                        }
+
+        let suggestionsmapped=<></>
+        if(suggestions&&props.users){
+
+          var d = new Date();
+          var n = d.getTime();
+
+
+          if(suggestions.length>=3&&!props.poll.notificationsent){
+
+            props.sendPollNotification(props.poll)
+          }
+
+          suggestionsmapped=suggestions.map(item=>{
+            let approval=<></>
+
+
+            approval=Math.round((item.approval.length/group.members.length)*100)
+
+
+            let approveenames=[]
+            for (let user of group.members){
+              for (let approvee of item.approval){
+                if (approvee==user._id){
+                  approveenames.push(user.name)
+                }
+              }
+            }
+
+            let width=`${(item.approval.length/props.users.length)*100}%`
+
+            return (<>
+              <div key={item._id} className="pollbox">
+              <h5 className="ruletext">{item.suggestion}, suggested by {item.createdby.name}, </h5>
+              <h5 className="ruletext">{approval}% of members in this group approve this suggestion, {item.approval.length}/{group.members.length}</h5>
+              {((item.createdby._id==auth.isAuthenticated().user._id)&&approval<75&&!item.areyousure)&&
+                <button className="ruletext deletebutton" onClick={(e)=>areYouSure(e,item)}>Delete Suggestion?</button>}
+                {item.areyousure&&<button className="ruletext deletebutton" onClick={(e)=>areYouNotSure(e,item)}>Not sure</button>}
+                {item.areyousure&&<button className="ruletext deletebutton" onClick={(e)=>deletePollSuggestion(e,item)}>Are you sure?</button>}
+
+                {!item.approval.includes(auth.isAuthenticated().user._id)&&<button className="ruletext" onClick={(e)=>approveofsuggestion(e,item._id)}>Approve this suggestion?</button>}
+                {item.approval.includes(auth.isAuthenticated().user._id)&&<button className="ruletext" onClick={(e)=>withdrawapprovalofsuggestion(e,item._id)}>Withdraw Approval?</button>}
+                {approveenames&&approveenames.map((item,index)=>{return(<><h4 className="ruletext">{item}{(index<(approveenames.length-2))?", ":(index<(approveenames.length-1))?" and ":"."}</h4></>)})}
+                <div className="percentagecontainer"><div style={{width:width}} className="percentage"></div></div>
+                {(poll&&group.level>poll.level)&&<p>This poll has been passed down by a higher group, all of it's children groups can vote on this question</p>}
+                </div>
+                </>)})
+              }
+
+              return (
+                <>
+                <div>
+                <div className="pollbox">
+                <h3 className="ruletext">{props.poll.pollquestion}  </h3>
+                {props.poll.createdby&&<>
+                  <h5 className="ruletext">Poll Created By {props.poll.createdby.name}</h5>
+                {((props.poll.createdby._id==auth.isAuthenticated().user._id)&&!sure)&&
+                  <button className="ruletext deletebutton" onClick={(e)=>areYouSur(e)}>Delete Poll?</button>}
+                  {sure&&<button className="ruletext deletebutton" onClick={(e)=>areYouNotSur(e)}>Not sure</button>}
+                  {sure&&<button className="ruletext deletebutton" onClick={(e)=>props.deletePoll(e,props.poll)}>Are you sure?</button>}
+                  </>}
+                  <form>
+                  <div>
+                  <h5 className="ruletext">Create Poll Suggestion</h5>
+                  <button className="pollsuggestionbutton" className="ruletext" onClick={(e) => handleSubmit(e)}>New Poll Suggestion?</button>
+                  <textarea ref={pollsuggestion} id="story" rows="2" />
+                  </div>
+                  </form>
+                  </div>
+                  <div>
+                  {suggestionsmapped}
+                      </div>
+                      </div>
+                      </>
+                    )
+                  }
