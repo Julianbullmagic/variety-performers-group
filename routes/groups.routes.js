@@ -73,7 +73,7 @@ jwt.verify(req.params.token, config.jwtSecret, (err,decoded) => {
 })
 
 router.get("/getusers", (req, res) => {
-  User.find({"active":true})
+  User.find()
   .populate("restrictions")
   .populate("groupstheybelongto")
   .populate("recentprivatemessages")

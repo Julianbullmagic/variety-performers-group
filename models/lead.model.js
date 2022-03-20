@@ -7,6 +7,7 @@ const leadSchema = mongoose.Schema({
   description:String,
   location:String,
   coordinates:[Number],
+  genres:[String],
   customername:String,
   views:[{type: mongoose.Schema.ObjectId, ref: 'User'}],
   notificationsent:{type:Boolean,default:false},

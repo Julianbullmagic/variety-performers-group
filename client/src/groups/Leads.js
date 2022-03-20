@@ -12,6 +12,8 @@ export default class Leads extends Component {
     super(props);
     this.state = {
       leads:[],
+      allleads:[],
+      category:"all",
       users:props.users,
       page:1,
       pageNum:[],
@@ -30,8 +32,14 @@ export default class Leads extends Component {
   }
 
   decidePage(e,pagenum){
-    let currentpage=this.state.leads.slice((pagenum*10-10),pagenum*10)
-    this.setState({page:pagenum,currentPageData:currentpage})
+    if(this.state.category=="all"){
+      let currentpage=this.state.leads.slice((pagenum*10-10),pagenum*10)
+      this.setState({page:pagenum,currentPageData:currentpage})
+    }else{
+      let filteredleadsbycategory=this.state.leads.filter(lead=>lead.genres.includes(this.state.category))
+      let currentpage=filteredleadsbycategory.slice((pagenum*10-10),pagenum*10)
+      this.setState({page:pagenum,currentPageData:currentpage})
+    }
   }
 
   async getLeads(){
@@ -140,9 +148,18 @@ export default class Leads extends Component {
       console.log("adding view",id,auth.isAuthenticated().user._id)
       fetch("/leads/addview/"+id+"/"+auth.isAuthenticated().user._id, options)
       .then(response => response.json()).then(json => console.log(json));
-
     }
 
+    changeLeadsCategory(e,item){
+      if(item=="all"){
+        let currentpage=this.state.leads.slice((this.state.page*10-10),this.state.page*10)
+        this.setState({category:item,currentPageData:currentpage})
+      }else{
+        let filteredleadsbycategory=this.state.leads.filter(lead=>lead.genres.includes(item))
+        let currentpage=filteredleadsbycategory.slice((this.state.page*10-10),this.state.page*10)
+        this.setState({category:item,currentPageData:currentpage})
+      }
+    }
 
     render() {
       var d = new Date();
@@ -181,12 +198,22 @@ export default class Leads extends Component {
           </>
         )})
       }
-
+      let genreoptions=[]
+      if (this.state.users){
+        for (let user of this.state.users){
+          if (!genreoptions.includes(user.jobtitle.toLowerCase())){
+            genreoptions.push(user.jobtitle.toLowerCase())
+          }
+        }
+      }
 
       return (
         <>
         {this.state.users&&<CreateLeadForm sendNotif="true" updateLeads={this.updateLeads} users={this.state.users}/>}
         <h2><strong>Gig Leads </strong></h2>
+        {genreoptions&&genreoptions.map((item,index)=><><button style={{display:"inline",
+        opacity:(item==this.state.category)?"0.5":"1"}} onClick={(e) => this.changeLeadsCategory(e,item)}>{item}</button></>)}
+
         {(this.state.pageNum&&this.state.leads.length>10)&&  <h4 style={{display:"inline"}}>Choose Page</h4>}
         {(this.state.pageNum&&this.state.leads)&&this.state.pageNum.map((item,index)=>{
           return (<>

@@ -8,6 +8,10 @@ const userSchema = new mongoose.Schema({
     trim: true,
     required: 'Name is required'
   },
+  jobtitle:{
+    type: String,
+    trim: true,
+  },
   email: {
     type: String,
     trim: true,

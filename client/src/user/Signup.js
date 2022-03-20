@@ -107,7 +107,65 @@ export default function Signup (){
     setNumImages([...imagenum])
   }
 
+function changer(){
+  let errors=false
+  if(validator.isURL(values.youtube)&&values.youtube.includes("youtube")){
+    setYoutubeChannelError(false)
+  }else{
+    setYoutubeChannelError(true)
+    setFixErrors(true)
+    errors=true
+  }
 
+  if(validator.isURL(values.website)){
+    setWebsiteError(false)
+  }else{
+    setWebsiteError(true)
+    setFixErrors(true)
+    errors=true
+  }
+
+  if(validator.isEmail(values.email)){
+    setEmailError(false)
+  }else{
+    setEmailError(true)
+    setFixErrors(true)
+    errors=true
+  }
+
+  var phoneExpression = /^\({0,1}((0|\+61)(2|4|3|7|8)){0,1}\){0,1}(\ |-){0,1}[0-9]{2}(\ |-){0,1}[0-9]{2}(\ |-){0,1}[0-9]{1}(\ |-){0,1}[0-9]{3}$/;
+  if(values.phone.match(phoneExpression)){
+    setPhoneError(false)
+  }else{
+    setPhoneError(true)
+    setFixErrors(true)
+    errors=true
+  }
+
+
+  if(!(values.password==values.passwordtwo)){
+    setValues({ ...values, passworderror:true})
+  }
+  let youtubevids=values.promovideos.split(",")
+  let notallyoutub=false
+  for (let vid of youtubevids){
+    if (!vid.includes("youtube")){
+      notallyoutub=true
+      errors=true
+    }
+  }
+  if(notallyoutub){
+    setValues({ ...values, passworderror:true})
+  }
+
+  if (errors){
+    setFixErrors(true)
+  }else{
+    setFixErrors(false)
+  }
+  console.log(values.passworderror)
+
+}
 
 
   async function createUser(){
@@ -274,6 +332,7 @@ export default function Signup (){
 
 
                 const handleChange = name => event => {
+                  changer()
                   setValues({ ...values, [name]: event.target.value })
                 }
 
@@ -309,8 +368,8 @@ export default function Signup (){
                   {youtubeChannelError&&<p style={{color:"red"}}>This is not a valid youtube channel</p>}
                   <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Promo Videos, separate youtube video link urls with a comma </h5><input id="promovideos" placeHolder={values.promovideos} type="promovideos" label="promotional videos, please add youtube url links separated by a comma" value={values.promovideos} onChange={handleChange('promovideos')} margin="normal"/></div>
                   {(notallyoutube&&!values.promovideos=="")&&<h5 style={{marginRight:"1vw",color:"red"}} className="ruletext">Includes links that are not for Youtube</h5>}
-                  <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Job Title </h5><input id="job title" type="job title" placeHolder={values.jobtitle} label="job title" value={values.jobtitle} onChange={handleChange('jobtitle')} margin="normal"/></div>
-                  <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Expertise </h5><input id="expertise" type="expertise" placeHolder={values.expertise} label="expertise" value={values.expertise} onChange={handleChange('expertise')} margin="normal"/></div>
+                  <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Job Title, what kind of performer are you? Magician, juggler, acrobat, etc? </h5><input id="job title" type="job title" placeHolder={values.jobtitle} label="job title" value={values.jobtitle} onChange={handleChange('jobtitle')} margin="normal"/></div>
+                  <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Expertise, how did you learn your skill? </h5><input id="expertise" type="expertise" placeHolder={values.expertise} label="expertise" value={values.expertise} onChange={handleChange('expertise')} margin="normal"/></div>
                   <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Performance Description </h5><input id="performancedescription" placeHolder={values.performancedescription} type="performancedescription" label="Performance Description"  value={values.performancedescription} onChange={handleChange('performancedescription')} margin="normal"/></div>
                   <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Rates, if you have several different services you may put a variety of different rates </h5><input id="rates" placeHolder={values.rates} type="rates" label="Rates"  value={values.rates} onChange={handleChange('rates')} margin="normal"/></div>
 

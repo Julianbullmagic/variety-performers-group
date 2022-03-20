@@ -49,7 +49,7 @@ getGroupData()
       will keep you amazed and amused. We are an agency run by performers, allowing direct communication and better value for money. No middle men.</h3>
       </div>
       <div style={{opacity:"0.9"}}>
-      <CreateLeadForm homepage="true"/>
+      <CreateLeadForm homepage="true" users={users}/>
       </div>
       <div className="users">
       {users&&users.map(user=>{return(<>

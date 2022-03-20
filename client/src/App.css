@@ -809,10 +809,10 @@ input
 }
 
 input[type="checkbox"] {
-  margin: 0;
+  margin-right:1vw;
   font: inherit;
   width: 5vw;
-  height: 10vw;
+  height: 5vw;
   border: 0.15em solid #6699cc;
   border-radius: 0.15em;
 }

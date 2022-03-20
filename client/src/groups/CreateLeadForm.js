@@ -5,8 +5,11 @@ import isEmail from 'validator/lib/isEmail';
 const mongoose = require("mongoose");
 
 export default function CreateLeadForm(props) {
+  const [users, setUsers] = useState(props.users);
   const [viewForm, setViewForm] = useState(false);
   const [emailError, setEmailError] = useState(false);
+  const [genre, setGenre] = useState('');
+  const [genres, setGenres] = useState([]);
   const [phoneError, setPhoneError] = useState(false);
   const [addressError, setAddressError] = useState(false);
   const [fixErrors, setFixErrors] = useState(false);
@@ -25,28 +28,39 @@ export default function CreateLeadForm(props) {
   const [toggle, setToggle] = useState(false);
   let server = "http://localhost:5000";
   let socket
+  if(sendNotif){
   if(process.env.NODE_ENV=="production"){
     socket=io();
   }
   if(process.env.NODE_ENV=="development"){
     socket=io(server);
   }
+}
+
   function sendAnother(e){
     setFormSubmitted(!formSubmitted)
   }
 
   useEffect(() => {
+    setUsers(props.users)
     if(props.sendnotif){
       console.log("send notif",props.sendnotif)
       setSendNotif(props.sendnotif)
     }
   },[props])
 
+  function handleGenreChange(event){
+    console.log(event.target.value)
+    setGenre(event.target.value)
+  }
+
   function sendLeadEmailNotification(item){
     console.log("sending Lead notification",props.users)
     let userscopy=JSON.parse(JSON.stringify(props.users))
     console.log(userscopy.length)
     userscopy=userscopy.filter(user=>user.leads)
+    userscopy=userscopy.filter(user=>item.genres.includes(user.jobtitle))
+    console.log(userscopy)
     let emails=userscopy.map(item=>{return item.email})
     console.log(emails)
     console.log(emails.length)
@@ -146,6 +160,7 @@ if (errors){
           title:titleValue.current.value,
           description:descriptionValue.current.value,
           customername:customerNameValue.current.value,
+          genres:genres,
           location:locationValue.current.value,
           coordinates:coordinates,
           views:[],
@@ -161,6 +176,10 @@ if (errors){
         console.log("new lead", newLead)
         if(props.updateLeads){
           props.updateLeads(newLead)
+
+          if(!props.homepage){
+
+          }
           let chatMessage=`created an gig lead called ${titleValue.current.value}`
           let userId=''
 
@@ -204,6 +223,7 @@ if (errors){
 
               sendLeadEmailNotification(newLead)
 
+              setGenres([])
               titleValue.current.value=""
               descriptionValue.current.value=""
               locationValue.current.value=""
@@ -215,6 +235,35 @@ if (errors){
   }
         }
 
+        function addGenre(e){
+          e.preventDefault()
+          let genrescopy=[...genres]
+          if (!genres.includes(genre)){
+            genrescopy.push(genre)
+          }
+          setGenres(genrescopy)
+        }
+        function removeGenre(e,item){
+          e.preventDefault()
+          console.log(item)
+          let filteredgenres=[]
+          for (let genre of genres){
+            if(!(genre==item)){
+              filteredgenres.push(genre)
+            }
+          }
+          console.log(filteredgenres)
+          setGenres(filteredgenres)
+        }
+
+        let genreoptions=[]
+        if (users){
+          for (let user of users){
+            if (!genreoptions.includes(user.jobtitle.toLowerCase())){
+              genreoptions.push(user.jobtitle.toLowerCase())
+            }
+          }
+        }
 
         return (
           <>
@@ -247,7 +296,6 @@ if (errors){
           />
           </div>
 
-
           <div className="eventformbox">
           <label htmlFor='name'>Briefly describe your event or the customers event and the sort of entertainment you are looking for</label>
           <input
@@ -271,6 +319,18 @@ if (errors){
           />
           {addressError&&<p style={{color:"red"}}>Not a valid location</p>}
           </div>
+
+
+          <div className="eventformbox">
+          <label htmlFor='name'>What kind of performance are you looking for?</label>
+          <select style={{width:"40vw"}} id="restriction" onChange={(e) => handleGenreChange(e)}>
+          <option value="all">all</option>
+          {genreoptions&&genreoptions.map(item=><option value={item}>{item}</option>)}
+          </select>
+          <button onClick={(e) => addGenre(e)}>Add</button>
+          {genres&&genres.map(item=><><h5 style={{display:"inline",marginLeft:"2vw"}}>{item}</h5><button style={{display:"inline"}} onClick={(e) => removeGenre(e,item)}>Remove</button></>)}
+          </div>
+
           <div className="eventformbox">
           <label htmlFor='name'>When is it?</label>
           <input

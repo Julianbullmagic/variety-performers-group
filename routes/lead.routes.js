@@ -55,6 +55,7 @@ router.get("/", (req, res, next) => {
       title:req.body.title,
       description:req.body.description,
       customername:req.body.customername,
+      genres:req.body.genres,
       location:req.body.location,
       coordinates:req.body.coordinates,
       time:req.body.time,
