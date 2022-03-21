@@ -7,8 +7,6 @@ import PrivateRoute from './auth/PrivateRoute'
 import GroupPage from './groups/GroupPage'
 import SingleUser from './groups/SingleUser'
 import Menu from './core/Menu'
-import ExplanationPage from "./ExplanationPage"
-
 
 const MainRouter = () => {
     return (<div>
@@ -18,7 +16,6 @@ const MainRouter = () => {
         <Route exact path="/signup" component={Signup}/>
         <Route exact path="/signin" component={Signin}/>
         <Route exact path="/group"    component={GroupPage}/>
-        <Route exact path="/explanation"    component={ExplanationPage}/>
         <Route exact path="/singleuser/:userId"    component={SingleUser}/>
       </Switch>
 
