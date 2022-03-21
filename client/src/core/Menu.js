@@ -16,7 +16,7 @@ const isActive = (history, path) => {
 const Menu = withRouter(({history}) => (
   <div className="menu" style={{backgroundColor:"#759CC9"}}>
     <h2 className="menutitle">
-        Variety Performers Group
+        Variety Performers
       </h2>
       <div className="navbuttons">
       <Link to="/">

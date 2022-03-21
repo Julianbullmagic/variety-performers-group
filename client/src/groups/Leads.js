@@ -27,7 +27,12 @@ export default class Leads extends Component {
 
   componentDidMount(){
     let server = "http://localhost:5000";
-    this.socket = io(server);
+    if(process.env.NODE_ENV=="production"){
+      socket=io();
+    }
+    if(process.env.NODE_ENV=="development"){
+      socket=io(server);
+    }
     this.getLeads()
   }
 
