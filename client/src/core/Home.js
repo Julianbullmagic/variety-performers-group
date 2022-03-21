@@ -19,6 +19,7 @@ const KmeansLib = require('kmeans-same-size');
 
 export default function Home({history}){
   const [users, setUsers] = useState(false)
+  const [videos, setVideos] = useState(false)
 
 
   useEffect(()=> {
@@ -36,6 +37,16 @@ getGroupData()
           let approvedusers=data.filter(user=>user.approvedmember)
           console.log("APPROVED USERS",approvedusers)
           setUsers(approvedusers)
+          let vids=[]
+          for (let user of approvedusers){
+            if (user.promovideos){
+              console.log("user.promovideos",user.promovideos)
+              vids.push(...user.promovideos)
+            }
+          }
+          vids = vids.sort(() => Math.random() - 0.5)
+          console.log("vids",vids)
+          setVideos(vids)
         })
 
 
@@ -51,6 +62,7 @@ getGroupData()
       <div style={{opacity:"0.9"}}>
       <CreateLeadForm homepage="true" users={users}/>
       </div>
+
       <div className="users">
       {users&&users.map(user=>{return(<>
         <Link to={"/singleuser/" + user._id}>
@@ -63,6 +75,10 @@ getGroupData()
         cloudName="julianbullmagic" publicId={user.images[0]} /></div>
         }</Link>
         </>)})}
+        <div className="vids">
+      <iframe style={{margin:"0.5vw",width:"44vw",height:"44vh",display:"inline"}} src={videos[0]} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      <iframe style={{margin:"0.5vw",width:"44vw",height:"44vh",display:"inline"}} src={videos[1]} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
         </div>
       </div>
       </>

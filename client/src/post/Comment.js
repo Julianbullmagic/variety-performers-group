@@ -119,7 +119,6 @@ export default function Comment(props) {
                       <button style={{display:"inline"}} onClick={(e) => handleSubmit(e)}>Submit Comment</button>
                       </div>
                       <input className='commentinput'
-                      style={{width:"80vw"}}
                       type='text'
                       style={{overflowY:"auto"}}
                       name='commentValue'

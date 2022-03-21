@@ -22,16 +22,17 @@ export default class Leads extends Component {
       updating:false
     }
     this.updateLeads= this.updateLeads.bind(this)
+    let socket
   }
 
 
   componentDidMount(){
     let server = "http://localhost:5000";
     if(process.env.NODE_ENV=="production"){
-      socket=io();
+      this.socket=io();
     }
     if(process.env.NODE_ENV=="development"){
-      socket=io(server);
+      this.socket=io(server);
     }
     this.getLeads()
   }

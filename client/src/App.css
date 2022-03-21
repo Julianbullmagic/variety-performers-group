@@ -151,6 +151,10 @@ bottom:0;
 	justify-content: space-between;
 	padding: 0.1vw;
 }
+.commentinput
+{
+	width: 60vw;
+}
 .commp{
 	display:inline;
 }
@@ -723,15 +727,16 @@ width:100vw;
 	box-shadow: 5px 5px 5px #050A30;
 	color: white;
 	height: 45vh;
-	margin-right: 2vw;
+  margin-bottom:1vw;
 	overflow: hidden;
 	position: relative;
-	width: 42vw;
+	width: 43vw;
 }
 .users
 {
 	display: flex;
 	flex-wrap: wrap;
+  justify-content:space-between;
 }
 .yourgroups
 {
@@ -1108,7 +1113,7 @@ textarea:focus
 		margin:2vw;
 	}
 	.commentinput{
-		width:70vw;
+		width:75vw;
 		display:block;
 	}
 }
