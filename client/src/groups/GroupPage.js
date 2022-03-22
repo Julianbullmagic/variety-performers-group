@@ -104,6 +104,7 @@ class GroupPage extends Component {
 
     return (
       <>
+      <div style={{width:"100vw",overflowX:"hidden"}}>
       {!auth.isAuthenticated().user.approvedmember&&<h2 style={{marginRight:"5vw",marginLeft:"5vw",
       width:"90vw"}}>Your membership has not yet been approved by
         quarters of existing members</h2>}
@@ -176,6 +177,7 @@ class GroupPage extends Component {
        </>}
        </div>
        </>}
+       </div>
       </>
     );
   }

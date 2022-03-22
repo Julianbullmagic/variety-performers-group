@@ -483,7 +483,7 @@ width:100vw;
 .percentage
 {
 	background-color: red;
-	height: 3vw;
+	height: 3vh;
 }
 .percentagecontainer
 {
@@ -491,7 +491,7 @@ width:100vw;
 	border-color: black;
 	border-style: solid;
 	border-width: 2px;
-	height: 2vh;
+	height: 3vh;
 	width: 98%;
 }
 .pollbox
@@ -533,8 +533,6 @@ width:100vw;
 	border-right-width: 5px;
 	border-style: solid;
 	border-top-width: 5px;
-	display: flex;
-	justify-content: space-between;
 	padding: 1vw;
 }
 .restrictionexplanation
@@ -694,7 +692,7 @@ width:100vw;
 	margin-left: 4vw;
 	margin-right: 4vw;
 	margin-bottom: 4vw;
-	width: 92vw;
+	width: 91vw;
 }
 .titlediv
 {

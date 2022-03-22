@@ -82,8 +82,8 @@ export default class Leads extends Component {
     leadscopy.reverse()
     leadscopy.push(newlead)
     leadscopy.reverse()
+    leadscopy=leadscopy.filter(lead=>lead.genres.includes(this.state.category))
     this.setState({ leads:leadscopy})
-
     let current=leadscopy.slice((this.state.page*10-10),this.state.page*10)
     console.log(current)
     this.setState({currentPageData:current})
@@ -159,11 +159,29 @@ export default class Leads extends Component {
     changeLeadsCategory(e,item){
       if(item=="all"){
         let currentpage=this.state.leads.slice((this.state.page*10-10),this.state.page*10)
-        this.setState({category:item,currentPageData:currentpage})
+        let pagenum=Math.ceil(this.state.leads.length/10)
+        console.log(this.state.leads.length,pagenum)
+        let pagenums=[]
+        while(pagenum>0){
+          pagenums.push(pagenum)
+          pagenum--
+        }
+        pagenums.reverse()
+        console.log(pagenums)
+        this.setState({category:item,currentPageData:currentpage,pageNum:pagenums})
       }else{
         let filteredleadsbycategory=this.state.leads.filter(lead=>lead.genres.includes(item))
+        let pagenum=Math.ceil(filteredleadsbycategory.length/10)
+        console.log(filteredleadsbycategory.length,pagenum)
+        let pagenums=[]
+        while(pagenum>0){
+          pagenums.push(pagenum)
+          pagenum--
+        }
+        pagenums.reverse()
+        console.log(pagenums)
         let currentpage=filteredleadsbycategory.slice((this.state.page*10-10),this.state.page*10)
-        this.setState({category:item,currentPageData:currentpage})
+        this.setState({category:item,currentPageData:currentpage,pageNum:pagenums})
       }
     }
 
@@ -179,14 +197,17 @@ export default class Leads extends Component {
           <div key={item._id} className="leadbox">
           <div className="leadcol1">
           <h3 style={{margin:"0.5vw"}}>{item.title}</h3>
-          <h4 style={{margin:"0.5vw"}}>Customer Name: {item.customername}</h4>
-          <h4 style={{margin:"0.5vw"}}>Description: {item.description}</h4>
-          <h4 style={{margin:"0.5vw"}}>Where: {item.location}</h4>
-          <h4 style={{margin:"0.5vw"}}>When: {item.time}</h4>
-          <h4 vstyle={{margin:"0.5vw"}}>How Long: {item.duration}</h4>
-          {item.views.length>=3&&<h4 style={{margin:"0.5vw"}}>Max 3 people have viewed contact details already</h4>}
-          {(item.views.includes(auth.isAuthenticated().user._id)&&item.views.length<=3)&&<><h4 style={{margin:"0.5vw"}}>Phone: {item.phone}</h4>
-          <h4 style={{margin:"0.5vw"}}>Email: {item.email}</h4></>}
+          <h6 style={{margin:"0.5vw"}}>Customer Name: {item.customername}</h6>
+          <h6 style={{margin:"0.5vw"}}>Description: {item.description}</h6>
+          <h6 style={{margin:"0.5vw"}}>Where: {item.location}</h6>
+          <h6 style={{margin:"0.5vw"}}>When: {item.time}</h6>
+          <h6 style={{margin:"0.5vw"}}>How Long: {item.duration}</h6>
+          {item.genres&&<h6 style={{margin:"0.5vw",display:"inline"}}>Types of Performance Needed:
+          {item.genres&&item.genres.map(item=><h6 style={{display:"inline"}}> {item}</h6>)}</h6>}
+
+          {item.views.length>=3&&<h5 style={{margin:"0.5vw"}}>Max 3 people have viewed contact details already</h5>}
+          {(item.views.includes(auth.isAuthenticated().user._id)&&item.views.length<=3)&&<><h6 style={{margin:"0.5vw"}}>Phone: {item.phone}</h6>
+          <h6 style={{margin:"0.5vw"}}>Email: {item.email}</h6></>}
           {(!item.views.includes(auth.isAuthenticated().user._id)&&item.views.length<3)&&<button onClick={(e)=>this.viewContactDetails(e,item._id)}>View Contact Details?</button>}
           <button onClick={(e)=>this.deleteLead(e,item._id)}>Delete this lead?</button>
 
@@ -217,15 +238,18 @@ export default class Leads extends Component {
         <>
         {this.state.users&&<CreateLeadForm sendNotif="true" updateLeads={this.updateLeads} users={this.state.users}/>}
         <h2><strong>Gig Leads </strong></h2>
+        <h4 style={{display:"inline"}}>Choose Lead By Performance Type</h4>
+        <button style={{display:"inline",
+        opacity:("all"==this.state.category)?"0.5":"1"}} onClick={(e) => this.changeLeadsCategory(e,"all")}>all</button>
         {genreoptions&&genreoptions.map((item,index)=><><button style={{display:"inline",
         opacity:(item==this.state.category)?"0.5":"1"}} onClick={(e) => this.changeLeadsCategory(e,item)}>{item}</button></>)}
-
+        <div>
         {(this.state.pageNum&&this.state.leads.length>10)&&  <h4 style={{display:"inline"}}>Choose Page</h4>}
         {(this.state.pageNum&&this.state.leads)&&this.state.pageNum.map((item,index)=>{
           return (<>
             <button style={{display:"inline",opacity:(index+1==this.state.page)?"0.5":"1"}} onClick={(e) => this.decidePage(e,item)}>{item}</button>
             </>)
-          })}
+          })}</div>
           {leadscomponent}
           {(this.state.pageNum&&this.state.leads.length>10)&&  <h4 style={{display:"inline"}}>Choose Page</h4>}
           {(this.state.pageNum&&this.state.leads)&&this.state.pageNum.map((item,index)=>{
@@ -233,6 +257,7 @@ export default class Leads extends Component {
               <button style={{display:"inline",opacity:(index+1==this.state.page)?"0.5":"1"}} onClick={(e) => this.decidePage(e,item)}>{item}</button>
               </>)
             })}
+            <br/>
             <br/>
             </>
           );

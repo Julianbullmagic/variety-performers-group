@@ -327,7 +327,7 @@ if (errors){
           <option value="all">all</option>
           {genreoptions&&genreoptions.map(item=><option value={item}>{item}</option>)}
           </select>
-          <button onClick={(e) => addGenre(e)}>Add</button>
+          <button onClick={(e) => addGenre(e)}>Add performance type</button>
           {genres&&genres.map(item=><><h5 style={{display:"inline",marginLeft:"2vw"}}>{item}</h5><button style={{display:"inline"}} onClick={(e) => removeGenre(e,item)}>Remove</button></>)}
           </div>
 
@@ -386,6 +386,6 @@ if (errors){
             <button style={{height:"3vw"}} onClick={(e) => sendAnother(e)}>Submit another booking request</button>
             </>)}
             </div>
-            <br/>
+            {props.sendnotif&&<br/>}
             </>
           )}

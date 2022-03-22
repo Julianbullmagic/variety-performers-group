@@ -290,6 +290,7 @@ function handleSubmit(e){
                   }).catch(err => {
                     console.error(err);
                   })
+                  setPost("")
               }
 
 
@@ -323,35 +324,19 @@ function handleSubmit(e){
                         setViewExplanation(!viewExplanation)
                       }
 
-              if(preview){
-                if(preview.image){
-                  var previewmapped=<><h2>{preview.title}</h2><img src={preview.image}></img></>
-                }
-
-                if(preview.url){
-                  var previewmapped=<><h2>{preview.title}</h2><iframe src={preview.url}></iframe></>
-                }
-              }
+                      if(preview){
+                        console.log("preview",preview)
+                        if(preview.url){
+                          var previewmapped=<img src={preview.url} style={{marginLeft:"10vw",textAlign:"center",maxHeight:"70vh",maxWidth:"70vw",objectFit:"contain"}}></img>
+                        }
+                      }
 
               var postsmapped=currentPageData.map((item,i)=>{
+                let prev
                 if (item.preview){
-                  if(item.preview.title){
-                    if(item.preview.image){
-                      var prev=
-                      <>
-                      <h2>{item.preview.title}</h2>
-                      <img src={item.preview.image}></img>
-                      </>
                       if(item.preview.url){
-                        prev=
-                        <>
-                        <h2>{item.preview.title}</h2>
-                        <iframe src={item.preview.url}></iframe>
-                        <img src={item.preview.image}></img>
-                        </>
+                         prev=<img key={item._id} style={{position:"relative",margin:"1vw",display:"block",Zindex:"-1",Position:"fixed",marginLeft:"10vw",textAlign:"center",maxHeight:"70vh",maxWidth:"70vw",objectFit:"contain"}} src={item.preview.url}></img>
                       }
-                    }
-                  }
                 }
 
                 return (
@@ -359,15 +344,16 @@ function handleSubmit(e){
                   <div key={item._id} className="postbox">
                   <div>
                   <div className="postboxform">
-                  <h4 style={{margin:"1vw"}}><strong>Post: </strong>{item.post}</h4>
-                  {prev&&prev}
-                  <div>
-                  {item.createdby&&<><h5 style={{margin:"1vw",display:"inline"}}><strong> Post by {item.createdby.name}</strong></h5>
+                  <div style={{display:"block",margin:"1vw",textAlign:"right"}}>
+                  {item.createdby&&<><h5 style={{margin:"1vw",display:"inline",textAlign:"center"}}><strong> Post by {item.createdby.name}</strong></h5>
                   {((item.createdby._id==auth.isAuthenticated().user._id)&&!item.areyousure)&&
                     <button className="ruletext deletebutton" onClick={(e)=>areYouSure(e,item)}>Delete Post?</button>}</>}
                     {item.areyousure&&<button className="ruletext deletebutton" onClick={(e)=>areYouNotSure(e,item)}>Not sure</button>}
                     {item.areyousure&&<button className="ruletext deletebutton" onClick={(e)=>deletePost(e,item._id)}>Are you sure?</button>}
-                    </div></div>
+                    </div>
+                    <h4 style={{display:"block",margin:"1vw"}}><strong>Post: </strong>{item.post}</h4>
+                    {prev&&prev}
+                    </div>
                     </div>
                       <Comment id={item._id}/>
                       </div>
@@ -383,7 +369,6 @@ function handleSubmit(e){
                       <>
                       {inthisgroup&&<>
                         <button style={{display:"block"}} onClick={(e) => setViewForm(!viewForm)}>View Write Post Form?</button>
-
                         <div className="form" style={{maxHeight:!viewForm?"0":"1000vw",overflow:"hidden",transition:"max-height 2s"}}>
                         <form style={{display:!viewForm?"none":"block"}}>
                         <div>

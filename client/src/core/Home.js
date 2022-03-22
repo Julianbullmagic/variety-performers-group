@@ -76,8 +76,8 @@ getGroupData()
         }</Link>
         </>)})}
         <div className="vids">
-      <iframe style={{margin:"0.5vw",width:"44vw",height:"44vh",display:"inline"}} src={videos[0]} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-      <iframe style={{margin:"0.5vw",width:"44vw",height:"44vh",display:"inline"}} src={videos[1]} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      <iframe style={{margin:"0.5vw",width:"44vw",height:"44vh",display:"inline",borderRadius:"10px"}} src={videos[0]} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      <iframe style={{margin:"0.5vw",width:"44vw",height:"44vh",display:"inline",borderRadius:"10px"}} src={videos[1]} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
       </div>
         </div>
       </div>
