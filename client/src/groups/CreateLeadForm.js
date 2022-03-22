@@ -386,6 +386,6 @@ if (errors){
             <button style={{height:"3vw"}} onClick={(e) => sendAnother(e)}>Submit another booking request</button>
             </>)}
             </div>
-            {props.sendnotif&&<br/>}
+            {!props.sendnotif&&<br/>}
             </>
           )}
