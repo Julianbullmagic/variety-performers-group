@@ -879,18 +879,6 @@ function delRestPoll(e,item){
             </div>
             </div>
             <button className="formsubmitbutton" style={{margin:"0.5vw"}} onClick={(e) => handleSubmit(e)}>New Restriction Poll</button>
-            {group.groupabove&&<>
-              {group.groupabove.members.includes(auth.isAuthenticated().user._id)&&
-                <div style={{margin:"0.5vw",display:"inline"}}>
-                {!leaderCreatingRestriction&&<button style={{margin:"0.5vw",display:"inline"}} onClick={(e) => leaderCreateRestriction(e)}>Create Restriction Immediately</button>}
-                {leaderCreatingRestriction&&<h3 style={{margin:"0.5vw",display:"inline"}}>Uploading Restriction!!!</h3>}
-                {uploadComplete&&<h2 style={{margin:"0.5vw",display:"inline"}}>Upload Complete</h2>}
-                <p style={{margin:"0.5vw"}}>You are an group leader, you can create restrictions to enforce the rules. However, unless you are dealing with
-                a very serious issue and speed is vital, it is probably better to just propose a restriction poll for the jury to decide on. If you change your
-                mind about this punishment, you can visit the users profile by clicking on the button with their name at the top of the group page. If the user has
-                any restrictions they will be visible here and you can delete ones you have created</p>
-                </div>}
-              </>}
               <p style={{margin:"0.5vw"}}>Restriction polls are activated at 75% approval.</p>
               </form>
               </div></>}
@@ -904,23 +892,7 @@ function delRestPoll(e,item){
                   </>)
                 })}
                 {restrictionpollsmapped}
-                <p style={{display:isShown?"block":"none"}}>
-                If you punish too severely, you are getting revenge.
-                You are also trying to assert dominance and control, you become the bad guy. The best kind of revenge is to succeed and prosper without
-                the need to dominate and control others. Revenge leads to a pointless race to the bottom of people just trying to destroy each other.
-                The only lesson that revenge teaches people is that might makes right, revenge can ony encourage more unethical behaviour, or destroy
-                the spirit and confidence of the person it is inflicted onto.
 
-                We live in a very unfair world and this puts huge pressure on people to behave in immoral ways. This makes us wonder that if we don't
-                dominate others, they might end up dominating us. Try to take this into account when imposing restrictions on rule breakers. Try
-                your best to explain the rules and to not make prejudiced judgments about people. Maybe they have just been surrounded by
-                untrustworthy domineering people their whole lives,  making it very difficult for them to choose to behave ethically. It is
-                much easier to behave in a moral way if you are surrounded by trustworthy people and you know they will reciprocate and follow
-                the golden rule of "treat others how you would like to be treated" with you. People's lives are very complicated and our personal
-                circumstances, advantages and disadvantages, vary hugely.
-                People are much more likey to agree to follow a rule if they understand and agree with it and if the rules are enforced
-                in the spirit that nobody is perfect.
-                </p>
                 {pageNum.length>1&&<h4 style={{display:"inline"}}>Choose Page</h4>}
                 {(pageNum.length>1&&pageNum&&restrictionPolls)&&pageNum.map((item,index)=>{
                   return (<>
