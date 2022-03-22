@@ -202,8 +202,8 @@ export default class Leads extends Component {
           <h6 style={{margin:"0.5vw"}}>Where: {item.location}</h6>
           <h6 style={{margin:"0.5vw"}}>When: {item.time}</h6>
           <h6 style={{margin:"0.5vw"}}>How Long: {item.duration}</h6>
-          {item.genres&&<h6 style={{margin:"0.5vw",display:"inline"}}>Types of Performance Needed:
-          {item.genres&&item.genres.map(item=><h6 style={{display:"inline"}}> {item}</h6>)}</h6>}
+          {item.genres&&<h6 style={{margin:"0.5vw",display:"inline"}}>Types of Performance Needed:</h6>}
+          {item.genres&&item.genres.map(item=><h6 style={{display:"inline"}}> {item}</h6>)}
 
           {item.views.length>=3&&<h5 style={{margin:"0.5vw"}}>Max 3 people have viewed contact details already</h5>}
           {(item.views.includes(auth.isAuthenticated().user._id)&&item.views.length<=3)&&<><h6 style={{margin:"0.5vw"}}>Phone: {item.phone}</h6>
