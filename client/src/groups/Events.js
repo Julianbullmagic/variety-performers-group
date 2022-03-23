@@ -225,6 +225,16 @@ approveofevent(e,id){
     return id!==auth.isAuthenticated().user._id
   }
   for (var ev of eventscopy){
+    let votesfrommembers=[]
+    let memberids=this.state.users.map(item=>item._id)
+
+    for (let vote of ev.approval){
+      if (memberids.includes(vote)){
+        votesfrommembers.push(vote)
+      }
+    }
+    ev.approval=votesfrommembers
+
     if (ev._id==id){
 
       if(!ev.approval.includes(auth.isAuthenticated().user._id)){
@@ -282,12 +292,20 @@ withdrawapprovalofevent(e,id){
     return userid!=auth.isAuthenticated().user._id
   }
   for (var ev of eventscopy){
-    let approval=Math.round((ev.approval.length/this.state.users.length)*100)
+    let votesfrommembers=[]
+    let memberids=this.state.users.map(item=>item._id)
 
+    for (let vote of ev.approval){
+      if (memberids.includes(vote)){
+        votesfrommembers.push(vote)
+      }
+    }
+    ev.approval=votesfrommembers
     if (ev._id==id){
       var filteredapproval=ev.approval.filter(checkEvent)
       ev.approval=filteredapproval
     }
+    let approval=Math.round((ev.approval.length/this.state.users.length)*100)
 
 
     if (approval<75&&(n-ev.timecreated)>MILLISECONDS_IN_A_WEEK){
@@ -508,6 +526,16 @@ render() {
     if(this.state.events.length>0){
     eventscomponent=this.state.currentPageData.map(item => {
 
+      let votesfrommembers=[]
+      let memberids=this.state.users.map(item=>item._id)
+
+      for (let vote of item.approval){
+        if (memberids.includes(vote)){
+          votesfrommembers.push(vote)
+        }
+      }
+      item.approval=votesfrommembers
+
       let approval=<></>
       approval=Math.round((item.approval.length/this.state.users.length)*100)
 
@@ -539,11 +567,9 @@ render() {
         <div className="percentagecontainer"><div style={{width:width}} className="percentage"></div></div>
         {!item.approval.includes(auth.isAuthenticated().user._id)&&<button className="ruletext approvalbutton" id={item.title} onClick={(e)=>this.approveofevent(e,item._id)}>Attend this event?</button>}
         {item.approval.includes(auth.isAuthenticated().user._id)&&<button className="ruletext approvalbutton" id={item.title} onClick={(e)=>this.withdrawapprovalofevent(e,item._id)}>Don't want to attend anymore?</button>}
-        {this.state.group.groupabove&&<>
         {item.createdby&&<>
-        {((item.createdby._id==auth.isAuthenticated().user._id||this.state.group.groupabove.members.includes(auth.isAuthenticated().user._id))&&approval<75&&!item.areyousure)&&
+        {((item.createdby._id==auth.isAuthenticated().user._id)&&approval<75&&!item.areyousure)&&
           <button className="ruletext deletebutton" id={item.title} onClick={(e)=>this.areYouSure(e,item)}>Delete?</button>}</>}
-          </>}
           {item.areyousure&&<button className="ruletext deletebutton" id={item.title} onClick={(e)=>this.areYouNotSure(e,item)}>Not sure</button>}
           {item.areyousure&&<button className="ruletext deletebutton" id={item.title} onClick={(e)=>this.deleteEvent(e,item)}>Are you sure?</button>}
           </div>

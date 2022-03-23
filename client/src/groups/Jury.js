@@ -392,6 +392,15 @@ function delRestPoll(e,item){
                 let restrictionpollscopy=JSON.parse(JSON.stringify(restrictionPolls))
 
                 for (let restriction of restrictionpollscopy){
+                  let votesfrommembers=[]
+                  let memberids=users.map(item=>item._id)
+
+                  for (let vote of restriction.approval){
+                    if (memberids.includes(vote)){
+                      votesfrommembers.push(vote)
+                    }
+                  }
+                  restriction.approval=votesfrommembers
                     let approval
                   if (restriction._id==item._id){
 
@@ -411,6 +420,15 @@ function delRestPoll(e,item){
                 let restrictionpollscopy=JSON.parse(JSON.stringify(restrictionPolls))
 
                 for (let restriction of restrictionpollscopy){
+                  let votesfrommembers=[]
+                  let memberids=users.map(item=>item._id)
+
+                  for (let vote of restriction.approval){
+                    if (memberids.includes(vote)){
+                      votesfrommembers.push(vote)
+                    }
+                  }
+                  restriction.approval=votesfrommembers
                     let approval
                   if (restriction._id==item._id){
                     if(!restriction.approval.includes(auth.isAuthenticated().user._id)){
@@ -532,8 +550,15 @@ function delRestPoll(e,item){
             return userid!=auth.isAuthenticated().user._id
           }
           for (let restriction of restrictionpollscopy){
+            let votesfrommembers=[]
+            let memberids=users.map(item=>item._id)
+            for (let vote of restriction.approval){
+              if (memberids.includes(vote)){
+                votesfrommembers.push(vote)
+              }
+            }
+            restriction.approval=votesfrommembers
             if (restriction._id==item._id){
-
               let filteredapproval=restriction.approval.filter(checkRestriction)
               restriction.approval=filteredapproval
             }
@@ -762,6 +787,16 @@ function delRestPoll(e,item){
       var n = d.getTime();
 
       var restrictionpollsmapped=currentPageData.map((item,i)=>{
+
+        let votesfrommembers=[]
+        let memberids=users.map(item=>item._id)
+
+        for (let vote of item.approval){
+          if (memberids.includes(vote)){
+            votesfrommembers.push(vote)
+          }
+        }
+        item.approval=votesfrommembers
         let approval=<></>
 
         if(props.users){

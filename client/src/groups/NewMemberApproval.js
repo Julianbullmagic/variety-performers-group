@@ -81,11 +81,21 @@ export default class NewMemberApproval extends Component {
     var potentialmemberscopy=JSON.parse(JSON.stringify(this.state.potentialmembers))
 
     for (var member of potentialmemberscopy){
+
+      let votesfrommembers=[]
+      let memberids=this.state.users.map(item=>item._id)
+
+      for (let vote of member.approval){
+        if (memberids.includes(vote)){
+          votesfrommembers.push(vote)
+        }
+      }
+      member.approval=votesfrommembers
+
       if (member._id==id){
 
         if(!member.approval.includes(auth.isAuthenticated().user._id)){
           member.approval.push(auth.isAuthenticated().user._id)
-
 
           let approval=(member.approval.length/this.state.users.length)*100
 
@@ -140,6 +150,15 @@ withdrawapprovalofnewmember(e,id){
     return userid!=auth.isAuthenticated().user._id
   }
   for (var member of potentialmemberscopy){
+    let votesfrommembers=[]
+    let memberids=this.state.users.map(item=>item._id)
+
+    for (let vote of member.approval){
+      if (memberids.includes(vote)){
+        votesfrommembers.push(vote)
+      }
+    }
+    member.approval=votesfrommembers
     if (member._id==id){
 
       var filteredapproval=member.approval.filter(checkMember)
@@ -165,11 +184,12 @@ withdrawapprovalofnewmember(e,id){
 }
 
 sendMemberApprovedNotification(item){
-  if(!item.notificationsent){
+  if(!item.approvedmember){
     var memberscopy=JSON.parse(JSON.stringify(this.state.allusers))
     for (let member of memberscopy){
+
       if (member._id==item._id){
-        member.notificationsent=true
+        member.approvedmember=true
       }}
       this.setState({allusers:memberscopy})
 
@@ -223,21 +243,6 @@ sendMemberApprovedNotification(item){
     }).catch(err => {
       console.log(err);
     })
-
-    const optionstwo = {
-      method: 'put',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: ''
-    }
-
-    fetch("/groups/notificationsent/"+item._id, optionstwo
-  ) .then(res => {
-    console.log(res);
-  }).catch(err => {
-    console.log(err);
-  })
 }
 }
 
@@ -285,8 +290,7 @@ sendMemberApprovalNotification(item){
       let notification={
         emails:emails,
         subject:"Potential New Member",
-        message:`A potential new member called ${item.name} would like to join the group. Visit the New Member Approval
-        tab on the group page to vote to approve this. They need 75% approval.`
+        message:`A potential new member called ${item.name} would like to join the group. Visit the New Member Approval tab on the group page to vote to approve this. They need 75% approval.`
       }
 
       const options = {
@@ -330,6 +334,17 @@ render(props) {
   var newmemberscomponent=<h3>no potential members</h3>
   if (this.state.potentialmembers){
     newmemberscomponent=this.state.potentialmembers.map(item => {
+
+      let votesfrommembers=[]
+      let memberids=this.state.users.map(item=>item._id)
+
+      for (let vote of item.approval){
+        if (memberids.includes(vote)){
+          votesfrommembers.push(vote)
+        }
+      }
+      item.approval=votesfrommembers
+
       let approval=<></>
 
       if(this.state.users){

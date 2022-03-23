@@ -71,7 +71,7 @@ export default class Rules extends Component {
   }
 
   async getRules(){
-    await fetch(`/rules/`+this.props.groupId)
+    await fetch(`/rules/getrules/`+this.props.groupId)
     .then(response => response.json())
     .then(data=>{
 
@@ -199,6 +199,15 @@ export default class Rules extends Component {
       return id!==auth.isAuthenticated().user._id
     }
     for (var rule of rulescopy){
+      let votesfrommembers=[]
+      let memberids=this.state.users.map(item=>item._id)
+
+      for (let vote of rule.approval){
+        if (memberids.includes(vote)){
+          votesfrommembers.push(vote)
+        }
+      }
+      rule.approval=votesfrommembers
       if (rule._id==id){
 
         if(!rule.approval.includes(auth.isAuthenticated().user._id)){
@@ -294,6 +303,16 @@ withdrawapprovalofrule(e,id){
     return userid!=auth.isAuthenticated().user._id
   }
   for (var rule of rulescopy){
+
+    let votesfrommembers=[]
+    let memberids=this.state.users.map(item=>item._id)
+
+    for (let vote of rule.approval){
+      if (memberids.includes(vote)){
+        votesfrommembers.push(vote)
+      }
+    }
+    rule.approval=votesfrommembers
     if (rule._id==id){
 
 
@@ -523,6 +542,15 @@ render(props) {
   if (this.state.rules){
     if(this.state.rules.length>0){
     rulescomponent=this.state.currentPageData.map(item => {
+      let votesfrommembers=[]
+      let memberids=this.state.users.map(item=>item._id)
+
+      for (let vote of item.approval){
+        if (memberids.includes(vote)){
+          votesfrommembers.push(vote)
+        }
+      }
+      item.approval=votesfrommembers
       let approval=<></>
 
       if(this.state.users){
@@ -546,10 +574,9 @@ render(props) {
         <>
         <div key={item._id} className="rule">
         {item.createdby&&<>
-        <h3 className="ruletext">{item.rule}, suggested by {item.createdby.name}</h3>
-        {this.state.group.groupabove&&<>
-        {(((item.createdby._id==auth.isAuthenticated().user._id)||this.state.group.groupabove.members.includes(auth.isAuthenticated().user._id))&&approval<75&&!item.areyousure)&&
-          <button className="ruletext deletebutton" id={item.title} onClick={(e)=>this.areYouSure(e,item)}>Delete Rule?</button>}</>}
+        <h3 className="ruletext">{item.rule}{!item.rule.endsWith(".")&&<>,</>} Suggested by {item.createdby.name}</h3>
+        {((item.createdby._id==auth.isAuthenticated().user._id)&&approval<75&&!item.areyousure)&&
+          <button className="ruletext deletebutton" id={item.title} onClick={(e)=>this.areYouSure(e,item)}>Delete Rule?</button>}
           {item.areyousure&&<button className="ruletext deletebutton" id={item.title} onClick={(e)=>this.areYouNotSure(e,item)}>Not sure</button>}
           {item.areyousure&&<button className="ruletext deletebutton" id={item.title} onClick={(e)=>this.deleteRule(e,item)}>Are you sure?</button>}
         </>}

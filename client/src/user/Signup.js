@@ -351,7 +351,7 @@ function changer(){
                 return (
 
 
-                  <div className="signupform" style={{marginTop:"16vh"}}>
+                  <div className="signupform" style={{marginTop:"6vh"}}>
                   <h2  className="innersignupform" style={{display:(loading?"block":"none")}}>Uploading profile, please wait...</h2>
                   <div className="innersignupform" style={{display:(!loading?"block":"none")}}>
                   <h4 style={{textAlign:"center",marginTop:"0.5vh"}}>

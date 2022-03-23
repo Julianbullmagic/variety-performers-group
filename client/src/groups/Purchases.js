@@ -126,8 +126,8 @@ async getPurchases(){
            let userName=auth.isAuthenticated().user.name
            let nowTime=n
            let type="text"
-           let groupId=this.state.group._id
-           let groupTitle=this.state.group.title
+           let groupId="Performers"
+           let groupTitle="Performers"
 
            this.socket.emit("Input Chat Message", {
              chatMessage,
@@ -182,6 +182,17 @@ function checkPurchase() {
   return id!==auth.isAuthenticated().user._id
 }
 for (var p of purchasescopy){
+
+  let votesfrommembers=[]
+  let memberids=this.state.users.map(item=>item._id)
+
+  for (let vote of p.approval){
+    if (memberids.includes(vote)){
+      votesfrommembers.push(vote)
+    }
+  }
+  p.approval=votesfrommembers
+
   if (p._id==id){
  if(!p.approval.includes(auth.isAuthenticated().user._id)){
    p.approval.push(auth.isAuthenticated().user._id)
@@ -222,6 +233,15 @@ this.setState({currentPageData:current})
            return userid!=auth.isAuthenticated().user._id
          }
          for (var p of purchasescopy){
+           let votesfrommembers=[]
+           let memberids=this.state.users.map(item=>item._id)
+
+           for (let vote of p.approval){
+             if (memberids.includes(vote)){
+               votesfrommembers.push(vote)
+             }
+           }
+           p.approval=votesfrommembers
            if (p._id==id){
 
              var filteredapproval=p.approval.filter(checkpurchase)
@@ -316,6 +336,34 @@ this.setState({currentPageData:current})
          }
        }
 
+
+       areYouSure(e,item){
+         console.log(item)
+           let rulescopy=JSON.parse(JSON.stringify(this.state.purchases))
+           console.log(rulescopy)
+           for (let rule of rulescopy){
+             if (rule._id==item._id){
+               rule.areyousure=true
+             }}
+             console.log(rulescopy)
+
+             let current=rulescopy.slice((this.state.page*10-10),this.state.page*10)
+             this.setState({purchases:rulescopy,currentPageData:current})
+           }
+
+           areYouNotSure(e,item){
+             console.log(item)
+               let rulescopy=JSON.parse(JSON.stringify(this.state.purchases))
+               console.log(rulescopy)
+               for (let rule of rulescopy){
+                 if (rule._id==item._id){
+                   rule.areyousure=false
+                 }}
+                 console.log(rulescopy)
+                 let current=rulescopy.slice((this.state.page*10-10),this.state.page*10)
+                 this.setState({purchases:rulescopy,currentPageData:current})
+               }
+
   render() {
     console.log("USERS IN EVENTS",this.props.users)
     var d = new Date();
@@ -324,7 +372,15 @@ this.setState({currentPageData:current})
             var purchasescomponent=<h3>no suggested purchases</h3>
             if (this.state.users&&this.state.purchases){
               purchasescomponent=this.state.currentPageData.map(item => {
+                let votesfrommembers=[]
+                let memberids=this.state.users.map(item=>item._id)
 
+                for (let vote of item.approval){
+                  if (memberids.includes(vote)){
+                    votesfrommembers.push(vote)
+                  }
+                }
+                item.approval=votesfrommembers
                 let approval=<></>
                 if(this.state.users){
                   approval=Math.round((item.approval.length/this.state.users.length)*100)
@@ -346,22 +402,26 @@ this.setState({currentPageData:current})
 
                 return(
 <>
-<div className="leadbox">
+<div key={item._id} className="leadbox">
 <div className="leadcol1">
-<h3>{item.title}</h3>
-<h4>{item.description}</h4>
-<h4>{item.price}</h4>
-<h4>{item.quantity}</h4>
+{item.title&&<h3>Title: {item.title}</h3>}
+{item.description&&<h4>Description: {item.description}</h4>}
+{item.price&&<h4>Price: {item.price}</h4>}
+{item.quantity&&<h4>Quantity: {item.quantity}</h4>}
 {this.state.users&&<h4>{approval}% of members want to share in this purchase, {item.approval.length}/{this.state.users.length}</h4>}
 {approveenames&&approveenames.map((item,index)=>{return(<><h4 className="ruletext">{item}{(index<(approveenames.length-2))?", ":(index<(approveenames.length-1))?" and ":"."}</h4></>)})}
 {!item.approval.includes(auth.isAuthenticated().user._id)&&<button onClick={(e)=>this.approveofpurchase(e,item._id)}>Contribute to this purchase?</button>}
 {item.approval.includes(auth.isAuthenticated().user._id)&&<button onClick={(e)=>this.withdrawapprovalofpurchase(e,item._id)}>Don't contribute to this purchase?</button>}
-<button onClick={(e)=>this.deletePurchase(e,item)}>Delete?</button>
+{((item.createdby==auth.isAuthenticated().user._id)&&!item.areyousure)&&
+  <button className="ruletext deletebutton" id={item.title} onClick={(e)=>this.areYouSure(e,item)}>Delete Purchase?</button>}
+  {item.areyousure&&<button className="ruletext deletebutton" id={item.title} onClick={(e)=>this.areYouNotSure(e,item)}>Not sure</button>}
+  {item.areyousure&&<button className="ruletext deletebutton" id={item.title} onClick={(e)=>this.deletePurchase(e,item)}>Are you sure?</button>}
 </div>
 <div className="leadcol2">
-<AwesomeSlider style={{width:"25vw",position: "absolute",  zIndex: +1}}>
+{item.images&&<>
+<AwesomeSlider style={{width:"40vw",position: "absolute",  zIndex: +1}}>
 {item.images.map(item=>{return <div><Image cloudName="julianbullmagic" publicId={item} /></div>})}
-</AwesomeSlider>
+</AwesomeSlider></>}
 </div>
 </div>
 </>
@@ -380,16 +440,16 @@ this.setState({currentPageData:current})
       <CreatePurchaseForm updatePurchases={this.updatePurchases}/>
       <h2><strong>Possible Purchases </strong></h2>
       {(this.state.pageNum&&this.state.purchases.length>10)&&<h4 style={{display:"inline"}}>Choose Page</h4>}
-{(this.state.pageNum&&this.state.purchases)&&this.state.pageNum.map(item=>{
+{(this.state.pageNum&&this.state.purchases)&&this.state.pageNum.map((item,index)=>{
         return (<>
-          <button style={{display:"inline"}} onClick={(e) => this.decidePage(e,item)}>{item}</button>
+          <button style={{display:"inline",opacity:(index+1==this.state.page)?"0.5":"1"}}  onClick={(e) => this.decidePage(e,item)}>{item}</button>
           </>)
       })}
       {purchasescomponent}
     {(this.state.pageNum&&this.state.purchases.length>10)&&  <h4 style={{display:"inline"}}>Choose Page</h4>}
-{(this.state.pageNum&&this.state.purchases)&&this.state.pageNum.map(item=>{
+{(this.state.pageNum&&this.state.purchases)&&this.state.pageNum.map((item,index)=>{
         return (<>
-          <button style={{display:"inline"}} onClick={(e) => this.decidePage(e,item)}>{item}</button>
+          <button style={{display:"inline",opacity:(index+1==this.state.page)?"0.5":"1"}}  onClick={(e) => this.decidePage(e,item)}>{item}</button>
           </>)
       })}
       </>

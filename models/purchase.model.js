@@ -6,7 +6,7 @@ const purchaseSchema = mongoose.Schema({
   title:String,
   description:String,
   images:[{type:String}],
-  price:Number,
+  price:String,
   notificationsent:{type:Boolean,default:false},
   ratificationnotificationsent:{type:Boolean,default:false},
   createdby:{type:mongoose.Schema.Types.ObjectId,ref:"User"},

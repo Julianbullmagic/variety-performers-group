@@ -174,7 +174,7 @@ console.log("submitting")
               className="posttextarea"
               type='datetime-local'
               name='startTimValue'
-              style={{width:"80vw"}}
+              style={{width:"80vw",overflow:"hidden"}}
               id='startTimeValue'
               ref={startTimeValue}
               />
@@ -183,7 +183,7 @@ console.log("submitting")
               className="posttextarea"
               type='datetime-local'
               name='endTimeValue'
-              style={{width:"80vw"}}
+              style={{width:"80vw",overflow:"hidden"}}
               id='endTimeValue'
               ref={endTimeValue}
               />

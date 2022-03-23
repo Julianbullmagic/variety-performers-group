@@ -103,11 +103,12 @@ export default function Polls (props) {
     newPollToRender.createdby=auth.isAuthenticated().user
 
 
+
     var d = new Date();
     var n = d.getTime();
 
 
-    let chatMessage=`created a poll question: ${pollquestion.current.value}`
+    let chatMessage=`created a poll called ${pollquestion.current.value}`
     let userId=auth.isAuthenticated().user._id
     let userName=auth.isAuthenticated().user.name
     let nowTime=n
@@ -248,7 +249,7 @@ export default function Polls (props) {
                       let notification={
                         emails:emails,
                         subject:"New Poll",
-                        message:`In the group called ${group.title} at level ${group.level}, ${item.createdby.name} created the poll question: ${item.pollquestion}`
+                        message:`In the group called ${group.title} at level ${group.level}, ${item.createdby.name} created the poll: ${item.pollquestion}`
                       }
 
                       const options = {
