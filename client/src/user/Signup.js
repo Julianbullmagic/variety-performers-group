@@ -109,14 +109,18 @@ export default function Signup (){
 
 function changer(){
   let errors=false
-  if(validator.isURL(values.youtube)&&values.youtube.includes("youtube")){
-    setYoutubeChannelError(false)
-  }else{
-    setYoutubeChannelError(true)
-    setFixErrors(true)
-    errors=true
+
+  if(values.youtube!==""){
+    if(validator.isURL(values.youtube)&&values.youtube.includes("youtube")){
+      setYoutubeChannelError(false)
+    }else{
+      setYoutubeChannelError(true)
+      setFixErrors(true)
+      errors=true
+    }
   }
 
+if(values.website!==""){
   if(validator.isURL(values.website)){
     setWebsiteError(false)
   }else{
@@ -124,7 +128,8 @@ function changer(){
     setFixErrors(true)
     errors=true
   }
-
+}
+if(values.email!==""){
   if(validator.isEmail(values.email)){
     setEmailError(false)
   }else{
@@ -132,28 +137,33 @@ function changer(){
     setFixErrors(true)
     errors=true
   }
+}
 
   var phoneExpression = /^\({0,1}((0|\+61)(2|4|3|7|8)){0,1}\){0,1}(\ |-){0,1}[0-9]{2}(\ |-){0,1}[0-9]{2}(\ |-){0,1}[0-9]{1}(\ |-){0,1}[0-9]{3}$/;
-  if(values.phone.match(phoneExpression)){
+  if(values.phone!==""){
+if(values.phone.match(phoneExpression)){
     setPhoneError(false)
   }else{
     setPhoneError(true)
     setFixErrors(true)
     errors=true
   }
-
+}
 
   if(!(values.password==values.passwordtwo)){
     setValues({ ...values, passworderror:true})
   }
-  let youtubevids=values.promovideos.split(",")
   let notallyoutub=false
+
+if(values.promovideos!==""){
+  let youtubevids=values.promovideos.split(",")
   for (let vid of youtubevids){
     if (!vid.includes("youtube")){
       notallyoutub=true
       errors=true
     }
   }
+}
   if(notallyoutub){
     setValues({ ...values, passworderror:true})
   }
@@ -164,20 +174,23 @@ function changer(){
     setFixErrors(false)
   }
   console.log(values.passworderror)
-
 }
 
 
   async function createUser(){
     let errors=false
-    if(validator.isURL(values.youtube)&&values.youtube.includes("youtube")){
-      setYoutubeChannelError(false)
-    }else{
-      setYoutubeChannelError(true)
-      setFixErrors(true)
-      errors=true
+
+    if(values.youtube!==""){
+      if(validator.isURL(values.youtube)&&values.youtube.includes("youtube")){
+        setYoutubeChannelError(false)
+      }else{
+        setYoutubeChannelError(true)
+        setFixErrors(true)
+        errors=true
+      }
     }
 
+  if(values.website!==""){
     if(validator.isURL(values.website)){
       setWebsiteError(false)
     }else{
@@ -185,7 +198,8 @@ function changer(){
       setFixErrors(true)
       errors=true
     }
-
+  }
+  if(values.email!==""){
     if(validator.isEmail(values.email)){
       setEmailError(false)
     }else{
@@ -193,28 +207,33 @@ function changer(){
       setFixErrors(true)
       errors=true
     }
+  }
 
     var phoneExpression = /^\({0,1}((0|\+61)(2|4|3|7|8)){0,1}\){0,1}(\ |-){0,1}[0-9]{2}(\ |-){0,1}[0-9]{2}(\ |-){0,1}[0-9]{1}(\ |-){0,1}[0-9]{3}$/;
-    if(values.phone.match(phoneExpression)){
+    if(values.phone!==""){
+  if(values.phone.match(phoneExpression)){
       setPhoneError(false)
     }else{
       setPhoneError(true)
       setFixErrors(true)
       errors=true
     }
-
+  }
 
     if(!(values.password==values.passwordtwo)){
       setValues({ ...values, passworderror:true})
     }
-    let youtubevids=values.promovideos.split(",")
     let notallyoutub=false
+
+  if(values.promovideos!==""){
+    let youtubevids=values.promovideos.split(",")
     for (let vid of youtubevids){
       if (!vid.includes("youtube")){
         notallyoutub=true
         errors=true
       }
     }
+  }
     if(notallyoutub){
       setValues({ ...values, passworderror:true})
     }
@@ -225,6 +244,7 @@ function changer(){
       setFixErrors(false)
     }
     console.log(values.passworderror)
+
 
     if(!errors){
       if((values.password==values.passwordtwo)&&!notallyoutub){
