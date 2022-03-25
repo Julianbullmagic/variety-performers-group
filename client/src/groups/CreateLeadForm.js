@@ -14,25 +14,22 @@ export default function CreateLeadForm(props) {
   const [addressError, setAddressError] = useState(false);
   const [fixErrors, setFixErrors] = useState(false);
   const [sendNotif,setSendNotif] = useState(props.sendnotif)
-  const titleValue = React.useRef('')
-  const descriptionValue = React.useRef('')
-  const locationValue = React.useRef('')
-  const timeValue = React.useRef('')
-  const durationValue = React.useRef('')
-  const customerNameValue = React.useRef('')
-  const emailValue = React.useRef('')
-  const phoneValue = React.useRef('')
-  const coordinatesValue = React.useRef('')
+  const titleValue = useRef('')
+  const descriptionValue = useRef('')
+  const locationValue = useRef('')
+  const timeValue = useRef('')
+  const durationValue = useRef('')
+  const customerNameValue = useRef('')
+  const emailValue = useRef('')
+  const phoneValue = useRef('')
   const [formSubmitted, setFormSubmitted] = useState(false);
-  const [numImages, setNumImages] = useState([0]);
-  const [toggle, setToggle] = useState(false);
   let server = "http://localhost:5000";
   let socket
   if(sendNotif){
-  if(process.env.NODE_ENV=="production"){
+  if(process.env.NODE_ENV==="production"){
     socket=io();
   }
-  if(process.env.NODE_ENV=="development"){
+  if(process.env.NODE_ENV==="development"){
     socket=io(server);
   }
 }
@@ -55,11 +52,13 @@ export default function CreateLeadForm(props) {
   }
 
   function sendLeadEmailNotification(item){
-    console.log("sending Lead notification",props.users)
+    console.log("sending Lead notification",props.users,item.genres)
     let userscopy=JSON.parse(JSON.stringify(props.users))
     console.log(userscopy.length)
     userscopy=userscopy.filter(user=>user.leads)
-    userscopy=userscopy.filter(user=>item.genres.includes(user.jobtitle))
+    console.log(userscopy)
+    
+    userscopy=userscopy.filter(user=>item.genres.includes(user.jobtitle.toLowerCase()))
     console.log(userscopy)
     let emails=userscopy.map(item=>{return item.email})
     console.log(emails)
@@ -170,10 +169,7 @@ if (errors){
           email:emailValue.current.value,
           timecreated:n,
         }
-        var d = new Date();
-        var n = d.getTime();
 
-        console.log("new lead", newLead)
         if(props.updateLeads){
           props.updateLeads(newLead)
 
@@ -248,7 +244,7 @@ if (errors){
           console.log(item)
           let filteredgenres=[]
           for (let genre of genres){
-            if(!(genre==item)){
+            if(!(genre===item)){
               filteredgenres.push(genre)
             }
           }
@@ -325,10 +321,10 @@ if (errors){
           <label htmlFor='name'>What kind of performance are you looking for?</label>
           <select style={{width:"40vw"}} id="restriction" onChange={(e) => handleGenreChange(e)}>
           <option value="all">all</option>
-          {genreoptions&&genreoptions.map(item=><option value={item}>{item}</option>)}
+          {genreoptions&&genreoptions.map(item=><option key={item} value={item}>{item}</option>)}
           </select>
           <button onClick={(e) => addGenre(e)}>Add performance type</button>
-          {genres&&genres.map(item=><><h5 style={{display:"inline",marginLeft:"2vw"}}>{item}</h5><button style={{display:"inline"}} onClick={(e) => removeGenre(e,item)}>Remove</button></>)}
+          {genres&&genres.map(item=><div key={item}><h5 style={{display:"inline",marginLeft:"2vw"}}>{item}</h5><button style={{display:"inline"}} onClick={(e) => removeGenre(e,item)}>Remove</button></div>)}
           </div>
 
           <div className="eventformbox">

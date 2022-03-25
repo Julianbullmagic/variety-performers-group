@@ -4,8 +4,8 @@ const mongoose = require("mongoose");
 
 
 export default function Comment(props) {
-  const commentValue = React.useRef('')
-  const [comments, setComments] = useState();
+  const commentValue = useRef('')
+  const [comments, setComments] = useState([]);
 
   useEffect(() => {
 
@@ -81,15 +81,6 @@ export default function Comment(props) {
                   .catch(err => {
                     console.error(err);
                   })
-
-                  const optionstwo = {
-                    method: 'put',
-                    headers: {
-                      'Content-Type': 'application/json'
-                    },
-                    body: ''
-                  }
-
                 }
 
 

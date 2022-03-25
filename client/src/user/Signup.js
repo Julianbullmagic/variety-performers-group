@@ -1,57 +1,20 @@
-import React, {useState,useRef,useEffect} from 'react'
-import Card from '@material-ui/core/Card'
-import CardActions from '@material-ui/core/CardActions'
-import CardContent from '@material-ui/core/CardContent'
-import Button from '@material-ui/core/Button'
-import TextField from '@material-ui/core/TextField'
+import React, {useState,useRef} from 'react'
 import Typography from '@material-ui/core/Typography'
 import Icon from '@material-ui/core/Icon'
-import { makeStyles } from '@material-ui/core/styles'
 import Dialog from '@material-ui/core/Dialog'
-import DialogActions from '@material-ui/core/DialogActions'
 import DialogContent from '@material-ui/core/DialogContent'
 import DialogContentText from '@material-ui/core/DialogContentText'
-import DialogTitle from '@material-ui/core/DialogTitle'
 import {create} from './api-user.js'
 import {Link} from 'react-router-dom'
-import auth from './../auth/auth-helper'
-import {Image} from 'cloudinary-react'
-import io from "socket.io-client";
 import Axios from 'axios'
 import validator from 'validator';
 const mongoose = require("mongoose");
 
-
-const useStyles = makeStyles(theme => ({
-  card: {
-    maxWidth: 600,
-    margin: 'auto',
-    textAlign: 'center',
-    marginTop: theme.spacing(5),
-    paddingBottom: theme.spacing(2)
-  },
-  error: {
-    verticalAlign: 'middle'
-  },
-  title: {
-    marginTop: theme.spacing(2),
-    color: theme.palette.openTitle
-  },
-  textField: {
-    marginLeft: theme.spacing(1),
-    marginRight: theme.spacing(1),
-    width: 300
-  },
-
-}))
-
 export default function Signup (){
-  const classes = useStyles()
   const [numImages, setNumImages] = useState([0]);
   const [loading,setLoading]=useState(false);
   const [websiteError,setWebsiteError]=useState(false);
   const [youtubeChannelError,setYoutubeChannelError]=useState(false);
-  const [promoVidsError,setPromoVidsError]=useState(false);
   const [emailError,setEmailError]=useState(false);
   const [phoneError,setPhoneError]=useState(false);
   const [fixErrors,setFixErrors]=useState(false)
@@ -73,17 +36,12 @@ export default function Signup (){
     error:'',
     open: false,
   })
-  const selectedFile1 = React.useRef(null)
-  const selectedFile2 = React.useRef(null)
-  const selectedFile3 = React.useRef(null)
-  const selectedFile4 = React.useRef(null)
-  const selectedFile5 = React.useRef(null)
-  let server = "http://localhost:5000";
-  let socket = io(server);
+  const selectedFile1 = useRef(null)
+  const selectedFile2 = useRef(null)
+  const selectedFile3 = useRef(null)
+  const selectedFile4 = useRef(null)
+  const selectedFile5 = useRef(null)
 
-  useEffect(()=>{
-    console.log("use EFFECT",numImages)
-  },[numImages,setNumImages])
 
   function extraImage(e){
     e.preventDefault()
@@ -92,18 +50,15 @@ export default function Signup (){
     if(imagenum.length<5){
       imagenum.push(0)
     }
-    console.log("after push",imagenum)
     setNumImages([...imagenum])
   }
 
   function lessImage(e){
     e.preventDefault()
-    console.log(imagenum)
     let imagenum=numImages
     if(imagenum.length>0){
       imagenum.pop()
     }
-    console.log(imagenum)
     setNumImages([...imagenum])
   }
 
@@ -150,7 +105,7 @@ if(values.phone.match(phoneExpression)){
   }
 }
 
-  if(!(values.password==values.passwordtwo)){
+  if(!(values.password===values.passwordtwo)){
     setValues({ ...values, passworderror:true})
   }
   let notallyoutub=false
@@ -178,7 +133,8 @@ if(values.promovideos!==""){
 
 
   async function createUser(){
-    let errors=false
+    var errors=false
+    var notallyoutub=false
 
     if(values.youtube!==""){
       if(validator.isURL(values.youtube)&&values.youtube.includes("youtube")){
@@ -223,7 +179,6 @@ if(values.promovideos!==""){
     if(!(values.password==values.passwordtwo)){
       setValues({ ...values, passworderror:true})
     }
-    let notallyoutub=false
 
   if(values.promovideos!==""){
     let youtubevids=values.promovideos.split(",")
@@ -251,6 +206,7 @@ if(values.promovideos!==""){
         setValues({ ...values, passworderror:false})
         setLoading(true)
         var userId=mongoose.Types.ObjectId()
+        let youtubevids=values.promovideos.split(",")
 
         youtubevids=youtubevids.map(item=>{
           let x=item.split("=")
@@ -427,7 +383,7 @@ if(values.promovideos!==""){
                   {fixErrors&&<p style={{color:"red"}}>Please fix all errors</p>}
                   <br/> {
                     values.error && (<Typography component="p" color="error">
-                    <Icon color="error" className={classes.error}>error</Icon>
+                    <Icon color="error" >error</Icon>
                     {values.error}</Typography>)
                   }
                   </div>

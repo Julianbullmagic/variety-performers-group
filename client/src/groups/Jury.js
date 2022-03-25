@@ -28,10 +28,10 @@ export default function Jury(props) {
   const pollquestion = React.useRef('')
   let server = "http://localhost:5000";
   let socket
-  if(process.env.NODE_ENV=="production"){
+  if(process.env.NODE_ENV==="production"){
     socket=io();
   }
-  if(process.env.NODE_ENV=="development"){
+  if(process.env.NODE_ENV==="development"){
     socket=io(server);
   }
 console.log("node env",process.env.NODE_ENV)

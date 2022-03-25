@@ -1,7 +1,6 @@
-import React, {useRef,useState,useEffect} from 'react'
+import React, {useRef,useState} from 'react'
 import auth from '../auth/auth-helper'
 import Axios from 'axios'
-import io from "socket.io-client";
 const mongoose = require("mongoose");
 
 
@@ -9,44 +8,14 @@ export default function CreateEventForm(props) {
   const [viewForm, setViewForm] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [coordError, setCoordError] = useState(false);
-  const [level, setLevel] = useState(props.level);
-  const titleValue = React.useRef('')
-  const descriptionValue = React.useRef('')
-  const locationValue = React.useRef('')
-  const startTimeValue = React.useRef(0)
-  const endTimeValue = React.useRef(0)
-  const selectedFile1 = React.useRef(null)
-  const [toggle, setToggle] = useState(false);
-  const [numberOfImages, setNumberOfImages]=useState(1)
-  let server = "http://localhost:5000";
-  let socket
-
-  useEffect(()=>{
-
-    setLevel(props.level,"level")
-  },[props])
-
-  if(process.env.NODE_ENV=="production"){
-    socket=io();
-  }
-  if(process.env.NODE_ENV=="development"){
-    socket=io(server);
-
-  }
-
-  function addImages(){
-    var numberplusone=numberOfImages+1
-    setNumberOfImages(numberplusone)
-  }
-
-  function lessImages(){
-    var numberminusone=numberOfImages-1
-    setNumberOfImages(numberminusone);
-  }
-
+  const titleValue = useRef('')
+  const descriptionValue = useRef('')
+  const locationValue = useRef('')
+  const startTimeValue = useRef(0)
+  const endTimeValue = useRef(0)
+  const selectedFile1 = useRef(null)
 
   async function handleSubmit(e) {
-console.log("submitting")
     e.preventDefault()
     setUploading(true)
     var d = new Date();
@@ -94,7 +63,6 @@ console.log("submitting")
           _id:eventId,
           title: titleValue.current.value,
           groupIds:[props.groupId],
-          level:level,
           starttime:String(startTimeValue.current.value),
           endtime:String(endTimeValue.current.value),
           description:descriptionValue.current.value,

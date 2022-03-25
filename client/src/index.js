@@ -1,12 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App";
-import MainRouter from './MainRouter'
 import * as serviceWorker from "./serviceWorker";
-
-
-import { BrowserRouter } from "react-router-dom";
-
 import Reducer from './reducers';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';

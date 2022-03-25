@@ -1,56 +1,40 @@
-import React, {useRef,useState,useEffect} from 'react'
+import React, {useRef,useState} from 'react'
 import auth from '../auth/auth-helper'
 import Axios from 'axios'
-import io from "socket.io-client";
-
 const mongoose = require("mongoose");
 
 
 export default function CreatePurchaseForm(props) {
 const [viewForm, setViewForm] = useState(false);
 const [uploading, setUploading] = useState(false);
-const titleValue = React.useRef('')
-const descriptionValue = React.useRef('')
-const locationValue = React.useRef('')
-const priceValue = React.useRef('')
-const quantityValue = React.useRef('')
+const titleValue = useRef('')
+const descriptionValue = useRef('')
+const priceValue = useRef('')
+const quantityValue = useRef('')
 const [numImages, setNumImages] = useState([0]);
-const selectedFile1 = React.useRef(null)
-const selectedFile2 = React.useRef(null)
-const selectedFile3 = React.useRef(null)
-const selectedFile4 = React.useRef(null)
-const selectedFile5 = React.useRef(null)
-const [toggle, setToggle] = useState(false);
-let server = "http://localhost:5000";
-let socket
+const selectedFile1 =useRef(null)
+const selectedFile2 =useRef(null)
+const selectedFile3 =useRef(null)
+const selectedFile4 =useRef(null)
+const selectedFile5 =useRef(null)
 
-if(process.env.NODE_ENV=="production"){
-  socket=io();
-}
-if(process.env.NODE_ENV=="development"){
-  socket=io(server);
-}
 
 
 function extraImage(e){
   e.preventDefault()
   let imagenum=numImages
-  console.log(imagenum)
   if(imagenum.length<5){
   imagenum.push(0)
   }
-  console.log("after push",imagenum)
   setNumImages([...imagenum])
 }
 
 function lessImage(e){
   e.preventDefault()
-  console.log(imagenum)
   let imagenum=numImages
   if(imagenum.length>0){
   imagenum.pop()
   }
-  console.log(imagenum)
   setNumImages([...imagenum])
 }
 

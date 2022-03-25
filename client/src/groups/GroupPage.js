@@ -10,13 +10,10 @@ import Polls from './Polls'
 import Purchases from './Purchases'
 import NewMemberApproval from './NewMemberApproval'
 import ChatPage from "./../ChatPage/ChatPage"
-import Kmeans from 'node-kmeans';
-import {Image} from 'cloudinary-react'
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import {Redirect} from 'react-router-dom'
-var geodist = require('geodist')
-const mongoose = require("mongoose");
+
 
 class GroupPage extends Component {
     constructor(props) {
@@ -54,37 +51,37 @@ class GroupPage extends Component {
                  .then(data=>{
                    console.log("users",data)
                    for (let user of data){
-                     if(user._id==auth.isAuthenticated().user._id){
+                     if(user._id===auth.isAuthenticated().user._id){
                        if(user.restrictions){
                          for (let restriction of user.restrictions){
-                           if(restriction.restriction=="cannot post"){
+                           if(restriction.restriction==="cannot post"){
                              this.setState({cannotpost:true})
                            }
-                           if(restriction.restriction=="cannot use chat"){
+                           if(restriction.restriction==="cannot use chat"){
                              this.setState({cannotusechat:true})
                            }
-                           if(restriction.restriction=="cannot see events"){
+                           if(restriction.restriction==="cannot see events"){
                              this.setState({cannotseeevents:true})
                            }
-                           if(restriction.restriction=="cannot participate in group purchases"){
+                           if(restriction.restriction==="cannot participate in group purchases"){
                              this.setState({cannotparticipateingrouppurchases:true})
                            }
-                           if(restriction.restriction=="remove from group"){
+                           if(restriction.restriction==="remove from group"){
                              this.setState({removefromgroup:true})
                            }
-                           if(restriction.restriction=="cannot create polls"){
+                           if(restriction.restriction==="cannot create polls"){
                              this.setState({cannotcreatepolls:true})
                            }
-                           if(restriction.restriction=="cannot suggest rules"){
+                           if(restriction.restriction==="cannot suggest rules"){
                              this.setState({cannotsuggestrules:true})
                            }
-                           if(restriction.restriction=="cannot see gig leads"){
+                           if(restriction.restriction==="cannot see gig leads"){
                              this.setState({cannotseegigleads:true})
                            }
-                           if(restriction.restriction=="cannot vote in jury"){
+                           if(restriction.restriction==="cannot vote in jury"){
                              this.setState({cannotvoteinjury:true})
                            }
-                           if(restriction.restriction=="cannot vote to approve new members"){
+                           if(restriction.restriction==="cannot vote to approve new members"){
                              this.setState({cannotvotetoapprovenewmembers:true})
                            }
                          }

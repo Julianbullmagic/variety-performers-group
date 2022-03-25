@@ -1,19 +1,8 @@
 import React, {useState, useEffect} from 'react'
-import ChatPage from "./../ChatPage/ChatPage"
-import { makeStyles } from '@material-ui/core/styles'
-import Card from '@material-ui/core/Card'
-import CardMedia from '@material-ui/core/CardMedia'
-import CardContent from '@material-ui/core/CardContent'
-import Typography from '@material-ui/core/Typography'
-import unicornbikeImg from './../assets/images/unicornbike.jpg'
-import Grid from '@material-ui/core/Grid'
-import auth from './../auth/auth-helper'
-import background from "./2170171.jpg";
 import {Image} from 'cloudinary-react'
 import {Link} from "react-router-dom";
 import CreateLeadForm from '../groups/CreateLeadForm'
 
-const KmeansLib = require('kmeans-same-size');
 
 
 
@@ -33,19 +22,15 @@ getGroupData()
     await fetch(`/groups/getusers`)
         .then(response => response.json())
         .then(data=>{
-          console.log("users",data)
           let approvedusers=data.filter(user=>user.approvedmember)
-          console.log("APPROVED USERS",approvedusers)
           setUsers(approvedusers)
           let vids=[]
           for (let user of approvedusers){
             if (user.promovideos){
-              console.log("user.promovideos",user.promovideos)
               vids.push(...user.promovideos)
             }
           }
           vids = vids.sort(() => Math.random() - 0.5)
-          console.log("vids",vids)
           setVideos(vids)
         })
 
@@ -64,7 +49,7 @@ getGroupData()
       </div>
 
       <div className="users">
-      {users&&users.map(user=>{return(<>
+      {users&&users.map(user=>{return(<div key={user._id}>
         <Link to={"/singleuser/" + user._id}>
         <div className="usercard">
         <div className="userdeets">
@@ -74,10 +59,10 @@ getGroupData()
         <Image style={{objectFit:"cover",width:"100%",height:"100%",overflow:"hidden",position:"relative"}}
         cloudName="julianbullmagic" publicId={user.images[0]} /></div>
         }</Link>
-        </>)})}
+        </div>)})}
         <div className="vids">
-      <iframe style={{margin:"0.5vw",width:"44vw",height:"44vh",display:"inline",borderRadius:"10px"}} src={videos[0]} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-      <iframe style={{margin:"0.5vw",width:"44vw",height:"44vh",display:"inline",borderRadius:"10px"}} src={videos[1]} title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      <iframe style={{marginRight:"1vw",width:"44vw",height:"44vh",display:"inline",borderRadius:"10px"}} src={videos[0]} title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+      <iframe style={{marginLeft:"1vw",width:"44vw",height:"44vh",display:"inline",borderRadius:"10px"}} src={videos[1]} title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
       </div>
         </div>
       </div>

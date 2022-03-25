@@ -17,14 +17,14 @@ export default function Polls (props) {
   const [page, setPage] = useState(1);
   const [pageNum, setPageNum] = useState([]);
   const [currentPageData, setCurrentPageData] = useState([]);
-  const pollquestion = React.useRef('')
+  const pollquestion = useRef('')
 
   let server = "http://localhost:5000";
   let socket
-  if(process.env.NODE_ENV=="production"){
+  if(process.env.NODE_ENV==="production"){
     socket=io();
   }
-  if(process.env.NODE_ENV=="development"){
+  if(process.env.NODE_ENV==="development"){
     socket=io(server);
   }
 

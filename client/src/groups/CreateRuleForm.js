@@ -1,23 +1,13 @@
 import React, {useRef,useState} from 'react'
 import auth from '../auth/auth-helper'
-import io from "socket.io-client";
 const mongoose = require("mongoose");
 
 
 export default function CreateRuleForm(props) {
-  const ruleValue = React.useRef('')
-  const explanationValue = React.useRef('')
+  const ruleValue = useRef('')
+  const explanationValue = useRef('')
   const [viewForm, setViewForm] = useState(false);
-  const [toggle, setToggle] = useState(false);
-  let server = "http://localhost:5000";
-  let socket
-  if(process.env.NODE_ENV=="production"){
-    socket=io();
-  }
-  if(process.env.NODE_ENV=="development"){
-    socket=io(server);
 
-  }
 
 
   async function handleSubmit(e) {

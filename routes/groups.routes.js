@@ -329,8 +329,6 @@ router.get("/finduser/:userId", (req, res) => {
 
 
 
-
-
                 router.post("/createuser", (req, res, next) => {
                   var user=req.body.user
                   let newUser = new User(user);

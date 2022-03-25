@@ -1,29 +1,15 @@
-import React, { useState, useEffect, useRef} from 'react'
-import {Redirect, Link} from 'react-router-dom'
-import ChatPage from "./../ChatPage/ChatPage"
+import React, { useState, useEffect,useRef} from 'react'
 import {Image} from 'cloudinary-react'
 import AwesomeSlider from 'react-awesome-slider';
 import 'react-awesome-slider/dist/styles.css';
-import Card from '@material-ui/core/Card'
-import CardActions from '@material-ui/core/CardActions'
-import CardContent from '@material-ui/core/CardContent'
-import Button from '@material-ui/core/Button'
-import TextField from '@material-ui/core/TextField'
-import Typography from '@material-ui/core/Typography'
-import Icon from '@material-ui/core/Icon'
 import auth from './../auth/auth-helper'
-import io from "socket.io-client";
-import Axios from 'axios'
+import Axios from 'axios';
 import validator from 'validator';
-const mongoose = require("mongoose");
-
-
-
 
 export default function SingleUser({ match }) {
+  var phoneExpression = /^\({0,1}((0|\+61)(2|4|3|7|8)){0,1}\){0,1}(\ |-){0,1}[0-9]{2}(\ |-){0,1}[0-9]{2}(\ |-){0,1}[0-9]{1}(\ |-){0,1}[0-9]{3}$/;
   const [user, setUser] = useState({})
   const [numImages, setNumImages] = useState([0]);
-  const jwt = auth.isAuthenticated()
   const [events,setEvents]=useState(false)
   const [leads,setLeads]=useState(false)
   const [posts,setPosts]=useState(false)
@@ -36,7 +22,6 @@ export default function SingleUser({ match }) {
   const [restrictionsApproved,setRestrictionsApproved]=useState(false)
   const [websiteError,setWebsiteError]=useState(false);
   const [youtubeChannelError,setYoutubeChannelError]=useState(false);
-  const [promoVidsError,setPromoVidsError]=useState(false);
   const [emailError,setEmailError]=useState(false);
   const [phoneError,setPhoneError]=useState(false);
   const [fixErrors,setFixErrors]=useState(false)
@@ -59,13 +44,12 @@ export default function SingleUser({ match }) {
     error:'',
     open: false,
   })
-  const selectedFile1 = React.useRef(null)
-  const selectedFile2 = React.useRef(null)
-  const selectedFile3 = React.useRef(null)
-  const selectedFile4 = React.useRef(null)
-  const selectedFile5 = React.useRef(null)
-  let server = "http://localhost:5000";
-  let socket = io(server);
+  const selectedFile1 = useRef(null)
+  const selectedFile2 = useRef(null)
+  const selectedFile3 = useRef(null)
+  const selectedFile4 = useRef(null)
+  const selectedFile5 = useRef(null)
+
 
   useEffect(() => {
     getUser()
@@ -74,31 +58,25 @@ export default function SingleUser({ match }) {
   function extraImage(e){
     e.preventDefault()
     let imagenum=numImages
-    console.log(imagenum)
     if(imagenum.length<5){
       imagenum.push(0)
     }
-    console.log("after push",imagenum)
     setNumImages([...imagenum])
   }
 
   function lessImage(e){
     e.preventDefault()
-    console.log(imagenum)
     let imagenum=numImages
     if(imagenum.length>0){
       imagenum.pop()
     }
-    console.log(imagenum)
     setNumImages([...imagenum])
   }
-
 
   async function getUser(){
     await fetch(`/groups/getuser/`+match.params.userId)
     .then(response => response.json())
     .then(data=>{
-      console.log("user",data.data)
       setUser(data.data)
       setEvents(data.data.events)
       setLeads(data.data.leads)
@@ -138,7 +116,6 @@ export default function SingleUser({ match }) {
       errors=true
     }
 
-    var phoneExpression = /^(\+?\(61\)|\(\+?61\)|\+?61|\(0[1-9]\)|0[1-9])?( ?-?[0-9]){7,9}$/;
     if(values.phone.match(phoneExpression)){
       setPhoneError(false)
     }else{
@@ -147,7 +124,7 @@ export default function SingleUser({ match }) {
       errors=true
     }
 
-    if(!(values.password==values.passwordtwo)){
+    if(!(values.password===values.passwordtwo)){
       setValues({ ...values, passworderror:true})
     }
     let youtubevids=values.promovideos.split(",")
@@ -195,7 +172,6 @@ export default function SingleUser({ match }) {
       errors=true
     }
 
-    var phoneExpression = /^\({0,1}((0|\+61)(2|4|3|7|8)){0,1}\){0,1}(\ |-){0,1}[0-9]{2}(\ |-){0,1}[0-9]{2}(\ |-){0,1}[0-9]{1}(\ |-){0,1}[0-9]{3}$/;
     if(values.phone.match(phoneExpression)){
       setPhoneError(false)
     }else{
@@ -204,7 +180,7 @@ export default function SingleUser({ match }) {
       errors=true
     }
 
-    if(!(values.password==values.passwordtwo)){
+    if(!(values.password===values.passwordtwo)){
       setValues({ ...values, passworderror:true})
     }
     let youtubevids=values.promovideos.split(",")
@@ -226,7 +202,7 @@ export default function SingleUser({ match }) {
     }
 
     if(!errors){
-      if((values.password==values.passwordtwo)&&!notallyoutub){
+      if((values.password===values.passwordtwo)&&!notallyoutub){
         setValues({ ...values, passworderror:false})
         setLoading(true)
 
@@ -376,13 +352,13 @@ export default function SingleUser({ match }) {
                         {user.promovideos&&<>
                         <h3 style={{textAlign:"center"}}><strong>Youtube Videos</strong></h3>
                         <div style={{marginLeft:"5vw",width:"50vw"}}>
-                        {user.promovideos&&user.promovideos.map(item=>{return (<iframe style={{width:"100%",height:"60vh"}} src={item}/>)})}
+                        {user.promovideos&&user.promovideos.map(item=>{return (<iframe title={item} style={{width:"100%",height:"60vh"}} src={item}/>)})}
                         </div></>}
                         </div>
                         </div>)}
 
 
-                        {(auth.isAuthenticated()&&auth.isAuthenticated().user._id==match.params.userId)&&(
+                        {(auth.isAuthenticated()&&auth.isAuthenticated().user._id===match.params.userId)&&(
                           <div className="signupform">
                           <div  style={{position: "static"}}  className="innersignupform">
                           <h1 style={{textAlign:"center"}}>
@@ -413,7 +389,7 @@ export default function SingleUser({ match }) {
 
                           <div className="signininput">
                           <h5 style={{marginRight:"1vw",textAlign:"left"}} className="ruletext">Promotional Youtube Videos </h5><input id="promovideos" placeHolder={user.promovideos} type="promovideos" label="promotional videos, please add youtube url links separated by a comma" value={values.promovideos} onChange={handleChange('promovideos')} margin="normal"/>
-                          {(notallyoutube&&!values.promovideos=="")&&<h5 style={{marginRight:"1vw",color:"red"}} className="ruletext">Includes links that are not for Youtube</h5>}
+                          {(notallyoutube&&!values.promovideos==="")&&<h5 style={{marginRight:"1vw",color:"red"}} className="ruletext">Includes links that are not for Youtube</h5>}
                           </div>
 
                           <div className="signininput">
@@ -559,8 +535,8 @@ export default function SingleUser({ match }) {
 
                                             <button onClick={(e) => extraImage(e)}>Add Extra Image</button>
                                             <button onClick={(e) => lessImage(e)}>One Less Image</button>
-
-                                            <button id="submit" onClick={clickSubmit}>Submit</button>
+                                            {loading&&<h3>Loading!!!</h3>}
+                                            {!loading&&<button id="submit" onClick={clickSubmit}>Submit</button>}
                                             {fixErrors&&<p style={{color:"red"}}>Please fix all errors</p>}
                                             </div>
                                             </div>

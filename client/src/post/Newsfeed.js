@@ -7,8 +7,7 @@ const mongoose = require("mongoose");
 
 export default function Newsfeed (props) {
   const [viewForm, setViewForm] = useState(false);
-  const [viewExplanation, setViewExplanation] = useState(false);
-  const postArea = React.useRef('')
+  const postArea = useRef('')
   const [posts, setPosts] = useState([]);
   const [group, setGroup] = useState(props.group);
   const [post, setPost] = useState("");
@@ -16,15 +15,14 @@ export default function Newsfeed (props) {
   const [page, setPage] = useState(1);
   const [pageNum, setPageNum] = useState([]);
   const [currentPageData, setCurrentPageData] = useState([]);
-  const [comment, setComment] = useState("");
   const [preview, setPreview] = useState("");
   let server = "http://localhost:5000";
   let socket
 
-  if(process.env.NODE_ENV=="production"){
+  if(process.env.NODE_ENV==="production"){
     socket=io();
   }
-  if(process.env.NODE_ENV=="development"){
+  if(process.env.NODE_ENV==="development"){
     socket=io(server);
   }
 
@@ -180,11 +178,11 @@ function handleSubmit(e){
           let post
           let postscopy=JSON.parse(JSON.stringify(posts))
           for (let po of postscopy){
-            if(po._id == id){
+            if(po._id===id){
               post=po.post
             }
           }
-          let filteredarray = postscopy.filter(item=>!(item._id == id));
+          let filteredarray = postscopy.filter(item=>!(item._id === id));
           setPosts(filteredarray);
           let current=filteredarray.slice((page*10-10),page*10)
 
@@ -241,8 +239,8 @@ function handleSubmit(e){
                     body: JSON.stringify(notification)
                   }
 
-                  fetch("/groups/sendemailnotification", opt
-                ) .then(res => {
+                  fetch("/groups/sendemailnotification",opt
+                ).then(res => {
                   console.log(res)
                 }).catch(err => {
                   console.error(err);
@@ -269,8 +267,8 @@ function handleSubmit(e){
                         body: JSON.stringify(notification)
                       }
 
-                      fetch("/groups/sendemailnotification", options
-                    ) .then(res => {
+                      fetch("/groups/sendemailnotification",options
+                    ).then(res => {
                       console.log(res)
                     }).catch(err => {
                       console.error(err);
@@ -284,8 +282,8 @@ function handleSubmit(e){
                       body: ''
                     }
 
-                    fetch("/posts/notificationsent/"+item._id, optionstwo
-                  ) .then(res => {
+                    fetch("/posts/notificationsent/"+item._id,optionstwo
+                  ).then(res => {
                     console.log(res)
                   }).catch(err => {
                     console.error(err);
@@ -299,7 +297,7 @@ function handleSubmit(e){
                 console.log(item)
                 let postscopy=JSON.parse(JSON.stringify(posts))
                   for (let post of postscopy){
-                    if (post._id==item._id){
+                    if (post._id===item._id){
                       post.areyousure=true
                     }}
                     let current=postscopy.slice((page*10-10),page*10)
@@ -311,7 +309,7 @@ function handleSubmit(e){
                     console.log(item)
                       let postscopy=JSON.parse(JSON.stringify(posts))
                       for (let post of postscopy){
-                        if (post._id==item._id){
+                        if (post._id===item._id){
                           post.areyousure=false
                         }}
                         let current=postscopy.slice((page*10-10),page*10)
@@ -319,15 +317,10 @@ function handleSubmit(e){
                         setCurrentPageData(current)
                       }
 
-                      function viewExpl(e){
-                        e.preventDefault();
-                        setViewExplanation(!viewExplanation)
-                      }
-
                       if(preview){
                         console.log("preview",preview)
                         if(preview.url){
-                          var previewmapped=<img src={preview.url} style={{marginLeft:"10vw",textAlign:"center",maxHeight:"70vh",maxWidth:"70vw",objectFit:"contain"}}></img>
+                          var previewmapped=<img alt="preview" src={preview.url} style={{marginLeft:"10vw",textAlign:"center",maxHeight:"70vh",maxWidth:"70vw",objectFit:"contain"}}></img>
                         }
                       }
 
@@ -335,7 +328,7 @@ function handleSubmit(e){
                 let prev
                 if (item.preview){
                       if(item.preview.url){
-                         prev=<img key={item._id} style={{position:"relative",margin:"1vw",display:"block",Zindex:"-1",Position:"fixed",marginLeft:"10vw",textAlign:"center",maxHeight:"70vh",maxWidth:"70vw",objectFit:"contain"}} src={item.preview.url}></img>
+                         prev=<img alt="preview" key={item._id} style={{position:"relative",margin:"1vw",display:"block",Zindex:"-1",Position:"fixed",marginLeft:"10vw",textAlign:"center",maxHeight:"70vh",maxWidth:"70vw",objectFit:"contain"}} src={item.preview.url}></img>
                       }
                 }
 
@@ -346,7 +339,7 @@ function handleSubmit(e){
                   <div className="postboxform">
                   <div style={{display:"block",margin:"1vw",textAlign:"right"}}>
                   {item.createdby&&<><h5 style={{margin:"1vw",display:"inline",textAlign:"center"}}><strong> Post by {item.createdby.name}</strong></h5>
-                  {((item.createdby._id==auth.isAuthenticated().user._id)&&!item.areyousure)&&
+                  {((item.createdby._id===auth.isAuthenticated().user._id)&&!item.areyousure)&&
                     <button className="ruletext deletebutton" onClick={(e)=>areYouSure(e,item)}>Delete Post?</button>}</>}
                     {item.areyousure&&<button className="ruletext deletebutton" onClick={(e)=>areYouNotSure(e,item)}>Not sure</button>}
                     {item.areyousure&&<button className="ruletext deletebutton" onClick={(e)=>deletePost(e,item._id)}>Are you sure?</button>}
@@ -388,7 +381,7 @@ function handleSubmit(e){
                         {pageNum.length>1&&<h4 style={{display:"inline"}}>Choose Page</h4>}
                         {(pageNum.length>1&&pageNum&&posts)&&pageNum.map((item,index)=>{
                           return (<>
-                            <button style={{display:"inline",opacity:(index+1==page)?"0.5":"1"}} onClick={(e) => decidePage(e,item)}>{item}</button>
+                            <button style={{display:"inline",opacity:(index+1===page)?"0.5":"1"}} onClick={(e) => decidePage(e,item)}>{item}</button>
                             </>)
                           })}
                           {postsmapped}
@@ -398,7 +391,7 @@ function handleSubmit(e){
                           {pageNum.length>1&&<h4 style={{display:"inline"}}>Choose Page</h4>}
                           {(pageNum.length>1&&pageNum&&posts)&&pageNum.map((item,index)=>{
                             return (<>
-                              <button style={{display:"inline",opacity:(index+1==page)?"0.5":"1"}} onClick={(e) => decidePage(e,item)}>{item}</button>
+                              <button style={{display:"inline",opacity:(index+1===page)?"0.5":"1"}} onClick={(e) => decidePage(e,item)}>{item}</button>
                               </>)
                             })}
                             </div>

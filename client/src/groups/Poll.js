@@ -1,15 +1,15 @@
 import React, {useState, useEffect, useRef} from 'react'
 import auth from './../auth/auth-helper'
 const mongoose = require("mongoose");
-const MILLISECONDS_IN_A_DAY=86400000
-const MILLISECONDS_IN_A_WEEK=604800000
+
 
 export default function Poll (props) {
   const [suggestions, setSuggestions] = useState([]);
   const [poll, setPoll] = useState(props.poll);
-  const [sure, setSure] = useState(false);
   const [group, setGroup] = useState(props.group);
-  const pollsuggestion = React.useRef('')
+
+  const [sure, setSure] = useState(false);
+  const pollsuggestion = useRef('')
 
   useEffect(() => {
     fetch("/polls/getsuggestions/"+props.poll._id)
@@ -21,135 +21,6 @@ export default function Poll (props) {
         console.error(err);
       })
     },[])
-
-
-
-    function sendPollDown(){
-
-
-      if(!poll.sentdown){
-        var pollcopy=JSON.parse(JSON.stringify(poll))
-
-        pollcopy.sentdown=true
-
-        setPoll(pollcopy)
-
-        let allmembers=[]
-        for (let g of group.groupsbelow){
-          allmembers.push(g.members)
-          for (let gr of g.groupsbelow){
-            allmembers.push(gr.members)
-          }}
-
-          const options = {
-            method: 'put',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(allmembers)
-          }
-
-
-
-          fetch("/polls/marksentdown/" + poll._id, options
-        ).then(res => {
-          console.log(res)
-        }).catch(err => {
-          console.error(err);
-        })
-
-
-        let lowergroupids=[]
-        for (let grou of group.groupsbelow){
-
-          if(grou.groupsbelow){
-            lowergroupids.push(...grou.groupsbelow)
-          }
-          lowergroupids.push(grou._id)
-        }
-
-        for (let gr of lowergroupids){
-
-          fetch("/polls/sendpolldown/" + poll._id +"/"+ gr, options
-        ).then(res => {
-          console.log(res)
-        }).catch(err => {
-          console.error(err);
-        })
-      }
-    }
-  }
-
-  function approveOfSendingPollDown(e,pollId){
-    var pollcopy=JSON.parse(JSON.stringify(poll))
-
-    let approval=0
-
-    if(!pollcopy.approval.includes(auth.isAuthenticated().user._id)){
-      pollcopy.approval.push(auth.isAuthenticated().user._id)
-    }
-
-    let votesfrommembers=[]
-    let memberids=group.members.map(item=>item._id)
-
-    for (let vote of pollcopy.approval){
-      if (memberids.includes(vote)){
-        votesfrommembers.push(vote)
-      }
-    }
-    pollcopy.approval=votesfrommembers
-
-    if(group.members.length>0){
-      approval=Math.round((pollcopy.approval.length/group.members.length)*100)
-    }
-
-    if (approval>75){
-      sendPollDown()
-    }
-    setPoll(pollcopy)
-    const options = {
-      method: 'put',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: ''
-    }
-
-    fetch("/polls/approveofsendingpolldown/" + pollId +"/"+ auth.isAuthenticated().user._id, options
-  ).then(res => {
-    console.log(res)
-  }).catch(err => {
-    console.error(err);
-  })
-}
-
-function withdrawApprovalOfSendingPollDown(e,pollId){
-  var pollcopy=JSON.parse(JSON.stringify(poll))
-
-  function checkPoll(userid) {
-    return userid!=auth.isAuthenticated().user._id
-  }
-
-  var filteredapproval=pollcopy.approval.filter(checkPoll)
-  pollcopy.approval=filteredapproval
-
-  setPoll(pollcopy)
-
-  const options = {
-    method: 'put',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: ''
-  }
-
-  fetch("/polls/withdrawapprovalofsendingpolldown/" + pollId +"/"+ auth.isAuthenticated().user._id, options
-).then(res => {
-  console.log(res)
-}).catch(err => {
-  console.error(err);
-})
-}
 
 
 function handleSubmit(e){
@@ -219,13 +90,10 @@ newPollSuggestionToRender.createdby=auth.isAuthenticated().user
             function approveofsuggestion(e,id){
               console.log(id)
               var suggestionscopy=JSON.parse(JSON.stringify(suggestions))
-              function checkSuggestion() {
-                return id!==auth.isAuthenticated().user._id
-              }
+
               for (var suggestion of suggestionscopy){
                 let votesfrommembers=[]
                 let memberids=group.members.map(item=>item._id)
-                console.log("memberids",memberids)
                 for (let vote of suggestion.approval){
                   if (memberids.includes(vote)){
                     votesfrommembers.push(vote)
@@ -234,12 +102,11 @@ newPollSuggestionToRender.createdby=auth.isAuthenticated().user
                 suggestion.approval=votesfrommembers
                 console.log(suggestion.approval)
 
-                if (suggestion._id==id){
+                if (suggestion._id===id){
                   if(!suggestion.approval.includes(auth.isAuthenticated().user._id)){
                     suggestion.approval.push(auth.isAuthenticated().user._id)
                   }
                 }
-                console.log("APPROVAL",suggestion.approval)
               }
               if(suggestions.length>=3&&!props.poll.notificationsent){
                 props.sendPollNotification(props.poll)
@@ -268,7 +135,7 @@ newPollSuggestionToRender.createdby=auth.isAuthenticated().user
               return userid!=auth.isAuthenticated().user._id
             }
             for (var suggestion of suggestionscopy){
-              if (suggestion._id==id){
+              if (suggestion._id===id){
                 var filteredapproval=suggestion.approval.filter(checkSuggestion)
                 suggestion.approval=filteredapproval
               }
@@ -295,7 +162,7 @@ newPollSuggestionToRender.createdby=auth.isAuthenticated().user
             let suggestionscopy=JSON.parse(JSON.stringify(suggestions))
             console.log(suggestionscopy)
             for (let suggest of suggestionscopy){
-              if (suggest._id==item._id){
+              if (suggest._id===item._id){
                 suggest.areyousure=true
               }}
               console.log(suggestionscopy)
@@ -307,7 +174,7 @@ newPollSuggestionToRender.createdby=auth.isAuthenticated().user
               let suggestionscopy=JSON.parse(JSON.stringify(suggestions))
                 console.log(suggestionscopy)
                 for (let suggest of suggestionscopy){
-                  if (suggest._id==item._id){
+                  if (suggest._id===item._id){
                     suggest.areyousure=false
                   }}
                   console.log(suggestionscopy)
@@ -336,31 +203,27 @@ newPollSuggestionToRender.createdby=auth.isAuthenticated().user
 
           suggestionsmapped=suggestions.map(item=>{
             let approval=<></>
-            console.log("approval in render",item.suggestion,item.approval)
             let votesfrommembers=[]
             let memberids=group.members.map(item=>item._id)
-            console.log("memberids in render",group.members,memberids)
             for (let vote of item.approval){
               if (memberids.includes(vote)){
                 votesfrommembers.push(vote)
               }
             }
             item.approval=votesfrommembers
-            console.log("votes from members",item.approval)
             approval=Math.round((item.approval.length/group.members.length)*100)
 
 
             let approveenames=[]
             for (let user of group.members){
               for (let approvee of item.approval){
-                if (approvee==user._id){
+                if (approvee===user._id){
                   approveenames.push(user.name)
                 }
               }
             }
 
             let width=`${(item.approval.length/group.members.length)*100}%`
-            console.log(item.approval,item.approval.length,group.members.length)
 
             return (<>
               <div key={item._id} className="pollbox">
@@ -428,17 +291,6 @@ newPollSuggestionToRender.createdby=auth.isAuthenticated().user
                   </div>
                   <div>
                   {suggestionsmapped}
-
-                  {(group.level==poll.level)&&<>
-                    <div className="pollbox">
-                      {group.level>0&&<>
-                      <h5 className="ruletext">Send Down?</h5>
-                      {(!poll.approval.includes(auth.isAuthenticated().user._id))&&<button onClick={(e)=>approveOfSendingPollDown(e,poll._id)}>Send poll down to children groups?</button>}
-                      {(poll.approval.includes(auth.isAuthenticated().user._id))&&<button onClick={(e)=>withdrawApprovalOfSendingPollDown(e,poll._id)}>Don't send poll down to children groups?</button>}
-                      {group.members&&<h4 className="ruletext">{approval}% of members want to send this poll to lower groups, {poll.approval.length}/{group.members.length}. {poll.approval.length>0&&<h4 style={{display:'inline'}}>Approvees=</h4>}</h4>}
-                      {approveenames&&approveenames.map((item,index)=>{return(<><h4 className="ruletext">{item}{(index<(approveenames.length-2))?", ":(index<(approveenames.length-1))?" and ":"."}</h4></>)})}
-                      <div className="percentagecontainer"><div style={{width:width}} className="percentage"></div></div></>}</div>
-                      </>}
                       </div>
                       </div>
                       </>

@@ -1,19 +1,9 @@
 import React, { Component } from 'react';
-import {Image} from 'cloudinary-react'
 import CreateRuleForm from './CreateRuleForm'
 import auth from './../auth/auth-helper'
 import io from "socket.io-client";
-const mongoose = require("mongoose");
 let server = "http://localhost:5000";
-let socket
-const MILLISECONDS_IN_A_DAY=86400000
 const MILLISECONDS_IN_A_WEEK=604800000
-if(process.env.NODE_ENV=="production"){
-  socket=io();
-}
-if(process.env.NODE_ENV=="development"){
-  socket=io(server);
-}
 
 export default class Rules extends Component {
 
@@ -42,12 +32,11 @@ export default class Rules extends Component {
 
   componentDidMount(props){
     let server = "http://localhost:5000";
-    if(process.env.NODE_ENV=="production"){
-      socket=io();
+    if(process.env.NODE_ENV==="production"){
+      this.socket=io();
     }
-    if(process.env.NODE_ENV=="development"){
-      socket=io(server);
-
+    if(process.env.NODE_ENV==="development"){
+      this.socket=io(server);
     }
     this.getRules()
   }
@@ -151,7 +140,7 @@ export default class Rules extends Component {
     let groupId=this.state.group._id
     let groupTitle=this.state.group.title
 
-    socket.emit("Input Chat Message", {
+    this.socket.emit("Input Chat Message", {
       chatMessage,
       userId,
       userName,
@@ -201,14 +190,13 @@ export default class Rules extends Component {
     for (var rule of rulescopy){
       let votesfrommembers=[]
       let memberids=this.state.users.map(item=>item._id)
-
       for (let vote of rule.approval){
         if (memberids.includes(vote)){
           votesfrommembers.push(vote)
         }
       }
       rule.approval=votesfrommembers
-      if (rule._id==id){
+      if (rule._id===id){
 
         if(!rule.approval.includes(auth.isAuthenticated().user._id)){
           rule.approval.push(auth.isAuthenticated().user._id)
@@ -227,10 +215,7 @@ export default class Rules extends Component {
             this.sendRuleNotification(rule)
           }
 
-
-          if ((approval>75)&&(this.state.group.level>0)&&(rule.sentdown==false)){
-
-
+          if ((approval>75)&&(this.state.group.level>0)&&(rule.sentdown===false)){
             rule.sentdown=true
             this.sendRuleDown(rule)
           }
@@ -240,7 +225,6 @@ export default class Rules extends Component {
 
     this.setState({rules:rulescopy})
     let current=rulescopy.slice((this.state.page*10-10),this.state.page*10)
-
     this.setState({currentPageData:rulescopy})
 
     let options = {
@@ -253,7 +237,7 @@ export default class Rules extends Component {
 
     fetch("/rules/approveofrule/" + id +"/"+ auth.isAuthenticated().user._id, options
   ).then(res => {
-
+    console.log(res)
   }).catch(err => {
     console.error(err);
   })
@@ -286,7 +270,6 @@ for (let group of this.state.group.groupsbelow){
 }
 
 for (let gr of lowergroupids){
-
   fetch("/rules/sendruledown/"+rule._id+"/"+gr,  optionsone)
   .catch(err => {
     console.error(err);
@@ -313,9 +296,7 @@ withdrawapprovalofrule(e,id){
       }
     }
     rule.approval=votesfrommembers
-    if (rule._id==id){
-
-
+    if (rule._id===id){
       var filteredapproval=rule.approval.filter(checkRule)
       rule.approval=filteredapproval
     }
@@ -356,19 +337,16 @@ sendRuleNotification(item){
   if(!item.notificationsent){
     var rulescopy=JSON.parse(JSON.stringify(this.state.rules))
     for (var rule of rulescopy){
-      if (rule._id==item._id){
+      if (rule._id===item._id){
         rule.notificationsent=true
       }}
       this.setState({rules:rulescopy})
       let current=rulescopy.slice((this.state.page*10-10),this.state.page*10)
       this.setState({currentPageData:current})
 
-
       let userscopy=JSON.parse(JSON.stringify(this.state.users))
       userscopy=userscopy.filter(user=>user.rules)
       let emails=userscopy.map(item=>{return item.email})
-
-
 
       let d = new Date();
       let n = d.getTime();
@@ -380,7 +358,7 @@ sendRuleNotification(item){
       let groupId=this.state.group._id
       let groupTitle=this.state.group.title
 
-      socket.emit("Input Chat Message", {
+      this.socket.emit("Input Chat Message", {
         chatMessage,
         userId,
         userName,
@@ -421,7 +399,7 @@ sendRuleNotification(item){
 
       fetch("/rules/notificationsent/"+item._id, optionstwo
     ) .then(res => {
-
+      console.log(res)
     }).catch(err => {
       console.error(err);
     })
@@ -435,7 +413,7 @@ ruleApprovedNotification(item){
 
   if(!item.ratificationnotificationsent){
     for (let pol of rulescopy){
-      if (pol._id==item._id){
+      if (pol._id===item._id){
         pol.ratificationnotificationsent=true
       }}
       let d = new Date();
@@ -449,7 +427,7 @@ ruleApprovedNotification(item){
       let groupTitle=this.state.group.title
 
 
-      socket.emit("Input Chat Message", {
+      this.socket.emit("Input Chat Message", {
         chatMessage,
         userId,
         userName,
@@ -511,7 +489,7 @@ areYouSure(e,item){
     let rulescopy=JSON.parse(JSON.stringify(this.state.rules))
     console.log(rulescopy)
     for (let rule of rulescopy){
-      if (rule._id==item._id){
+      if (rule._id===item._id){
         rule.areyousure=true
       }}
       console.log(rulescopy)
@@ -525,7 +503,7 @@ areYouSure(e,item){
         let rulescopy=JSON.parse(JSON.stringify(this.state.rules))
         console.log(rulescopy)
         for (let rule of rulescopy){
-          if (rule._id==item._id){
+          if (rule._id===item._id){
             rule.areyousure=false
           }}
           console.log(rulescopy)
@@ -560,7 +538,7 @@ render(props) {
       let approveenames=[]
       for (let user of this.state.users){
         for (let approvee of item.approval){
-          if (approvee==user._id){
+          if (approvee===user._id){
             approveenames.push(user.name)
           }
         }
