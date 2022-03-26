@@ -52,7 +52,7 @@ export default class Leads extends Component {
 
 
   decidePage(e,pagenum){
-    if(this.state.category=="all"){
+    if(this.state.category==="all"){
       let currentpage=this.state.leads.slice((pagenum*10-10),pagenum*10)
       this.setState({page:pagenum,currentPageData:currentpage})
     }else{
@@ -71,13 +71,15 @@ export default class Leads extends Component {
       }
       let leads=data
       leads.reverse()
-      this.setState({leads:leads})
 
-      let currentpage=leads.slice(0,10)
+      let filteredleadsbycategory=leads.filter(lead=>lead.genres.includes(this.state.category))
+
+      this.setState({leads:leads})
+      let currentpage=filteredleadsbycategory.slice(0,10)
       console.log("currentpage",currentpage)
       this.setState({currentPageData:currentpage})
 
-      let pagenum=Math.ceil(data.length/10)
+      let pagenum=Math.ceil(filteredleadsbycategory.length/10)
       console.log("page num",pagenum)
       let pagenums=[]
       while(pagenum>0){
