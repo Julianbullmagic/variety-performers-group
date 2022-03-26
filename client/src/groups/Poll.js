@@ -1,5 +1,6 @@
 import React, {useState, useEffect, useRef} from 'react'
 import auth from './../auth/auth-helper'
+import { nanoid } from 'nanoid'
 const mongoose = require("mongoose");
 
 
@@ -7,7 +8,6 @@ export default function Poll (props) {
   const [suggestions, setSuggestions] = useState([]);
   const [poll, setPoll] = useState(props.poll);
   const [group, setGroup] = useState(props.group);
-
   const [sure, setSure] = useState(false);
   const pollsuggestion = useRef('')
 
@@ -267,10 +267,9 @@ newPollSuggestionToRender.createdby=auth.isAuthenticated().user
                 }
               }
               let width=`${(pollcopy.approval.length/group.members.length)*100}%`
-
+              let id=nanoid()
               return (
                 <>
-                <div key={props.poll._id}>
                 <div className="pollbox">
                 <h3 className="ruletext">{props.poll.pollquestion}  </h3>
                 {props.poll.createdby&&<>
@@ -282,7 +281,7 @@ newPollSuggestionToRender.createdby=auth.isAuthenticated().user
                   {sure&&<button className="ruletext deletebutton" onClick={(e)=>props.deletePoll(e,props.poll)}>Are you sure?</button>}
                   </>}
                   <form>
-                  <div>
+                  <div key={id}>
                   <h5 className="ruletext">Create Poll Suggestion</h5>
                   <button className="pollsuggestionbutton" className="ruletext" onClick={(e) => handleSubmit(e)}>New Poll Suggestion?</button>
                   <textarea style={{width:"75vw"}} ref={pollsuggestion} id="story" rows="2" />
@@ -291,7 +290,6 @@ newPollSuggestionToRender.createdby=auth.isAuthenticated().user
                   </div>
                   <div>
                   {suggestionsmapped}
-                      </div>
                       </div>
                       </>
                     )

@@ -11,6 +11,7 @@ export default class Rules extends Component {
     super(props);
     this.state = {
       users:props.users,
+      socket:props.socket,
       rules: [],
       group:props.group,
       page:1,
@@ -25,24 +26,27 @@ export default class Rules extends Component {
     this.sendRuleNotification= this.sendRuleNotification.bind(this)
     this.approveofrule=this.approveofrule.bind(this)
     this.ruleApprovedNotification=this.ruleApprovedNotification.bind(this)
+    this.deleteRule=this.deleteRule.bind(this)
     this.areYouSure=this.areYouSure.bind(this)
     this.areYouNotSure=this.areYouNotSure.bind(this)
-    let socket
   }
 
   componentDidMount(props){
-    let server = "http://localhost:5000";
-    if(process.env.NODE_ENV==="production"){
-      this.socket=io();
-    }
-    if(process.env.NODE_ENV==="development"){
-      this.socket=io(server);
-    }
+    // let server = "http://localhost:5000";
+    // if(process.env.NODE_ENV==="production"){
+    //   this.socket=io();
+    // }
+    // if(process.env.NODE_ENV==="development"){
+    //   this.socket=io(server);
+    // }
     this.getRules()
   }
 
 
   componentWillReceiveProps(nextProps) {
+    if (nextProps.socket !== this.props.socket) {
+      this.setState({socket:nextProps.socket})
+    }
     if (nextProps.users !== this.props.users) {
       this.setState({users:nextProps.users})
     }
@@ -67,7 +71,6 @@ export default class Rules extends Component {
       let rules=data
       rules.reverse()
       this.setState({rules:rules})
-
 
       let currentpage=rules.slice(0,10)
 
@@ -102,7 +105,6 @@ export default class Rules extends Component {
 
 
   async deleteRule(event,item){
-
     var rulescopy=JSON.parse(JSON.stringify(this.state.rules))
     function checkRule(rule) {
       return rule._id!=item._id
@@ -137,10 +139,10 @@ export default class Rules extends Component {
     let userName=auth.isAuthenticated().user.name
     let nowTime=n
     let type="text"
-    let groupId=this.state.group._id
+    let groupId=this.state.group.title
     let groupTitle=this.state.group.title
 
-    this.socket.emit("Input Chat Message", {
+    this.state.socket.emit("Input Chat Message", {
       chatMessage,
       userId,
       userName,
@@ -358,7 +360,7 @@ sendRuleNotification(item){
       let groupId=this.state.group._id
       let groupTitle=this.state.group.title
 
-      this.socket.emit("Input Chat Message", {
+      this.state.socket.emit("Input Chat Message", {
         chatMessage,
         userId,
         userName,
@@ -427,7 +429,7 @@ ruleApprovedNotification(item){
       let groupTitle=this.state.group.title
 
 
-      this.socket.emit("Input Chat Message", {
+      this.state.socket.emit("Input Chat Message", {
         chatMessage,
         userId,
         userName,
@@ -476,7 +478,7 @@ ruleApprovedNotification(item){
 
       fetch("/rules/ruleratificationnotificationsent/"+item._id, optionstwo
     ) .then(res => {
-
+      console.log(res)
     }).catch(err => {
       console.error(err);
     })
@@ -581,23 +583,8 @@ render(props) {
             <>
             <div style={{marginBottom:"20vw"}}>
             {inthisgroup&&<CreateRuleForm updateRules={this.updateRules} groupId={this.props.groupId} level={this.state.group.level}/>}
-            <button onClick={(e) => this.setState({viewexplanation:!this.state.viewexplanation})}>View Explanation</button>
-            <div className="leaderexpl" style={{maxHeight:!this.state.viewexplanation?"0":"300vw",overflow:"hidden"}}>
-            <p>Rules that have less than 75% approval and are more than a week old will be deleted. There are some rules you cannot
-            directly vote on because they have been approved by representatives of a larger group.
-            If you disagree, consult with your
-            elected representatives and they may be able to convince you, otherwize you can withdraw your vote from them.
-            We live in a very complicated modern world, you cannot be expected to understand everything or even most things, but we can try
-            to create circumstances that encourage trust between representatives and their constituency. Democracy book tries to achieve this
-            by having fairly small groups, encouraging a closer relationship between elected delegates and their people.
-            You may have important information that the delegate can pass onto the representative assembly. It is important that rules for
-            larger groups be created by responsible leaders who have consulted with their people, thoroughly discussed the issue and tried
-            to arrive at the most informed decision that as many people as possible are happy but also occasionally using authority to
-            overule people if absolutely necessary. Coercion is always inferior to persuasion. People comply and follow a rule much more
-            willingly and enthusiastically if they understand and agree with it or trust the people who created it.
-            Force should only be used to impose rules in dangerous or dire circumstances where persuasion has failed.
-            </p>
-            </div>
+            <p>Rules that have less than 75% approval and are more than a week old will be deleted. Rules need at least
+            three quarters approval.</p>
             <h2>Group Rules</h2>
             {this.state.pageNum.length>1&&<h4 style={{display:"inline"}}>Choose Page</h4>}
             {(this.state.pageNum.length>1&&this.state.pageNum&&this.state.rules)&&this.state.pageNum.map((item,index)=>{

@@ -16,6 +16,7 @@ export default function SingleUser({ match }) {
   const [polls,setPolls]=useState(false)
   const [rules,setRules]=useState(false)
   const [purchases,setPurchases]=useState(false)
+  const [restriction,setRestriction]=useState([])
   const [restrictions,setRestrictions]=useState(false)
   const [rulesApproved,setRulesApproved]=useState(false)
   const [loading,setLoading]=useState(false)
@@ -25,7 +26,6 @@ export default function SingleUser({ match }) {
   const [emailError,setEmailError]=useState(false);
   const [phoneError,setPhoneError]=useState(false);
   const [fixErrors,setFixErrors]=useState(false)
-
   const [values, setValues] = useState({
     name: '',
     jobtitle:'',
@@ -77,6 +77,7 @@ export default function SingleUser({ match }) {
     await fetch(`/groups/getuser/`+match.params.userId)
     .then(response => response.json())
     .then(data=>{
+      console.log("user",data.data)
       setUser(data.data)
       setEvents(data.data.events)
       setLeads(data.data.leads)
@@ -84,7 +85,8 @@ export default function SingleUser({ match }) {
       setPolls(data.data.polls)
       setRules(data.data.rules)
       setPurchases(data.data.purchases)
-      setRestrictions(data.data.restriction)
+      setRestriction(data.data.restriction)
+      setRestrictions(data.data.restrictions)
       setRulesApproved(data.data.rulesapproved)
       setRestrictionsApproved(data.data.restrictionsapproved)
     })
@@ -289,7 +291,8 @@ export default function SingleUser({ match }) {
                         polls:polls,
                         rules:rules,
                         purchases:purchases,
-                        restriction:restrictions,
+                        restriction:restriction,
+                        restrictions:restrictions,
                         rulesapproved:rulesApproved,
                         restrictionsapproved:restrictionsApproved
                       }
@@ -328,6 +331,17 @@ export default function SingleUser({ match }) {
                         notallyoutube=true
                       }
                     }
+                    let d = new Date();
+                    let n = d.getTime();
+
+                    let restrictionsmapped=<></>
+                    if(restrictions){
+                      restrictionsmapped=restrictions.map(item=>{
+                        let elapsed=n-item.timecreated
+                        let dayselapsed=Math.round(elapsed/86400000)
+                        let daysleft=item.duration-dayselapsed
+                        return (<div className="leader" style={{textAlign:"center",margin:"0.5vw"}}><p style={{display:"inline"}}><strong>Restriction: </strong>{item.restriction} for {daysleft} days. <strong>Explanation: </strong> {item.explanation}. </p>
+                        {(item.createdby===auth.isAuthenticated().user._id)&&<div style={{textAlign:"center",display:"inline"}}><p style={{display:'inline'}}>You created this restriction with your leader privileges </p></div>}</div>)})}
 
                     return (
                       <>
@@ -354,6 +368,8 @@ export default function SingleUser({ match }) {
                         <div style={{marginLeft:"5vw",width:"50vw"}}>
                         {user.promovideos&&user.promovideos.map(item=>{return (<iframe title={item} style={{width:"100%",height:"60vh"}} src={item}/>)})}
                         </div></>}
+                        {(user.restrictions&&user.restrictions.length>0)&&<div style={{textAlign:"center"}}><h3 style={{textAlign:"center"}}>Restrictions</h3>
+                        {restrictionsmapped}</div>}
                         </div>
                         </div>)}
 
@@ -477,10 +493,10 @@ export default function SingleUser({ match }) {
                                       <input
                                       type="checkbox"
                                       style={{overflow:"auto"}}
-                                      checked={restrictions}
+                                      checked={restriction}
                                       onChange={e => {
                                         console.log(e.target.value)
-                                        setRestrictions(e.target.checked)}}
+                                        setRestriction(e.target.checked)}}
                                         />
                                         <h5 style={{marginRight:"1vw"}} className="ruletext">Restrictions </h5>
                                         </div>

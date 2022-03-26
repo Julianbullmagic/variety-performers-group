@@ -57,7 +57,7 @@ export default function CreateLeadForm(props) {
     console.log(userscopy.length)
     userscopy=userscopy.filter(user=>user.leads)
     console.log(userscopy)
-    
+
     userscopy=userscopy.filter(user=>item.genres.includes(user.jobtitle.toLowerCase()))
     console.log(userscopy)
     let emails=userscopy.map(item=>{return item.email})
@@ -176,7 +176,7 @@ if (errors){
           if(!props.homepage){
 
           }
-          let chatMessage=`created an gig lead called ${titleValue.current.value}`
+          let chatMessage=`created an gig lead called ${titleValue.current.value} visit https://variety-performers-group.herokuapp.com to see details`
           let userId=''
 
           if(auth.isAuthenticated()){

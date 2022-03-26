@@ -11,6 +11,7 @@ export default function Jury(props) {
   const [viewForm, setViewForm] = useState(false);
   const [selectedUser, setSelectedUser] = useState(props.users[`${props.users.length-1}`]);
   const [group, setGroup] = useState(props.group);
+  const [socket,setSocket] = useState(props.socket);
   const [users, setUsers] = useState(props.users);
   const [allGroups, setAllGroups] = useState([props.group])
   const [searchTerm, setSearchTerm] = useState('');
@@ -25,17 +26,17 @@ export default function Jury(props) {
   const [page, setPage] = useState(1);
   const [pageNum, setPageNum] = useState([]);
   const [currentPageData, setCurrentPageData] = useState([]);
-  const pollquestion = React.useRef('')
-  let server = "http://localhost:5000";
-  let socket
-  if(process.env.NODE_ENV==="production"){
-    socket=io();
-  }
-  if(process.env.NODE_ENV==="development"){
-    socket=io(server);
-  }
-console.log("node env",process.env.NODE_ENV)
+  const pollquestion = useRef('')
+  // let server = "http://localhost:5000";
+  // let socket
+  // if(process.env.NODE_ENV==="production"){
+  //   socket=io();
+  // }
+  // if(process.env.NODE_ENV==="development"){
+  //   socket=io(server);
+  // }
   useEffect(()=>{
+    setSocket(props.socket)
     setGroup(props.group)
     setAllGroups([props.group])
     setUsers(props.users)
@@ -43,7 +44,6 @@ console.log("node env",process.env.NODE_ENV)
   },[props])
 
   useEffect(() => {
-
     fetch("/polls/getrestrictionpolls/"+props.groupId)
     .then(res => {
       return res.json();
@@ -441,9 +441,10 @@ function delRestPoll(e,item){
                     let n = d.getTime();
 
 
-                    console.log("approving restriction",approval)
+                    console.log("approving restriction",approval,restriction)
 
                     if(approval>=10&&!restriction.notificationsent){
+                      console.log("sending notification")
                       sendRestrictionPollNotification(restriction)
                     }
                     if (approval<75&&(n-restriction.timecreated)>MILLISECONDS_IN_A_WEEK){
@@ -638,7 +639,7 @@ function delRestPoll(e,item){
               let notification={
                 emails:emails,
                 subject:"New Restriction Suggestion In Group Jury",
-                message:`${item.createdby.name} suggested a restriction ${item.restriction} for ${item.usertorestrict.name} in the group ${group.title} at level ${group.level}`
+                message:`${item.createdby.name} suggested a restriction ${item.restriction} for ${item.usertorestrict.name}`
               }
 
               const options = {
@@ -714,8 +715,7 @@ function delRestPoll(e,item){
               let notification={
                 emails:emails,
                 subject:"A restriction has been approved by group jury",
-                message:`The restriction, ${item.restriction} for ${item.duration} days, has been approved for ${item.usertorestrict.name}
-                in the group ${group.title} at level ${group.level}`
+                message:`The restriction, ${item.restriction} for ${item.duration} days, has been approved for ${item.usertorestrict.name}`
               }
 
               const options = {
@@ -828,10 +828,9 @@ function delRestPoll(e,item){
           {approveenames&&approveenames.map((item,index)=>{return(<h4 className="ruletext"> {item}{(index<(approveenames.length-2))?", ":(index<(approveenames.length-1))?" and ":"."}</h4>)})}
           {!item.approval.includes(auth.isAuthenticated().user._id)&&<button style={{margin:"0.5vw"}} className="ruletext" onClick={(e)=>{approve(e,item);appr(e,item);}}>Approve?</button>}
           {item.approval.includes(auth.isAuthenticated().user._id)&&<button style={{margin:"0.5vw"}} className="ruletext" onClick={(e)=>withdrawapproval(e,item)}>Withdraw Approval?</button>}
-          {group.groupabove&&<>
-            {(((item.createdby&&(item.createdby._id==auth.isAuthenticated().user._id))||group.groupabove.members.includes(auth.isAuthenticated().user._id))&&!item.areyousure)&&
+            {((item.createdby&&(item.createdby._id==auth.isAuthenticated().user._id))&&!item.areyousure)&&
               <button className="ruletext deletebutton" onClick={(e)=>areYouSure(e,item)}>Delete Restriction Poll?</button>}
-            </>}
+
             {item.areyousure&&<button className="ruletext deletebutton" onClick={(e)=>areYouNotSure(e,item)}>Not sure</button>}
             {item.areyousure&&<button className="ruletext deletebutton" onClick={(e)=>{deleteRestrictionPoll(e,item);delRestPoll(e,item);}}>Are you sure?</button>}
             <h4 style={{margin:"0vw",marginBottom:"0.5vw"}}><strong>Explanation:</strong> {item.explanation} </h4>
@@ -895,7 +894,7 @@ function delRestPoll(e,item){
 
             </div>
             <div className="eventformbox">
-            <input type='text' name='duration' id='duration' onChange={(e) => handleDurationChange(e)}/>
+            <input type='number' name='duration' id='duration' onChange={(e) => handleDurationChange(e)}/>
             <p htmlFor="duration"> How many days?</p>
             </div>
             <div className="eventformbox">
@@ -910,6 +909,9 @@ function delRestPoll(e,item){
             will not follow a rule if they don't even know it exists. A rule might seem like common sense
             to you, but to someone of a different background, culture, nationality, religion or ethnicity,
             it might not.
+
+            Restrictions can be removed earlier than their set duration if they recieve less than 75% approval or
+            the creator deletes them.
             </p>
             </div>
             </div>

@@ -16,18 +16,19 @@ export default function Newsfeed (props) {
   const [pageNum, setPageNum] = useState([]);
   const [currentPageData, setCurrentPageData] = useState([]);
   const [preview, setPreview] = useState("");
-  let server = "http://localhost:5000";
-  let socket
-
-  if(process.env.NODE_ENV==="production"){
-    socket=io();
-  }
-  if(process.env.NODE_ENV==="development"){
-    socket=io(server);
-  }
+  const [socket,setSocket] = useState(props.socket)
+  // let server = "http://localhost:5000";
+  // let socket
+  //
+  // if(process.env.NODE_ENV==="production"){
+  //   socket=io();
+  // }
+  // if(process.env.NODE_ENV==="development"){
+  //   socket=io(server);
+  // }
 
   useEffect(() => {
-
+    setSocket(props.socket)
     setGroup(props.group)
     fetch("/posts/getposts/"+props.groupId)
     .then(res => {

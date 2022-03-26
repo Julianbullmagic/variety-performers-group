@@ -12,14 +12,14 @@ const createStoreWithMiddleware = applyMiddleware(promiseMiddleware, ReduxThunk)
 
 
 ReactDOM.render(
-  <Provider
+  <Provider key="provider"
       store={createStoreWithMiddleware(
           Reducer,
           window.__REDUX_DEVTOOLS_EXTENSION__ &&
           window.__REDUX_DEVTOOLS_EXTENSION__()
       )}
   >
-    <App />
+    <App  key="app" />
         </Provider>,
   document.getElementById("root")
 );

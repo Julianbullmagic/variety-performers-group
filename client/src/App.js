@@ -7,8 +7,8 @@ import './App.css'
 const App = () => {
 
   return (
-  <BrowserRouter >
-        <MainRouter/>
+  <BrowserRouter key="browserrouter">
+        <MainRouter key="mainrouter"/>
   </BrowserRouter>
 )}
 

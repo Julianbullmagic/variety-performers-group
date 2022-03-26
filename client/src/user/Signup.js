@@ -176,7 +176,7 @@ if(values.promovideos!==""){
     }
   }
 
-    if(!(values.password==values.passwordtwo)){
+    if(!(values.password===values.passwordtwo)){
       setValues({ ...values, passworderror:true})
     }
 
@@ -202,7 +202,7 @@ if(values.promovideos!==""){
 
 
     if(!errors){
-      if((values.password==values.passwordtwo)&&!notallyoutub){
+      if((values.password===values.passwordtwo)&&!notallyoutub){
         setValues({ ...values, passworderror:false})
         setLoading(true)
         var userId=mongoose.Types.ObjectId()
@@ -343,7 +343,7 @@ if(values.promovideos!==""){
                   <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Youtube Channel </h5><input id="youtube" placeHolder={values.youtube} type="youtube" label="youtube" value={values.youtube} onChange={handleChange('youtube')} margin="normal"/></div>
                   {youtubeChannelError&&<p style={{color:"red"}}>This is not a valid youtube channel</p>}
                   <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Promo Videos, separate youtube video link urls with a comma </h5><input id="promovideos" placeHolder={values.promovideos} type="promovideos" label="promotional videos, please add youtube url links separated by a comma" value={values.promovideos} onChange={handleChange('promovideos')} margin="normal"/></div>
-                  {(notallyoutube&&!values.promovideos=="")&&<h5 style={{marginRight:"1vw",color:"red"}} className="ruletext">Includes links that are not for Youtube</h5>}
+                  {(notallyoutube&&!values.promovideos==="")&&<h5 style={{marginRight:"1vw",color:"red"}} className="ruletext">Includes links that are not for Youtube</h5>}
                   <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Job Title, what kind of performer are you? Magician, juggler, acrobat, etc? </h5><input id="job title" type="job title" placeHolder={values.jobtitle} label="job title" value={values.jobtitle} onChange={handleChange('jobtitle')} margin="normal"/></div>
                   <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Expertise, how did you learn your skill? </h5><input id="expertise" type="expertise" placeHolder={values.expertise} label="expertise" value={values.expertise} onChange={handleChange('expertise')} margin="normal"/></div>
                   <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Performance Description </h5><input id="performancedescription" placeHolder={values.performancedescription} type="performancedescription" label="Performance Description"  value={values.performancedescription} onChange={handleChange('performancedescription')} margin="normal"/></div>
@@ -373,10 +373,10 @@ if(values.promovideos!==""){
 
                   <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Password </h5><input id="password" type="password" placeHolder={values.password} label="Password" value={values.password} onChange={handleChange('password')} margin="normal"/></div>
                   <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Confirm Password </h5><input id="passwordtwo" type="password" placeHolder={values.passwordtwo} label="Confirm Password" value={values.passwordtwo} onChange={handleChange('passwordtwo')} margin="normal"/></div>
-                  {(!(values.password==values.passwordtwo)&&!(values.passwordtwo==""))&&<h5 style={{marginRight:"1vw",color:"red"}} className="ruletext">Passwords Do Not Match</h5>}
+                  {(!(values.password===values.passwordtwo)&&!(values.passwordtwo===""))&&<h5 style={{marginRight:"1vw",color:"red"}} className="ruletext">Passwords Do Not Match</h5>}
                   {(values.passworderror&&notallyoutube)&&<h5 style={{marginRight:"1vw",color:"red"}} className="ruletext">Cannot Submit, Must Fix Errors, All Input fields must be filled</h5>}
 
-                  {(values.passworderror&&(!(values.password==values.passwordtwo)&&!(values.passwordtwo=="")))&&<h5 style={{marginRight:"1vw",color:"red"}} className="ruletext">Cannot Submit, Must Fix Errors, All Input fields must be filled</h5>}
+                  {(values.passworderror&&(!(values.password===values.passwordtwo)&&!(values.passwordtwo==="")))&&<h5 style={{marginRight:"1vw",color:"red"}} className="ruletext">Cannot Submit, Must Fix Errors, All Input fields must be filled</h5>}
                   <button style={{marginLeft:"30%"}} onClick={(e) => extraImage(e)}>Add Extra Image</button>
                   <button onClick={(e) => lessImage(e)}>One Less Image</button>
                   <button id="submit" onClick={clickSubmit}>Submit</button>

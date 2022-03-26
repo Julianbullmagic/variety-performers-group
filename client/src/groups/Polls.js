@@ -4,46 +4,31 @@ import Comment from '../post/Comment'
 import Poll from './Poll'
 import io from "socket.io-client";
 const mongoose = require("mongoose");
-const MILLISECONDS_IN_A_DAY=86400000
-const MILLISECONDS_IN_A_WEEK=604800000
+
 
 export default function Polls (props) {
   const [viewForm, setViewForm] = useState(false);
-  const [admin, setAdmin] = useState(false);
   const [polls, setPolls] = useState([]);
   const [group, setGroup] = useState(props.group);
-  const [poll, setPoll] = useState("");
-  const [comment, setComment] = useState("");
+  const [socket,setSocket] = useState(props.socket)
   const [page, setPage] = useState(1);
   const [pageNum, setPageNum] = useState([]);
   const [currentPageData, setCurrentPageData] = useState([]);
   const pollquestion = useRef('')
 
-  let server = "http://localhost:5000";
-  let socket
-  if(process.env.NODE_ENV==="production"){
-    socket=io();
-  }
-  if(process.env.NODE_ENV==="development"){
-    socket=io(server);
-  }
+  // let server = "http://localhost:5000";
+  // let socket
+  // if(process.env.NODE_ENV==="production"){
+  //   socket=io();
+  // }
+  // if(process.env.NODE_ENV==="development"){
+  //   socket=io(server);
+  // }
 
-  useEffect(()=>{
-    if(props.group.groupabove){
-      if (props.group.groupabove.members.includes(auth.isAuthenticated().user._id)){
-        setAdmin(true)
-      }
-    }
-  },[])
 
   useEffect(() => {
-    if(props.group.groupabove){
-      if (props.group.groupabove.members.includes(auth.isAuthenticated().user._id)){
-        setAdmin(true)
-      }
-    }
     setGroup(props.group)
-
+    setSocket(props.socket)
     fetch("/polls/getpolls/"+props.groupId)
     .then(res => {
       return res.json();
@@ -67,7 +52,7 @@ export default function Polls (props) {
       pagenums.reverse()
 
       setPageNum(pagenums)
-    })
+    }).catch(err=>console.error(err))
   },[props])
 
 
@@ -101,12 +86,6 @@ export default function Polls (props) {
 
     const newPollToRender=JSON.parse(JSON.stringify(newPoll))
     newPollToRender.createdby=auth.isAuthenticated().user
-
-
-
-    var d = new Date();
-    var n = d.getTime();
-
 
     let chatMessage=`created a poll called ${pollquestion.current.value}`
     let userId=auth.isAuthenticated().user._id
@@ -147,12 +126,10 @@ export default function Polls (props) {
             .catch(err => {
               console.error(err);
             })
-
           }
 
 
           function deletePoll(e,item) {
-            console.log(item)
             var pollscopy=JSON.parse(JSON.stringify(polls))
             var filteredarray = pollscopy.filter(function( obj ) {
               return obj._id !== item._id;
@@ -201,7 +178,7 @@ export default function Polls (props) {
                   }
 
                   fetch("/groups/sendemailnotification", opt
-                ) .then(res => {
+                ).then(res => {
                   console.log(res)
                 }).catch(err => {
                   console.error(err);
@@ -230,7 +207,7 @@ export default function Polls (props) {
 
                     let pollscopy=JSON.parse(JSON.stringify(polls))
                     for (let pol of pollscopy){
-                      if(pol._id==item._id){
+                      if(pol._id===item._id){
                         pol.notificationsent=true
                       }
                     }
@@ -241,7 +218,6 @@ export default function Polls (props) {
                     setCurrentPageData(current)
 
                     if(!item.notificationsent){
-
                       let userscopy=JSON.parse(JSON.stringify(props.users))
                       userscopy=userscopy.filter(user=>user.polls)
                       let emails=userscopy.map(item=>{return item.email})
@@ -261,7 +237,7 @@ export default function Polls (props) {
                       }
 
                       fetch("/groups/sendemailnotification", options
-                    ) .then(res => {
+                    ).then(res => {
                       console.log(res)
                     }).catch(err => {
                       console.error(err);
@@ -289,7 +265,7 @@ export default function Polls (props) {
                           let pollscopy=JSON.parse(JSON.stringify(polls))
                           console.log(pollscopy)
                           for (let poll of pollscopy){
-                            if (poll._id==poll._id){
+                            if (poll._id===poll._id){
                               poll.areyousure=true
                             }}
                             console.log(pollscopy)
@@ -303,7 +279,7 @@ export default function Polls (props) {
                               let pollscopy=JSON.parse(JSON.stringify(polls))
                               console.log(pollscopy)
                               for (let poll of pollscopy){
-                                if (poll._id==item._id){
+                                if (poll._id===item._id){
                                   poll.areyousure=false
                                 }}
                                 console.log(pollscopy)
@@ -317,10 +293,8 @@ export default function Polls (props) {
 
                 return (
                   <>
-                  <div className="postbox">
-                  <div>
-                  <Poll poll={item} key={item._id} users={props.users} deletePoll={deletePoll} sendPollNotification={sendPollEmailNotification} group={group}/>
-                  </div>
+                  <div  key={item._id} className="postbox">
+                  <Poll poll={item} users={props.users} deletePoll={deletePoll} sendPollNotification={sendPollEmailNotification} group={group}/>
                   <Comment id={item._id}/>
                   </div>
                   </>

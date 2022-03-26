@@ -19,6 +19,7 @@
     "kmeans-same-size": "^1.0.1",
     "leaflet": "^1.7.1",
     "moment": "^2.29.1",
+    "nanoid": "^3.3.1",
     "node-kmeans": "^1.1.9",
     "react": "^17.0.2",
     "react-awesome-slider": "^4.1.0",

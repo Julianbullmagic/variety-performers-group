@@ -7,7 +7,6 @@ const mongoose = require("mongoose");
 
 
 export default class NewMemberApproval extends Component {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -17,32 +16,31 @@ export default class NewMemberApproval extends Component {
       potentialmembers:[],
       rules: [],
       page:1,
+      socket:props.socket,
       pageNum:[],
       currentPageData:[],
       redirect: false,
       updating:false,
       participate:props.participate
     }
-    let socket
     this.approveofnewmember=this.approveofnewmember.bind(this)
     this.withdrawapprovalofnewmember=this.withdrawapprovalofnewmember.bind(this)
     this.toggleDetails=this.toggleDetails.bind(this)
     this.sendMemberApprovedNotification=this.sendMemberApprovedNotification.bind(this)
     this.sendMemberApprovalNotification=this.sendMemberApprovalNotification.bind(this)
-
   }
 
 
 
   componentDidMount(props){
-    let server = "http://localhost:5000";
-    if(process.env.NODE_ENV==="production"){
-      this.socket=io();
-    }
-    if(process.env.NODE_ENV==="development"){
-      this.socket=io(server);
-    }
-    this.socket = io(server);
+    // let server = "http://localhost:5000";
+    // if(process.env.NODE_ENV==="production"){
+    //   this.socket=io();
+    // }
+    // if(process.env.NODE_ENV==="development"){
+    //   this.socket=io(server);
+    // }
+    // this.socket = io(server);
     console.log(this.state.users)
     let allusers=JSON.parse(JSON.stringify(this.state.users))
     let potentialmembers=this.state.users.filter(item=>!item.approvedmember)
@@ -57,6 +55,9 @@ export default class NewMemberApproval extends Component {
     this.setState({potentialmembers:potentialmembers,users:actualmembers,allusers:allusers})
   }
   componentWillReceiveProps(nextProps) {
+    if (nextProps.socket !== this.props.socket) {
+      this.setState({socket:nextProps.socket})
+    }
     if (nextProps.users !== this.props.users) {
       this.setState({users:nextProps.users})
     }
@@ -209,7 +210,7 @@ sendMemberApprovedNotification(item){
       let groupId=this.state.group._id
       let groupTitle=this.state.group.title
 
-      this.socket.emit("Input Chat Message", {
+      this.state.socket.emit("Input Chat Message", {
         chatMessage,
         userId,
         userName,
@@ -259,9 +260,7 @@ sendMemberApprovalNotification(item){
       var d = new Date();
       var n = d.getTime();
 
-      let chatMessage=`An potential new member called ${item.name} would like to join the group.
-      They need 75% approval for this to happen. You can vote to approve them by visiting the
-      new member approval tab on the group page.`
+      let chatMessage=`An potential new member called ${item.name} would like to join the group. They need 75% approval for this to happen. You can vote to approve them by visiting the new member approval tab on the group page.`
       let userId=auth.isAuthenticated().user._id
       let userName=auth.isAuthenticated().user.name
       let nowTime=n
@@ -269,7 +268,7 @@ sendMemberApprovalNotification(item){
       let groupId=this.state.group._id
       let groupTitle=this.state.group.title
 
-      this.socket.emit("Input Chat Message", {
+      this.state.socket.emit("Input Chat Message", {
         chatMessage,
         userId,
         userName,

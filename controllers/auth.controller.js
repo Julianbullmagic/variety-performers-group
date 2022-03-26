@@ -45,7 +45,7 @@ await User.findByIdAndUpdate(user._id,{$push: {signins: n}}).exec(function(err,d
       user: {_id: user._id,approvedmember:user.approvedmember, name: user.name,cool:user.cool,coordinates:user.coordinates, email: user.email,events:user.events,
         leads:user.leads,posts:user.posts,polls:user.polls,rules:user.rules,purchases:user.purchases,
         restriction:user.restriction,rulesapproved:user.rulesapproved,restrictionsapproved:user.restrictionsapproved,
-        recentprivatemessages:user.recentprivatemessages}
+        recentprivatemessages:user.recentprivatemessages,jobtitle:user.jobtitle}
     })
   } catch (err) {
     console.error(err)

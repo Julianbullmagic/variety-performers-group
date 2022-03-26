@@ -13,8 +13,9 @@ export default class Leads extends Component {
     this.state = {
       leads:[],
       allleads:[],
-      category:"all",
+      category:auth.isAuthenticated().user.jobtitle.toLowerCase(),
       users:props.users,
+      socket:props.socket,
       page:1,
       pageNum:[],
       currentPageData:[],
@@ -22,20 +23,33 @@ export default class Leads extends Component {
       updating:false
     }
     this.updateLeads= this.updateLeads.bind(this)
-    let socket
-  }
+    console.log("user",auth.isAuthenticated().user)
 
+  }
 
   componentDidMount(){
-    let server = "http://localhost:5000";
-    if(process.env.NODE_ENV==="production"){
-      this.socket=io();
-    }
-    if(process.env.NODE_ENV==="development"){
-      this.socket=io(server);
-    }
+    // let server = "http://localhost:5000";
+    // if(process.env.NODE_ENV==="production"){
+    //   this.socket=io();
+    // }
+    // if(process.env.NODE_ENV==="development"){
+    //   this.socket=io(server);
+    // }
     this.getLeads()
   }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.socket !== this.props.socket) {
+      this.setState({socket:nextProps.socket})
+    }
+    if (nextProps.users !== this.props.users) {
+      this.setState({users:nextProps.users})
+    }
+    if (nextProps.group !== this.props.group) {
+      this.setState({group:nextProps.group})
+    }
+  }
+
 
   decidePage(e,pagenum){
     if(this.state.category=="all"){
@@ -113,7 +127,7 @@ export default class Leads extends Component {
     let nowTime=n
     let type="text"
 
-    this.socket.emit("Input Chat Message", {
+    this.state.socket.emit("Input Chat Message", {
       chatMessage,
       userId,
       userName,

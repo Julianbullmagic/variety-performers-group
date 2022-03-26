@@ -24,12 +24,12 @@ constructor(props){
       unreadwholegroupmessages:0,
       usertomessage:"",
       room:'',
+      socket:props.socket,
       widthcolumntwo:"0%",
       widthcolumnthree:"60%",
       height:"0vh",
       togglechat:false
   }
-  var socket
 this.handleuserchange=this.handleuserchange.bind(this)
 this.setInitialChats=this.setInitialChats.bind(this)
 }
@@ -47,29 +47,32 @@ componentWillReceiveProps(nextProps) {
        grouptitle: nextProps.grouptitle
      });
    }
+   if (nextProps.socket !== this.props.socket) {
+     this.setState({socket:nextProps.socket})
+   }
  }
 
 componentDidMount(props) {
-    let server ="http://localhost:5000";
-
-    this.props.dispatch(getChats());
-    if(process.env.NODE_ENV==="production"){
-      this.socket=io();
-    }
-    if(process.env.NODE_ENV==="development"){
-      this.socket=io(server);
-    }
+    // let server ="http://localhost:5000";
+    //
+    // this.props.dispatch(getChats());
+    // if(process.env.NODE_ENV==="production"){
+    //   this.socket=io();
+    // }
+    // if(process.env.NODE_ENV==="development"){
+    //   this.socket=io(server);
+    // }
 
 console.log("node env",process.env.NODE_ENV)
     this.setInitialChats()
 
-    this.socket.on("increase unread whole group count", messageFromBackEnd => {
+    this.state.socket.on("increase unread whole group count", messageFromBackEnd => {
       if(this.state.chattingtouser){
         this.setState({unreadwholegroupmessages:this.state.unreadwholegroupmessages+1})
       }
 })
 
-    this.socket.on("Output Chat Message", messageFromBackEnd => {
+    this.state.socket.on("Output Chat Message", messageFromBackEnd => {
         if(this.state.usertomessage!=="All Group Chat"){
           this.setState({unreadallgroupmessages:this.state.unreadallgroupmessages+1})
         }
@@ -87,13 +90,10 @@ console.log("node env",process.env.NODE_ENV)
 });
 
         let chatscopy=JSON.parse(JSON.stringify(this.state.chats))
-        console.log(chatscopy)
         chatscopy.push(messageFromBackEnd[0])
-        console.log(chatscopy.length)
-        console.log(chatscopy)
+
         if(chatscopy.length>50){
           chatscopy=chatscopy.slice((chatscopy.length-50),(chatscopy.length-1))
-          console.log(chatscopy)
         }
         this.setState({chats:chatscopy,currentgroupmessage:messageFromBackEnd[0]})
 
@@ -119,30 +119,24 @@ console.log("node env",process.env.NODE_ENV)
     })
 
 
-    this.socket.on("Joined Room", messageFromBackEnd => {
-        console.log("Joined Room",messageFromBackEnd)
+    this.state.socket.on("Joined Room", messageFromBackEnd => {
         this.setState({user:messageFromBackEnd})
               let userscopy=JSON.parse(JSON.stringify(this.state.users))
               for (let user of userscopy){
                 user.unreadmessages=0
           for (let message of messageFromBackEnd.recentprivatemessages){
-
               if(message.sender===user._id){
                 user.unreadmessages+=1
               }
             }
           }
-          console.log("USERS COPY",userscopy)
             this.setState({users:userscopy})
     })
 
-    this.socket.on("Output pm", messageFromBackEnd => {
-        console.log("mp",messageFromBackEnd)
+    this.state.socket.on("Output pm", messageFromBackEnd => {
 if(messageFromBackEnd['recipient']===auth.isAuthenticated().user._id){
   let usercopy=JSON.parse(JSON.stringify(this.state.user))
-
   usercopy[`recentprivatemessages`].push(messageFromBackEnd)
-  console.log("usercopy",usercopy[`recentprivatemessages`])
   let userscopy=JSON.parse(JSON.stringify(this.state.users))
   for (let us of userscopy){
     us.unreadmessages=0
@@ -153,7 +147,6 @@ console.log(message)
   }
 }
 }
-console.log("USERS COPY",userscopy)
 this.setState({users:userscopy,user:usercopy})
       }
     })
@@ -162,8 +155,7 @@ this.setState({users:userscopy,user:usercopy})
 async setInitialChats(){
   let room=this.props.grouptitle
   let userName=auth.isAuthenticated().user.name
-  console.log("join group room",room)
-    this.socket.emit("join group room", {room,userName});
+    this.state.socket.emit("join group room", {room,userName});
   await fetch(`/api/chat/getChats/`+this.props.groupId)
       .then(response => response.json())
       .then(data=>{
@@ -206,7 +198,7 @@ async handleuserchange(e){
     this.setInitialChats()
     let room=this.props.groupId
     let userName=auth.isAuthenticated().user.name
-    this.socket.emit("join group room", {room,userName});
+    this.state.socket.emit("join group room", {room,userName});
     this.setState({chattingtouser:false})
   }else{
     let recipientId
@@ -224,14 +216,13 @@ async handleuserchange(e){
     let userId=auth.isAuthenticated().user._id
     let userName=recipientName
 
-    this.socket.emit("join room", {room,userName,userId,recipientId,groupId});
+    this.state.socket.emit("join room", {room,userName,userId,recipientId,groupId});
     if(this.state.usertomessage===""){
       this.setState({lastgroupmessage:this.state.currentgroupmessage})
     }
     this.setState({usertomessage: e.target.value,room: room,chattingtouser:true})
     let chatsarray=[]
   try{
-    console.log("recipientid",recipientId)
     chatsarray=await fetch(`/api/chat/getChatsWithParticularUser/${recipientId}/${auth.isAuthenticated().user._id}`)
           .then(response => response.json())
           .then(data=>{
@@ -275,7 +266,7 @@ for (let us of this.state.users){
   }
 }
 console.log(recipient?"Input Chat Message To User":"Input Chat Message")
-        this.socket.emit(recipient?"Input Chat Message To User":"Input Chat Message", {
+        this.state.socket.emit(recipient?"Input Chat Message To User":"Input Chat Message", {
             chatMessage,
             userId,
             userName,
@@ -288,8 +279,6 @@ console.log(recipient?"Input Chat Message To User":"Input Chat Message")
                   });
         this.setState({ chatMessage: "" })
     }
-
-
 
 
     render() {

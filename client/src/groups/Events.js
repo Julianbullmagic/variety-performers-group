@@ -26,9 +26,9 @@ export default class Events extends Component {
       pageNum:[],
       currentPageData:[],
       redirect: false,
-      updating:false
+      updating:false,
+      socket:props.socket
     }
-    let socket
     this.updateEvents= this.updateEvents.bind(this)
     this.eventApprovedNotification=this.eventApprovedNotification.bind(this)
     this.areYouSure=this.areYouSure.bind(this)
@@ -41,17 +41,20 @@ export default class Events extends Component {
 
 
   componentDidMount(){
-    let server = "http://localhost:5000";
-    if(process.env.NODE_ENV==="production"){
-      this.socket=io();
-    }
-    if(process.env.NODE_ENV==="development"){
-      this.socket=io(server);
-    }
+    // let server = "http://localhost:5000";
+    // if(process.env.NODE_ENV==="production"){
+    //   this.socket=io();
+    // }
+    // if(process.env.NODE_ENV==="development"){
+    //   this.socket=io(server);
+    // }
     this.getEvents()
   }
 
   componentWillReceiveProps(nextProps) {
+    if (nextProps.socket !== this.props.socket) {
+      this.setState({socket:nextProps.socket})
+    }
     if (nextProps.users !== this.props.users) {
       this.setState({users:nextProps.users})
     }
@@ -154,8 +157,9 @@ export default class Events extends Component {
   let type="text"
   let groupId=this.state.group._id
   let groupTitle=this.state.group.title
+  console.log(groupId,groupTitle)
 
-  this.socket.emit("Input Chat Message", {
+  this.state.socket.emit("Input Chat Message", {
     chatMessage,
     userId,
     userName,
@@ -221,9 +225,7 @@ approveofevent(e,id){
   let d = new Date();
   let n = d.getTime();
   let eventscopy=JSON.parse(JSON.stringify(this.state.events))
-  function checkEvent() {
-    return id!==auth.isAuthenticated().user._id
-  }
+console.log("EVENT ID",id)
   for (var ev of eventscopy){
     let votesfrommembers=[]
     let memberids=this.state.users.map(item=>item._id)
@@ -235,8 +237,8 @@ approveofevent(e,id){
     }
     ev.approval=votesfrommembers
 
-    if (ev._id==id){
-
+    if (ev._id===id){
+      console.log("event title",ev.title)
       if(!ev.approval.includes(auth.isAuthenticated().user._id)){
         ev.approval.push(auth.isAuthenticated().user._id)
       }
@@ -325,7 +327,6 @@ withdrawapprovalofevent(e,id){
     body: ''
   }
 
-
   fetch("/events/withdrawapprovalofevent/" + id +"/"+ auth.isAuthenticated().user._id, options
 ).then(res => {
   console.log(res)
@@ -360,8 +361,9 @@ console.log(eventscopy)
       let type="text"
       let groupId=this.state.group._id
       let groupTitle=this.state.group.title
+      console.log(groupId,groupTitle)
 
-      this.socket.emit("Input Chat Message", {
+      this.state.socket.emit("Input Chat Message", {
         chatMessage,
         userId,
         userName,
@@ -464,8 +466,9 @@ sendEventNotification(item){
       let type="text"
       let groupId=this.state.group._id
       let groupTitle=this.state.group.title
+      console.log(groupId,groupTitle)
 
-      this.socket.emit("Input Chat Message", {
+      this.state.socket.emit("Input Chat Message", {
         chatMessage,
         userId,
         userName,
@@ -517,7 +520,6 @@ sendEventNotification(item){
 
 
 render() {
-
   var d = new Date();
   var n = d.getTime();
 
