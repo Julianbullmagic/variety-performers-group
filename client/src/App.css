@@ -744,6 +744,8 @@ width:100vw;
   display:flex;
   flex-direction:column;
   justify-content:space-around;
+  justify-content:center;
+  align-items:center;
   height:23vh;
 }
 .users
