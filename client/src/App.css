@@ -743,6 +743,8 @@ width:100vw;
   top:17vh;
   display:flex;
   flex-direction:column;
+  justify-content:space-around;
+  height:20vh;
 }
 .users
 {
