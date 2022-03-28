@@ -3,20 +3,13 @@ import {Image} from 'cloudinary-react'
 import {Link} from "react-router-dom";
 import CreateLeadForm from '../groups/CreateLeadForm'
 
-
-
-
 export default function Home({history}){
   const [users, setUsers] = useState(false)
   const [videos, setVideos] = useState(false)
 
-
   useEffect(()=> {
 getGroupData()
   }, [])
-
-
-
 
   async function getGroupData(){
     await fetch(`/groups/getusers`)
@@ -33,9 +26,6 @@ getGroupData()
           vids = vids.sort(() => Math.random() - 0.5)
           setVideos(vids)
         })
-
-
-
   }
     return (
       <>
@@ -54,7 +44,7 @@ getGroupData()
         <div className="usercard">
         <div className="userdeets">
         <h2><strong>{user.name}</strong></h2>
-        <h4>{user.jobtitle}</h4>
+        <h4 style={{marginTop:"1vh"}}>{user.jobtitle}</h4>
         </div>
         <Image style={{objectFit:"cover",width:"100%",height:"100%",overflow:"hidden",position:"relative"}}
         cloudName="julianbullmagic" publicId={user.images[0]} /></div>
