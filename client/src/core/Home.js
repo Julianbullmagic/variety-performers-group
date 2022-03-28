@@ -43,8 +43,8 @@ getGroupData()
         <Link to={"/singleuser/" + user._id}>
         <div className="usercard">
         <div className="userdeets">
-        <h2><strong>{user.name}</strong></h2>
-        <h4>{user.jobtitle}</h4>
+        <h2 style={{maring:"0.5vh"}}><strong>{user.name}</strong></h2>
+        <h4 style={{maring:"0.5vh"}}>{user.jobtitle}</h4>
         </div>
         <Image style={{objectFit:"cover",width:"100%",height:"100%",overflow:"hidden",position:"relative"}}
         cloudName="julianbullmagic" publicId={user.images[0]} /></div>
