@@ -326,8 +326,8 @@ if(values.promovideos!==""){
                   <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Password </h5><input id="password" type="password" placeHolder={values.password} label="Password" value={values.password} onChange={handleChange('password')} margin="normal"/></div>
                   <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Confirm Password </h5><input id="passwordtwo" type="password" placeHolder={values.passwordtwo} label="Confirm Password" value={values.passwordtwo} onChange={handleChange('passwordtwo')} margin="normal"/></div>
                   {fixErrors&&<h5 style={{marginRight:"1vw",color:"red"}} className="ruletext">Please fix errors</h5>}
-
                   {(!(values.password===values.passwordtwo)&&!(values.passwordtwo===""))&&<h5 style={{marginRight:"1vw",color:"red"}} className="ruletext">Passwords Do Not Match</h5>}
+                  <button onClick={(e) => createUser(e)}>Submit Profile</button>
 
                   </div>
                   <Dialog style={{textAlign:"center"}} open={values.open} disableBackdropClick={true}>
