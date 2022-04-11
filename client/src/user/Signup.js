@@ -154,6 +154,7 @@ console.log("uploading")
 console.log(values.password===values.passwordtwo)
 console.log(notallyoutub)
       if((values.password===values.passwordtwo)&&!notallyoutub){
+        console.log("!!!!!")
         setValues({ ...values, passworderror:false})
         setLoading(true)
         var userId=mongoose.Types.ObjectId()
