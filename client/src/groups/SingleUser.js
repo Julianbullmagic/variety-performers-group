@@ -150,6 +150,7 @@ export default function SingleUser({ match }) {
 
   async function updateUser(){
     let errors=false
+    if(values.youtube!==""){
     if(validator.isURL(values.youtube)&&values.youtube.includes("youtube")){
       setYoutubeChannelError(false)
     }else{
@@ -157,7 +158,9 @@ export default function SingleUser({ match }) {
       setFixErrors(true)
       errors=true
     }
+  }
 
+  if(values.website!==""){
     if(validator.isURL(values.website)){
       setWebsiteError(false)
     }else{
@@ -165,7 +168,9 @@ export default function SingleUser({ match }) {
       setFixErrors(true)
       errors=true
     }
+  }
 
+  if(values.email!==""){
     if(validator.isEmail(values.email)){
       setEmailError(false)
     }else{
@@ -173,7 +178,9 @@ export default function SingleUser({ match }) {
       setFixErrors(true)
       errors=true
     }
+  }
 
+  if(values.phone!==""){
     if(values.phone.match(phoneExpression)){
       setPhoneError(false)
     }else{
@@ -181,10 +188,9 @@ export default function SingleUser({ match }) {
       setFixErrors(true)
       errors=true
     }
+  }
 
-    if(!(values.password===values.passwordtwo)){
-      setValues({ ...values, passworderror:true})
-    }
+  if(values.promovideos!==""){
     let youtubevids=values.promovideos.split(",")
     let notallyoutub=false
     for (let vid of youtubevids){
@@ -196,6 +202,7 @@ export default function SingleUser({ match }) {
     if(notallyoutub){
       setValues({ ...values, passworderror:true})
     }
+  }
 
     if (errors){
       setFixErrors(true)
@@ -204,8 +211,7 @@ export default function SingleUser({ match }) {
     }
 
     if(!errors){
-      if((values.password===values.passwordtwo)&&!notallyoutub){
-        setValues({ ...values, passworderror:false})
+      if(!notallyoutub){
         setLoading(true)
 
         let imageids=[]

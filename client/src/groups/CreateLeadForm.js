@@ -256,7 +256,7 @@ if (errors){
         if (users){
           for (let user of users){
             if (!genreoptions.includes(user.jobtitle.toLowerCase())){
-              genreoptions.push(user.jobtitle.toLowerCase())
+              genreoptions.push(...user.jobtitle.toLowerCase().split(","))
             }
           }
         }

@@ -31,8 +31,9 @@ getGroupData()
       <>
       <div className="homepage" style={{marginTop:"0vh",paddingTop:"0vh"}}>
       <div className="homepageexplanation">
-      <h5>We are a team of entertainers from Sydney. We perform at many different kinds of events, weddings, festivals, parties, functions. Our highly skilled and experienced entertainers
-      will keep you amazed and amused. We are an agency run by performers, allowing direct communication and better value for money. No middle men.</h5>
+      <h5>We are a team of entertainers from Sydney. We perform at many different kinds of events, weddings,
+      festivals, parties, functions. Our highly skilled and experienced entertainers will keep you amazed and
+      amused. </h5>
       </div>
       <div style={{opacity:"0.9"}}>
       <CreateLeadForm homepage="true" users={users}/>
