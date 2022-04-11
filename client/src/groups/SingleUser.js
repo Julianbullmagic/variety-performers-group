@@ -189,10 +189,10 @@ export default function SingleUser({ match }) {
       errors=true
     }
   }
+  let notallyoutub=false
 
   if(values.promovideos!==""){
     let youtubevids=values.promovideos.split(",")
-    let notallyoutub=false
     for (let vid of youtubevids){
       if (!vid.includes("youtube")){
         notallyoutub=true
