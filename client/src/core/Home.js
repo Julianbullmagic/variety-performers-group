@@ -27,6 +27,10 @@ getGroupData()
           setVideos(vids)
         })
   }
+  let usercopy=JSON.parse(JSON.stringify(users))
+  userscopy=userscopy.sort(() => Math.random() - 0.5);
+  userscopy=userscopy.sort(() => Math.random() - 0.5);
+
     return (
       <>
       <div className="homepage" style={{marginTop:"0vh",paddingTop:"0vh"}}>
