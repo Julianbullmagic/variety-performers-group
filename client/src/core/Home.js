@@ -44,7 +44,7 @@ getGroupData()
       </div>
 
       <div className="users">
-      {users&&users.map(user=>{return(<div key={user._id}>
+      {userscopy&&userscopy.map(user=>{return(<div key={user._id}>
         <Link to={"/singleuser/" + user._id}>
         <div className="usercard">
         <div className="userdeets">
