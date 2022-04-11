@@ -114,9 +114,9 @@ if(values.promovideos!==""){
 
 
   async function createUser(){
-    var errors=false
-    var notallyoutub=false
-
+    let errors=false
+    let notallyoutub=false
+console.log("uploading")
     if(values.youtube!==""){
       if(validator.isURL(values.youtube)&&values.youtube.includes("youtube")){
         setYoutubeChannelError(false)
@@ -151,9 +151,8 @@ if(values.promovideos!==""){
     }
   }
 
-
-
-
+console.log(values.password===values.passwordtwo)
+console.log(notallyoutub)
       if((values.password===values.passwordtwo)&&!notallyoutub){
         setValues({ ...values, passworderror:false})
         setLoading(true)
@@ -224,7 +223,6 @@ if(values.promovideos!==""){
                       })}
 
                       console.log("imageids",imageids)
-
 
                       const user = {
                         _id:userId,
