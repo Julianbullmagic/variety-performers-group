@@ -84,26 +84,7 @@ if(values.website!==""){
     errors=true
   }
 }
-if(values.email!==""){
-  if(validator.isEmail(values.email)){
-    setEmailError(false)
-  }else{
-    setEmailError(true)
-    setFixErrors(true)
-    errors=true
-  }
-}
 
-  var phoneExpression = /^\({0,1}((0|\+61)(2|4|3|7|8)){0,1}\){0,1}(\ |-){0,1}[0-9]{2}(\ |-){0,1}[0-9]{2}(\ |-){0,1}[0-9]{1}(\ |-){0,1}[0-9]{3}$/;
-  if(values.phone!==""){
-if(values.phone.match(phoneExpression)){
-    setPhoneError(false)
-  }else{
-    setPhoneError(true)
-    setFixErrors(true)
-    errors=true
-  }
-}
 
   if(!(values.password===values.passwordtwo)){
     setValues({ ...values, passworderror:true})
@@ -155,26 +136,6 @@ if(values.promovideos!==""){
       errors=true
     }
   }
-  if(values.email!==""){
-    if(validator.isEmail(values.email)){
-      setEmailError(false)
-    }else{
-      setEmailError(true)
-      setFixErrors(true)
-      errors=true
-    }
-  }
-
-    var phoneExpression = /^\({0,1}((0|\+61)(2|4|3|7|8)){0,1}\){0,1}(\ |-){0,1}[0-9]{2}(\ |-){0,1}[0-9]{2}(\ |-){0,1}[0-9]{1}(\ |-){0,1}[0-9]{3}$/;
-    if(values.phone!==""){
-  if(values.phone.match(phoneExpression)){
-      setPhoneError(false)
-    }else{
-      setPhoneError(true)
-      setFixErrors(true)
-      errors=true
-    }
-  }
 
     if(!(values.password===values.passwordtwo)){
       setValues({ ...values, passworderror:true})
@@ -189,19 +150,10 @@ if(values.promovideos!==""){
       }
     }
   }
-    if(notallyoutub){
-      setValues({ ...values, passworderror:true})
-    }
-
-    if (errors){
-      setFixErrors(true)
-    }else{
-      setFixErrors(false)
-    }
-    console.log(values.passworderror)
 
 
-    if(!errors){
+
+
       if((values.password===values.passwordtwo)&&!notallyoutub){
         setValues({ ...values, passworderror:false})
         setLoading(true)
@@ -304,11 +256,10 @@ if(values.promovideos!==""){
                       setLoading(false)
                     }
                   }
-                }
+
 
 
                 const handleChange = name => event => {
-                  changer()
                   setValues({ ...values, [name]: event.target.value })
                 }
 
@@ -370,22 +321,14 @@ if(values.promovideos!==""){
                   <input style={{width:"90%"}} id="file" type="file" ref={selectedFile5}/>
                   <p>Max 5 images</p>
                   </div>
-
-                  <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Password </h5><input id="password" type="password" placeHolder={values.password} label="Password" value={values.password} onChange={handleChange('password')} margin="normal"/></div>
-                  <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Confirm Password </h5><input id="passwordtwo" type="password" placeHolder={values.passwordtwo} label="Confirm Password" value={values.passwordtwo} onChange={handleChange('passwordtwo')} margin="normal"/></div>
-                  {(!(values.password===values.passwordtwo)&&!(values.passwordtwo===""))&&<h5 style={{marginRight:"1vw",color:"red"}} className="ruletext">Passwords Do Not Match</h5>}
-                  {(values.passworderror&&notallyoutube)&&<h5 style={{marginRight:"1vw",color:"red"}} className="ruletext">Cannot Submit, Must Fix Errors, All Input fields must be filled</h5>}
-
-                  {(values.passworderror&&(!(values.password===values.passwordtwo)&&!(values.passwordtwo==="")))&&<h5 style={{marginRight:"1vw",color:"red"}} className="ruletext">Cannot Submit, Must Fix Errors, All Input fields must be filled</h5>}
                   <button style={{marginLeft:"30%"}} onClick={(e) => extraImage(e)}>Add Extra Image</button>
                   <button onClick={(e) => lessImage(e)}>One Less Image</button>
-                  <button id="submit" onClick={clickSubmit}>Submit</button>
-                  {fixErrors&&<p style={{color:"red"}}>Please fix all errors</p>}
-                  <br/> {
-                    values.error && (<Typography component="p" color="error">
-                    <Icon color="error" >error</Icon>
-                    {values.error}</Typography>)
-                  }
+                  <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Password </h5><input id="password" type="password" placeHolder={values.password} label="Password" value={values.password} onChange={handleChange('password')} margin="normal"/></div>
+                  <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Confirm Password </h5><input id="passwordtwo" type="password" placeHolder={values.passwordtwo} label="Confirm Password" value={values.passwordtwo} onChange={handleChange('passwordtwo')} margin="normal"/></div>
+                  {fixErrors&&<h5 style={{marginRight:"1vw",color:"red"}} className="ruletext">Please fix errors</h5>}
+
+                  {(!(values.password===values.passwordtwo)&&!(values.passwordtwo===""))&&<h5 style={{marginRight:"1vw",color:"red"}} className="ruletext">Passwords Do Not Match</h5>}
+
                   </div>
                   <Dialog style={{textAlign:"center"}} open={values.open} disableBackdropClick={true}>
                   <h2 style={{textAlign:"center"}}>New Account</h2>
