@@ -27,7 +27,7 @@ getGroupData()
           setVideos(vids)
         })
   }
-  let usercopy=JSON.parse(JSON.stringify(users))
+  let userscopy=JSON.parse(JSON.stringify(users))
   userscopy=userscopy.sort(() => Math.random() - 0.5);
   userscopy=userscopy.sort(() => Math.random() - 0.5);
 
