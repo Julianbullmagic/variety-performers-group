@@ -4,8 +4,8 @@ import {Link} from "react-router-dom";
 import CreateLeadForm from '../groups/CreateLeadForm'
 
 export default function Home({history}){
-  const [users, setUsers] = useState(false)
-  const [videos, setVideos] = useState(false)
+  const [users, setUsers] = useState([])
+  const [videos, setVideos] = useState([])
 
   useEffect(()=> {
 getGroupData()
@@ -16,6 +16,9 @@ getGroupData()
         .then(response => response.json())
         .then(data=>{
           let approvedusers=data.filter(user=>user.approvedmember)
+          approvedusers=approvedusers.sort(() => Math.random() - 0.5);
+          approvedusers=approvedusers.sort(() => Math.random() - 0.5);
+
           setUsers(approvedusers)
           let vids=[]
           for (let user of approvedusers){
@@ -27,9 +30,6 @@ getGroupData()
           setVideos(vids)
         })
   }
-  let userscopy=JSON.parse(JSON.stringify(users))
-  userscopy=userscopy.sort(() => Math.random() - 0.5);
-  userscopy=userscopy.sort(() => Math.random() - 0.5);
 
     return (
       <>
@@ -44,7 +44,7 @@ getGroupData()
       </div>
 
       <div className="users">
-      {userscopy&&userscopy.map(user=>{return(<div key={user._id}>
+      {users&&users.map(user=>{return(<div key={user._id}>
         <Link to={"/singleuser/" + user._id}>
         <div className="usercard">
         <div className="userdeets">
