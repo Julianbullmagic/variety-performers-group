@@ -26,8 +26,21 @@ getGroupData()
               vids.push(...user.promovideos)
             }
           }
-          vids = vids.sort(() => Math.random() - 0.5)
-          setVideos(vids)
+          let embedvids=[]
+          for (let vid of vids){
+            console.log("vid",vid)
+            let splitvid=vid.split("=")
+            console.log(splitvid[splitvid.length-1])
+            let embedvid=`https://www.youtube.com/embed/${splitvid[splitvid.length-1]}`
+            if(vid.includes("embed")){
+              embedvids.push(vid)
+            }else{
+              embedvids.push(embedvid)
+            }
+          }
+          console.log("embedvids",embedvids)
+          embedvids = embedvids.sort(() => Math.random() - 0.5)
+          setVideos(embedvids)
         })
   }
 

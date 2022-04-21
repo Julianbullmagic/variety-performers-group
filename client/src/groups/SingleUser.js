@@ -355,7 +355,7 @@ export default function SingleUser({ match }) {
                         <div className="signupform" style={{height:"auto"}}>
                         <div className="innersignupform" style={{height:"auto"}}>
                         {user.name&&<h1 style={{textAlign:"center"}}>{user.name}</h1>}
-                        {user.youtube&&<a href={user.youtube}><h3 style={{textAlign:"center",color:"blue"}}><strong>Youtube Channel:</strong> {user.youtube}</h3></a>}
+                        {user.youtube&&<a href={user.youtube}><h3 style={{textAlign:"center",color:"blue"}}><strong>Youtube Channel:</strong></h3></a>}
                         {user.expertise&&<h3 style={{textAlign:"center"}}><strong>Expertise:</strong> {user.expertise}</h3>}
                         {user.performancedescription&&<h3 style={{textAlign:"center"}}><strong>Performance Description:</strong> {user.performancedescription}</h3>}
                         {user.rates&&<h3 style={{textAlign:"center"}}><strong>Rates:</strong> {user.rates}</h3>}
@@ -371,7 +371,13 @@ export default function SingleUser({ match }) {
                         {user.promovideos&&<>
                         <h3 style={{textAlign:"center"}}><strong>Youtube Videos</strong></h3>
                         <div style={{marginLeft:"5vw",width:"50vw"}}>
-                        {user.promovideos&&user.promovideos.map(item=>{return (<iframe title={item} style={{width:"100%",height:"60vh"}} src={item}/>)})}
+                        {user.promovideos&&user.promovideos.map(item=>{
+                            let splitvid=item.split("=")
+                            let embedvid=`https://www.youtube.com/embed/${splitvid[splitvid.length-1]}`
+                            if(item.includes("embed")){
+                              embedvid=item
+                            }
+                          return (<iframe title={item} style={{width:"100%",height:"60vh"}} src={embedvid}/>)})}
                         </div></>}
                         {(user.restrictions&&user.restrictions.length>0)&&<div style={{textAlign:"center"}}><h3 style={{textAlign:"center"}}>Restrictions</h3>
                         {restrictionsmapped}</div>}
