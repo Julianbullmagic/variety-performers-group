@@ -354,16 +354,15 @@ export default function SingleUser({ match }) {
                       {user&&(
                         <div className="signupform" style={{height:"auto"}}>
                         <div className="innersignupform" style={{height:"auto"}}>
-                        {user.name&&<h1 style={{textAlign:"center"}}>Name: {user.name}</h1>}
-                        {user.website&&<a href={user.website}><h3 style={{textAlign:"center",color:"blue"}}>Website</h3></a>}
-                        {user.youtube&&<a href={user.youtube}><h3 style={{textAlign:"center",color:"blue"}}>Youtube Channel</h3></a>}
-                        {user.expertise&&<h3 style={{textAlign:"center"}}>Expertise: {user.expertise}</h3>}
-                        {user.performancedescription&&<h3 style={{textAlign:"center",}}>{user.performancedescription}</h3>}
+                        {user.name&&<h1 style={{textAlign:"center"}}>{user.name}</h1>}
+                        {user.youtube&&<a href={user.youtube}><h3 style={{textAlign:"center",color:"blue"}}><strong>Youtube Channel:</strong> {user.youtube}</h3></a>}
+                        {user.expertise&&<h3 style={{textAlign:"center"}}><strong>Expertise:</strong> {user.expertise}</h3>}
+                        {user.performancedescription&&<h3 style={{textAlign:"center"}}><strong>Performance Description:</strong> {user.performancedescription}</h3>}
                         {user.rates&&<h3 style={{textAlign:"center"}}><strong>Rates:</strong> {user.rates}</h3>}
-                        {user.phone&&<h3 style={{textAlign:"center"}}>Phone Number: {user.phone}</h3>}
-                        {user.email&&<h3 style={{textAlign:"center"}}>Email Address: {user.email}</h3>}
+                        {user.phone&&<h3 style={{textAlign:"center"}}><strong>Phone Number:</strong> {user.phone}</h3>}
+                        {user.email&&<h3 style={{textAlign:"center"}}><strong>Email Address:</strong> {user.email}</h3>}
                         <br/>
-                        {user.images&&<><h3 style={{textAlign:"center"}}>Images</h3>
+                        {user.images&&<><h3 style={{textAlign:"center"}}><strong>Images</strong></h3>
                         <div style={{marginBottom:"40vw"}}>
                         <AwesomeSlider style={{marginLeft:"5vw",width:"50vw", zIndex: 1, position:"absolute"}}>
                         {user.images&&user.images.map(item=>{return (<div><Image style={{width:"100%"}} cloudName="julianbullmagic" publicId={item} /></div>)})}

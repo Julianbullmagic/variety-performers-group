@@ -29,10 +29,13 @@ const userSchema = new mongoose.Schema({
   votes:[String],
   recentprivatemessages: [{type: mongoose.Schema.ObjectId, ref: 'Chat'}],
   phone:Number,
-  sex:{
-    type:String,
-    default:true
-  },
+  website: String,
+  youtube: String,
+  promovideos: [String],
+  approvedmember: false,
+  approval: [],
+  performancedescription: String,
+  expertise:String,
   active:{
     type:Boolean,
     default: true

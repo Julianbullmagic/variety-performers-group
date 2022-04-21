@@ -740,12 +740,12 @@ width:100vw;
   margin:1vw;
   border-radius:10px;
   background:white;
-  top:17vh;
+  top:23vh;
   display:flex;
   flex-direction:column;
   justify-content:center;
   align-items:center;
-  height:23vh;
+  height:16vh;
 }
 .users
 {

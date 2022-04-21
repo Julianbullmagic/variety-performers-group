@@ -242,7 +242,7 @@ console.log(notallyoutub)
                         images:imageids,
                         password: values.password || undefined
                       }
-                      console.log(user)
+                      console.log("new user",user)
 
                       create(user).then((data) => {
                         if (data.error) {
@@ -295,8 +295,8 @@ console.log(notallyoutub)
                   <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Promo Videos, separate youtube video link urls with a comma </h5><input id="promovideos" placeHolder={values.promovideos} type="promovideos" label="promotional videos, please add youtube url links separated by a comma" value={values.promovideos} onChange={handleChange('promovideos')} margin="normal"/></div>
                   {(notallyoutube&&!values.promovideos==="")&&<h5 style={{marginRight:"1vw",color:"red"}} className="ruletext">Includes links that are not for Youtube</h5>}
                   <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Job Title, what kind of performer are you? Magician, juggler, acrobat, etc? Separate each job title with a comma. </h5><input id="job title" type="job title" placeHolder={values.jobtitle} label="job title" value={values.jobtitle} onChange={handleChange('jobtitle')} margin="normal"/></div>
-                  <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Expertise, how did you learn your skill? (Optional) </h5><input id="expertise" type="expertise" placeHolder={values.expertise} label="expertise" value={values.expertise} onChange={handleChange('expertise')} margin="normal"/></div>
-                  <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Performance Description </h5><input id="performancedescription" placeHolder={values.performancedescription} type="performancedescription" label="Performance Description"  value={values.performancedescription} onChange={handleChange('performancedescription')} margin="normal"/></div>
+                  <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Expertise, how did you learn your skill? (Optional) </h5><textarea rows="5" id="expertise" type="expertise" placeHolder={values.expertise} label="expertise" value={values.expertise} onChange={handleChange('expertise')} margin="normal"/></div>
+                  <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Performance Description </h5><textarea rows="5" id="performancedescription" placeHolder={values.performancedescription} type="performancedescription" label="Performance Description"  value={values.performancedescription} onChange={handleChange('performancedescription')} margin="normal"/></div>
                   <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Rates, if you have several different services you may put a variety of different rates </h5><input id="rates" placeHolder={values.rates} type="rates" label="Rates"  value={values.rates} onChange={handleChange('rates')} margin="normal"/></div>
 
                   <h5 className="ruletext">  Images </h5>
@@ -318,8 +318,8 @@ console.log(notallyoutub)
 
                   <div style={{display:((numImages.length>=5)?"block":"none")}}  className="eventformbox ruletext">
                   <input style={{width:"90%"}} id="file" type="file" ref={selectedFile5}/>
-                  <p>Max 5 images</p>
                   </div>
+                  <p style={{display:"block"}}>Max 5 images</p>
                   <button style={{marginLeft:"30%"}} onClick={(e) => extraImage(e)}>Add Extra Image</button>
                   <button onClick={(e) => lessImage(e)}>One Less Image</button>
                   <div className="signupinput"><h5 style={{marginRight:"1vw"}} className="ruletext">Password </h5><input id="password" type="password" placeHolder={values.password} label="Password" value={values.password} onChange={handleChange('password')} margin="normal"/></div>
