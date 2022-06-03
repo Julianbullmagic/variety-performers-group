@@ -56,8 +56,8 @@ getGroupData()
       <div style={{opacity:"0.9"}}>
       <CreateLeadForm homepage="true" users={users}/>
       </div>
-      <div className="users">
-      {users&&users.map(user=>{return(<div key={user._id}>
+      <div className="users" style={{justifyContent:"center"}}>
+      {users&&users.map(user=>{return(<div style={{marginLeft:"1vw",marginRight:"1vw",marginBottom:"0vw"}} key={user._id}>
         <Link to={"/singleuser/" + user._id}>
         <div className="usercard">
         <div className="userdeets">
