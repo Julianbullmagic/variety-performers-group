@@ -110,7 +110,7 @@ console.log("errors",phoneError,emailError,addressError)
       return typeof element === 'number';
     });
   }
-  var phoneExpression = /^\({0,1}((0|\+61)(2|4|3|7|8)){0,1}\){0,1}(\ |-){0,1}[0-9]{2}(\ |-){0,1}[0-9]{2}(\ |-){0,1}[0-9]{1}(\ |-){0,1}[0-9]{3}$/;
+  var phoneExpression = /^[0-9]+$/
 
   if(phoneValue.current.value.match(phoneExpression)){
     setPhoneError(false)
@@ -318,7 +318,7 @@ if (errors){
 
 
           <div className="eventformbox">
-          <label htmlFor='name'>What kind of performance are you looking for?</label>
+          <label htmlFor='name'>What kind of performance are you looking for? Press button to add. You can add several.</label>
           <select style={{width:"40vw"}} id="restriction" onChange={(e) => handleGenreChange(e)}>
           <option value="all">all</option>
           {genreoptions&&genreoptions.map(item=><option key={item} value={item}>{item}</option>)}

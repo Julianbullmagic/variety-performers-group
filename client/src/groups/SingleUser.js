@@ -355,7 +355,7 @@ export default function SingleUser({ match }) {
                         <div className="signupform" style={{height:"auto"}}>
                         <div className="innersignupform" style={{height:"auto"}}>
                         {user.name&&<h1 style={{textAlign:"center"}}>{user.name}</h1>}
-                        {user.youtube&&<a href={user.youtube}><h3 style={{textAlign:"center",color:"blue"}}><strong>Youtube Channel:</strong></h3></a>}
+                        {user.youtube&&<a href={user.youtube}><h3 style={{textAlign:"center",color:"blue"}}><strong>Youtube Channel</strong></h3></a>}
                         {user.expertise&&<h3 style={{textAlign:"center"}}><strong>Expertise:</strong> {user.expertise}</h3>}
                         {user.performancedescription&&<h3 style={{textAlign:"center"}}><strong>Performance Description:</strong> {user.performancedescription}</h3>}
                         {user.rates&&<h3 style={{textAlign:"center"}}><strong>Rates:</strong> {user.rates}</h3>}

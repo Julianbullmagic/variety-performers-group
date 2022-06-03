@@ -166,7 +166,6 @@ class GroupPage extends Component {
               <Jury socket={this.socket} users={this.state.approvedusers}
               groupId="Performers" grouptitle="Performers" group={this.state.group}/>
               </TabPanel>}
-
               {!this.state.cannotvotetoapprovenewmembers&&<TabPanel>
               <NewMemberApproval socket={this.socket} users={this.state.users}
               grouptitle="Performers"

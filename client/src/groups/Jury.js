@@ -888,6 +888,7 @@ function delRestPoll(e,item){
             <option value="cannot vote for leaders">cannot vote for leaders</option>
             <option value="cannot see events">cannot see events</option>
             <option value="cannot vote in jury">cannot vote in jury</option>
+            <option value="cannot see gig leads">cannot vote in jury</option>
             <option value="remove from group">remove from group</option>
             </select>
             <p htmlFor="room"> Choose a punishment</p>

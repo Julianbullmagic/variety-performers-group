@@ -2,6 +2,8 @@ import React, {useState, useEffect} from 'react'
 import {Image} from 'cloudinary-react'
 import {Link} from "react-router-dom";
 import CreateLeadForm from '../groups/CreateLeadForm'
+import background from "./homepagedesign.png";
+import reviews from "./reviews.png";
 
 export default function Home({history}){
   const [users, setUsers] = useState([])
@@ -46,16 +48,14 @@ getGroupData()
 
     return (
       <>
-      <div className="homepage" style={{marginTop:"0vh",paddingTop:"0vh"}}>
-      <div className="homepageexplanation">
-      <h5>We are a team of entertainers from Sydney. We perform at many different kinds of events, weddings,
+      <div className="homepage" style={{marginTop:"0vh",paddingTop:"0vh",textAlign:"center"}}>
+      <img src={background} style={{height:"85vh"}}/>
+      <h3 style={{margin:"2vw"}}>We are a team of entertainers from Sydney. We perform at many different kinds of events, weddings,
       festivals, parties, functions. Our highly skilled and experienced entertainers will keep you amazed and
-      amused. </h5>
-      </div>
+      amused. We offer roving entertainment, street style performances and stage shows.</h3>
       <div style={{opacity:"0.9"}}>
       <CreateLeadForm homepage="true" users={users}/>
       </div>
-
       <div className="users">
       {users&&users.map(user=>{return(<div key={user._id}>
         <Link to={"/singleuser/" + user._id}>
@@ -73,6 +73,7 @@ getGroupData()
       <iframe style={{marginLeft:"1vw",width:"44vw",height:"44vh",display:"inline",borderRadius:"10px"}} src={videos[1]} title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
       </div>
         </div>
+        <img src={reviews} style={{height:"120vh",marginTop:"1vw"}}/>
       </div>
       </>
     )
